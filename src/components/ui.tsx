@@ -1,0 +1,115 @@
+'use client';
+
+import { useFormStatus } from 'react-dom';
+import type { MarketStatus, WagerStatus } from '@/lib/types';
+
+export function SubmitButton({
+  children,
+  pending: pendingLabel,
+  className = 'btn-primary',
+  disabled,
+}: {
+  children: React.ReactNode;
+  pending?: string;
+  className?: string;
+  disabled?: boolean;
+}) {
+  const { pending } = useFormStatus();
+  return (
+    <button type="submit" disabled={pending || disabled} className={className}>
+      {pending && (
+        <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent opacity-70" />
+      )}
+      {pending ? (pendingLabel ?? 'Un momento…') : children}
+    </button>
+  );
+}
+
+export function Alert({
+  kind,
+  children,
+}: {
+  kind: 'error' | 'ok' | 'info';
+  children: React.ReactNode;
+}) {
+  const styles = {
+    error: 'border-lose/25 bg-lose/[.07] text-lose',
+    ok: 'border-brand/25 bg-brand/[.07] text-brand',
+    info: 'border-info/25 bg-info/[.07] text-info',
+  }[kind];
+  return (
+    <p className={`animate-rise rounded-xl border px-3.5 py-2.5 text-sm leading-relaxed ${styles}`}>
+      {children}
+    </p>
+  );
+}
+
+const MARKET_LABELS: Record<MarketStatus, { text: string; className: string }> = {
+  open: { text: 'Abierta', className: 'border-brand/25 bg-brand/[.08] text-brand' },
+  closed: { text: 'Sin resultado', className: 'border-gold/25 bg-gold/[.08] text-gold' },
+  pending: { text: 'Impugnable', className: 'border-info/25 bg-info/[.08] text-info' },
+  disputed: { text: 'En votación', className: 'border-info/40 bg-info/[.12] text-info' },
+  resolved: { text: 'Pagada', className: 'border-line bg-surface-raised text-content-muted' },
+  cancelled: { text: 'Anulada', className: 'border-line bg-surface-raised text-content-faint' },
+};
+
+export function MarketBadge({ status }: { status: MarketStatus }) {
+  const s = MARKET_LABELS[status];
+  return <span className={`chip ${s.className}`}>{s.text}</span>;
+}
+
+const WAGER_LABELS: Record<WagerStatus, { text: string; className: string }> = {
+  active: { text: 'En juego', className: 'border-info/25 bg-info/[.08] text-info' },
+  won: { text: 'Ganada', className: 'border-brand/25 bg-brand/[.08] text-brand' },
+  lost: { text: 'Perdida', className: 'border-line bg-surface-raised text-content-faint' },
+  refunded: { text: 'Devuelta', className: 'border-line bg-surface-raised text-content-muted' },
+  voided: { text: 'Anulada', className: 'border-lose/25 bg-lose/[.08] text-lose' },
+};
+
+export function WagerBadge({ status }: { status: WagerStatus }) {
+  const s = WAGER_LABELS[status];
+  return <span className={`chip ${s.className}`}>{s.text}</span>;
+}
+
+export function Empty({ icon, title, hint }: { icon: string; title: string; hint?: string }) {
+  return (
+    <div className="card grid place-items-center gap-2.5 px-6 py-16 text-center">
+      <span className="grid h-12 w-12 place-items-center rounded-2xl border border-line bg-surface-sunken text-xl">
+        {icon}
+      </span>
+      <p className="font-semibold text-white">{title}</p>
+      {hint && <p className="max-w-[26ch] text-sm leading-relaxed text-content-muted">{hint}</p>}
+    </div>
+  );
+}
+
+/** Cabecera de sección con contador opcional. */
+export function SectionTitle({
+  children,
+  count,
+  action,
+  tone = 'default',
+}: {
+  children: React.ReactNode;
+  count?: number;
+  action?: React.ReactNode;
+  tone?: 'default' | 'warn';
+}) {
+  return (
+    <div className="mb-3 flex items-center justify-between gap-3">
+      <h2 className={`eyebrow flex items-center gap-2 ${tone === 'warn' ? '!text-gold' : ''}`}>
+        {children}
+        {count !== undefined && (
+          <span
+            className={`num rounded-md px-1.5 py-0.5 text-2xs ${
+              tone === 'warn' ? 'bg-gold/15 text-gold' : 'bg-surface-raised text-content-muted'
+            }`}
+          >
+            {count}
+          </span>
+        )}
+      </h2>
+      {action}
+    </div>
+  );
+}

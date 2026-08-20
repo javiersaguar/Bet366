@@ -1,0 +1,200 @@
+'use server';
+
+import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
+import { createClient } from '@/lib/supabase/server';
+
+export type ActionResult = { error?: string; ok?: true };
+
+/** Los mensajes de las funciones SQL ya vienen en castellano y son de cara al usuario. */
+function toMessage(error: { message: string; code?: string } | null): string {
+  if (!error) return 'Algo ha fallado, prueba otra vez.';
+  const raw = error.message ?? '';
+  const clean = raw.replace(/^.*?(?:ERROR|error):\s*/i, '').trim();
+  if (/duplicate key|unique constraint/i.test(clean)) return 'Eso ya existe.';
+  if (/violates check constraint/i.test(clean)) return 'Hay algún dato fuera de rango.';
+  return clean || 'Algo ha fallado, prueba otra vez.';
+}
+
+async function rpc(fn: string, args: Record<string, unknown>): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc(fn, args);
+  return error ? { error: toMessage(error) } : { ok: true };
+}
+
+// ------------------------------------------------------------------ grupos
+export async function createGroupAction(
+  _prev: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc('create_group', {
+    p_name: String(formData.get('name') ?? '').trim(),
+    p_starting_points: Number(formData.get('starting_points') ?? 1000),
+    p_drift: Number(formData.get('drift') ?? 0.5),
+    p_liquidity: Number(formData.get('liquidity') ?? 300),
+    p_dispute_hours: Number(formData.get('dispute_hours') ?? 24),
+  });
+  if (error) return { error: toMessage(error) };
+  redirect(`/grupos/${data}`);
+}
+
+export async function joinGroupAction(
+  _prev: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc('join_group', {
+    p_code: String(formData.get('code') ?? '').trim(),
+  });
+  if (error) return { error: toMessage(error) };
+  redirect(`/grupos/${data}`);
+}
+
+// ------------------------------------------------------------------ apuestas
+export async function createMarketAction(
+  _prev: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  const labels = formData.getAll('option_label').map((v) => String(v).trim());
+  const oddsList = formData.getAll('option_odds').map((v) => Number(v));
+
+  const options = labels
+    .map((label, i) => ({ label, odds: oddsList[i] }))
+    .filter((o) => o.label.length > 0);
+
+  if (options.length < 2) return { error: 'Hacen falta al menos 2 opciones con nombre.' };
+  if (options.some((o) => !Number.isFinite(o.odds) || o.odds < 1.01 || o.odds > 50)) {
+    return { error: 'Las cuotas tienen que estar entre 1,01 y 50,00.' };
+  }
+
+  const groupId = String(formData.get('group_id'));
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc('create_market', {
+    p_group: groupId,
+    p_title: String(formData.get('title') ?? '').trim(),
+    p_description: String(formData.get('description') ?? '').trim() || null,
+    p_closes_at: new Date(String(formData.get('closes_at'))).toISOString(),
+    p_stakes_public: formData.get('stakes_public') === 'on',
+    p_options: options,
+  });
+  if (error) return { error: toMessage(error) };
+  redirect(`/grupos/${groupId}/apuesta/${data}`);
+}
+
+export async function placeWagerAction(
+  _prev: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  const result = await rpc('place_wager', {
+    p_market: String(formData.get('market_id')),
+    p_option: String(formData.get('option_id')),
+    p_stake: Number(formData.get('stake')),
+  });
+  if (result.ok) revalidatePath(`/grupos/${formData.get('group_id')}`, 'layout');
+  return result;
+}
+
+export async function voidWagerAction(
+  _prev: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  const result = await rpc('void_wager', {
+    p_wager: String(formData.get('wager_id')),
+    p_reason: String(formData.get('reason') ?? '').trim(),
+  });
+  if (result.ok) revalidatePath(`/grupos/${formData.get('group_id')}`, 'layout');
+  return result;
+}
+
+export async function closeMarketAction(
+  _prev: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  const result = await rpc('close_market', { p_market: String(formData.get('market_id')) });
+  if (result.ok) revalidatePath(`/grupos/${formData.get('group_id')}`, 'layout');
+  return result;
+}
+
+export async function setResultAction(
+  _prev: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  const option = String(formData.get('option_id') ?? '');
+  if (!option) return { error: 'Elige cuál fue el resultado.' };
+  const result = await rpc('set_result', {
+    p_market: String(formData.get('market_id')),
+    p_option: option,
+    p_note: String(formData.get('note') ?? '').trim() || null,
+  });
+  if (result.ok) revalidatePath(`/grupos/${formData.get('group_id')}`, 'layout');
+  return result;
+}
+
+export async function cancelMarketAction(
+  _prev: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  const result = await rpc('cancel_market', {
+    p_market: String(formData.get('market_id')),
+    p_reason: String(formData.get('reason') ?? '').trim(),
+  });
+  if (result.ok) revalidatePath(`/grupos/${formData.get('group_id')}`, 'layout');
+  return result;
+}
+
+// ------------------------------------------------------------------ impugnaciones
+export async function openDisputeAction(
+  _prev: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  const result = await rpc('open_dispute', {
+    p_market: String(formData.get('market_id')),
+    p_reason: String(formData.get('reason') ?? '').trim(),
+  });
+  if (result.ok) revalidatePath(`/grupos/${formData.get('group_id')}`, 'layout');
+  return result;
+}
+
+export async function castVoteAction(
+  _prev: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  const option = String(formData.get('option_id') ?? '');
+  const result = await rpc('cast_dispute_vote', {
+    p_market: String(formData.get('market_id')),
+    p_option: option === 'void' ? null : option,
+  });
+  if (result.ok) revalidatePath(`/grupos/${formData.get('group_id')}`, 'layout');
+  return result;
+}
+
+// ------------------------------------------------------------------ perfil
+export async function updateProfileAction(
+  _prev: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: 'No has iniciado sesión.' };
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({
+      display_name: String(formData.get('display_name') ?? '').trim(),
+      avatar_emoji: String(formData.get('avatar_emoji') ?? '🎲').slice(0, 4),
+    })
+    .eq('id', user.id);
+
+  if (error) return { error: toMessage(error) };
+  revalidatePath('/', 'layout');
+  return { ok: true };
+}
+
+export async function signOutAction() {
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+  redirect('/login');
+}

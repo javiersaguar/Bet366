@@ -1,0 +1,12 @@
+{
+  "name": "Bet366",
+  "short_name": "Bet366",
+  "description": "La casa de apuestas de tu grupo. Cuotas de verdad, puntos de mentira.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#08090C",
+  "theme_color": "#08090C",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

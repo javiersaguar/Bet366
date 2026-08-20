@@ -1,0 +1,133 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html,
+  body {
+    @apply bg-canvas text-content font-sans antialiased;
+    font-feature-settings: 'cv05' 1, 'ss03' 1;
+  }
+
+  /* Halo muy tenue arriba: da profundidad sin ensuciar el fondo. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(1100px 520px at 50% -18%, rgba(43, 224, 140, 0.07), transparent 62%),
+      radial-gradient(760px 420px at 100% 0%, rgba(90, 169, 255, 0.05), transparent 55%);
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply tracking-tightest text-white;
+  }
+
+  ::selection {
+    @apply bg-brand text-canvas;
+  }
+
+  input,
+  textarea,
+  select {
+    @apply w-full rounded-xl border border-line bg-surface-sunken px-3.5 py-2.5 text-content
+           outline-none transition placeholder:text-content-faint
+           focus:border-brand/50 focus:bg-surface focus:ring-4 focus:ring-brand/10;
+  }
+
+  input[type='checkbox'],
+  input[type='radio'],
+  input[type='range'] {
+    @apply w-auto p-0;
+  }
+
+  /* Los spinners del number ensucian el boleto de apuesta. */
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+}
+
+@layer components {
+  /* --- superficies --------------------------------------------------- */
+  .card {
+    @apply relative rounded-2xl border border-line bg-surface shadow-card;
+    background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0));
+  }
+
+  .card-interactive {
+    @apply card transition duration-200 hover:border-line-strong hover:bg-surface-raised
+           hover:shadow-lift;
+  }
+
+  /* --- botones ------------------------------------------------------- */
+  .btn {
+    @apply inline-flex select-none items-center justify-center gap-2 rounded-xl px-4 py-2.5
+           text-sm font-semibold tracking-tight transition duration-150
+           active:scale-[.985] disabled:pointer-events-none disabled:opacity-100
+           disabled:!bg-surface-raised disabled:!text-content-faint
+           disabled:!border-line disabled:!shadow-none;
+  }
+
+  .btn-primary {
+    @apply btn border border-transparent bg-brand text-canvas
+           shadow-[0_4px_16px_-8px_rgba(43,224,140,.6)] hover:bg-brand-bright;
+  }
+
+  .btn-ghost {
+    @apply btn border border-line-strong bg-surface-raised/60 text-content
+           hover:border-content-faint hover:bg-surface-raised;
+  }
+
+  .btn-quiet {
+    @apply btn text-content-muted hover:text-content;
+  }
+
+  .btn-danger {
+    @apply btn border border-lose/35 text-lose hover:bg-lose/10;
+  }
+
+  /* --- tipografia utilitaria ----------------------------------------- */
+  .label {
+    @apply mb-2 block text-2xs font-semibold uppercase tracking-[0.09em] text-content-muted;
+  }
+
+  .eyebrow {
+    @apply text-2xs font-semibold uppercase tracking-[0.12em] text-content-muted;
+  }
+
+  /* Cifras: siempre tabulares para que no bailen al actualizarse. */
+  .num {
+    font-variant-numeric: tabular-nums;
+    @apply tracking-tight;
+  }
+
+  /* La cuota es el numero protagonista de toda la app. */
+  .odds {
+    @apply num font-bold tracking-tightest text-white;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-1
+           text-2xs font-semibold uppercase tracking-[0.06em];
+  }
+
+  .hairline {
+    @apply divide-y divide-line;
+  }
+}
