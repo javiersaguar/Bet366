@@ -32,8 +32,8 @@ export default async function MyBetsPage({ params }: { params: Promise<{ groupId
 
   return (
     <div className="space-y-8">
-      <section className="grid grid-cols-3 gap-3">
-        <Stat label="En juego" value={`${points(staked)}`} accent />
+      <section className="stagger grid grid-cols-3 gap-3">
+        <Stat label="En juego" value={points(staked)} accent />
         <Stat label="Acertadas" value={`${wonCount}/${settled.length}`} />
         <Stat label="Lanzadas" value={String(launched.length)} />
       </section>
@@ -43,12 +43,12 @@ export default async function MyBetsPage({ params }: { params: Promise<{ groupId
           <SectionTitle count={needsResult.length} tone="warn">
             Te toca poner el resultado
           </SectionTitle>
-          <div className="space-y-3">
+          <div className="stagger space-y-3">
             {needsResult.map((m) => (
               <Link
                 key={m.id}
                 href={`/grupos/${groupId}/apuesta/${m.id}`}
-                className="card block border-gold/30 p-4 transition hover:border-gold/50"
+                className="group card-interactive block border-gold/30 p-4 hover:border-gold/50"
               >
                 <p className="font-semibold text-white">{m.title}</p>
                 <p className="mt-1 text-xs text-content-muted">
@@ -153,8 +153,8 @@ export default async function MyBetsPage({ params }: { params: Promise<{ groupId
 function Stat({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
     <div className="card px-4 py-3.5">
-      <p className="eyebrow !mb-1">{label}</p>
-      <p className={`num text-xl font-bold ${accent ? 'text-brand' : 'text-white'}`}>{value}</p>
+      <p className="eyebrow !mb-1 !text-[0.625rem]">{label}</p>
+      <p className={`num text-xl font-bold ${accent ? 'text-info' : 'text-white'}`}>{value}</p>
     </div>
   );
 }

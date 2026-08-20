@@ -7,7 +7,9 @@ import { maxNonArbitrageStake, checkStake } from '@/lib/engine/guard';
 import { payoutFor } from '@/lib/engine/odds';
 import { placeWagerAction } from '@/lib/actions';
 import { Alert, SubmitButton } from '@/components/ui';
+import { useToast } from '@/components/toast';
 import { OddsFace } from '@/components/odds-button';
+import { CountUp } from '@/components/count-up';
 
 const QUICK = [10, 25, 50, 100, 250];
 
@@ -29,13 +31,15 @@ export function BetSlip({
   const [selected, setSelected] = useState<string | null>(null);
   const [stake, setStake] = useState('');
   const [state, action] = useActionState(placeWagerAction, {});
+  const toast = useToast();
 
   useEffect(() => {
     if (state.ok) {
+      toast('Apuesta puesta. Suerte.');
       setStake('');
       setSelected(null);
     }
-  }, [state]);
+  }, [state, toast]);
 
   const option = market.market_options.find((o) => o.id === selected) ?? null;
 
@@ -66,8 +70,8 @@ export function BetSlip({
 
   return (
     <section className="space-y-3">
-      <div className="grid gap-2 sm:grid-cols-2">
-        {market.market_options.map((o) => {
+      <div className="stagger grid gap-2 sm:grid-cols-2">
+        {market.market_options.map((o, i) => {
           const mineHere = myWagers.filter((w) => w.option_id === o.id);
           const totalMine = mineHere.reduce((a, w) => a + Number(w.stake), 0);
           return (
@@ -75,7 +79,8 @@ export function BetSlip({
               key={o.id}
               type="button"
               onClick={() => setSelected(selected === o.id ? null : o.id)}
-              className="block w-full text-left"
+              style={{ '--i': i } as React.CSSProperties}
+              className="block w-full text-left transition-transform duration-200 ease-snap active:scale-[.985]"
               aria-pressed={selected === o.id}
             >
               <OddsFace
@@ -152,14 +157,16 @@ export function BetSlip({
           <div className="grid grid-cols-2 overflow-hidden rounded-xl border border-line bg-surface-sunken">
             <div className="border-r border-line px-4 py-3">
               <p className="eyebrow !mb-1">Ganancia</p>
-              <p className="num text-lg font-bold text-content">
-                {profit > 0 ? '+' : ''}
-                {points(profit)}
-              </p>
+              <CountUp
+                value={profit}
+                prefix={profit > 0 ? '+' : ''}
+                className="text-lg font-bold text-content"
+                duration={350}
+              />
             </div>
             <div className="px-4 py-3">
               <p className="eyebrow !mb-1">Cobras</p>
-              <p className="num text-lg font-bold text-brand">{points(payout)}</p>
+              <CountUp value={payout} className="text-lg font-bold text-brand" duration={350} />
             </div>
           </div>
 
@@ -177,7 +184,11 @@ export function BetSlip({
           )}
           {state.error && <Alert kind="error">{state.error}</Alert>}
 
-          <SubmitButton className="btn-primary w-full !py-3" pending="Poniendo…" disabled={!check?.ok}>
+          <SubmitButton
+            className={`btn-primary w-full !py-3 ${check?.ok ? 'sheen' : ''}`}
+            pending="Poniendo…"
+            disabled={!check?.ok}
+          >
             {valid ? `Apostar ${points(stakeNumber)} pts` : 'Apostar'}
           </SubmitButton>
 

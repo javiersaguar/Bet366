@@ -48,7 +48,7 @@ const MARKET_LABELS: Record<MarketStatus, { text: string; className: string }> =
   open: { text: 'Abierta', className: 'border-brand/25 bg-brand/[.08] text-brand' },
   closed: { text: 'Sin resultado', className: 'border-gold/25 bg-gold/[.08] text-gold' },
   pending: { text: 'Impugnable', className: 'border-info/25 bg-info/[.08] text-info' },
-  disputed: { text: 'En votación', className: 'border-info/40 bg-info/[.12] text-info' },
+  disputed: { text: 'En votación', className: 'border-vote/35 bg-vote/[.10] text-vote' },
   resolved: { text: 'Pagada', className: 'border-line bg-surface-raised text-content-muted' },
   cancelled: { text: 'Anulada', className: 'border-line bg-surface-raised text-content-faint' },
 };

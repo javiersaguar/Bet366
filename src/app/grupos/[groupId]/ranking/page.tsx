@@ -2,11 +2,17 @@ import { createClient } from '@/lib/supabase/server';
 import { loadGroup, loadStandings } from '@/lib/data';
 import { points, relative } from '@/lib/format';
 import { SectionTitle } from '@/components/ui';
+import { Avatar } from '@/components/avatar';
+import { Countdown } from '@/components/countdown';
 import { ProfileForm } from './profile-form';
 
 export const dynamic = 'force-dynamic';
 
-const MEDALS = ['🥇', '🥈', '🥉'];
+const PODIUM = [
+  { medal: '🥇', ring: 'gold' as const, glow: 'shadow-[0_0_0_1px_rgba(245,194,75,.25)]' },
+  { medal: '🥈', ring: undefined, glow: '' },
+  { medal: '🥉', ring: undefined, glow: '' },
+];
 
 export default async function RankingPage({ params }: { params: Promise<{ groupId: string }> }) {
   const { groupId } = await params;
@@ -22,56 +28,88 @@ export default async function RankingPage({ params }: { params: Promise<{ groupI
     .order('season_number', { ascending: false })
     .limit(8);
 
+  const start = Number(group.starting_points);
   const top = standings[0];
+  const best = Math.max(...standings.map((s) => s.points + s.staked), start);
 
   return (
     <div className="space-y-8">
       <section>
-        <div className="mb-3 flex items-end justify-between gap-3">
-          <div>
-            <h1 className="text-xl font-bold text-white">Ranking de la semana {season.number}</h1>
-            <p className="text-sm text-content-muted">
-              Se cierra {relative(season.ends_at)} y todos vuelven a {points(group.starting_points)} pts
-            </p>
-          </div>
+        <div className="mb-4">
+          <h1 className="text-xl font-bold">Ranking de la semana {season.number}</h1>
+          <p className="mt-0.5 text-sm text-content-muted">
+            Se cierra en <Countdown to={season.ends_at} className="text-content" urgentUnder={7200_000} />{' '}
+            y todos vuelven a {points(start)} pts
+          </p>
         </div>
 
-        <ul className="card hairline">
+        <ul className="stagger card hairline overflow-hidden">
           {standings.map((s, i) => {
             const isMe = s.profile.id === me.id;
             const total = s.points + s.staked;
+            const podium = PODIUM[i];
+            const width = best > 0 ? (total / best) * 100 : 0;
+
             return (
               <li
                 key={s.profile.id}
-                className={`flex items-center gap-3 px-4 py-3.5 ${isMe ? 'bg-brand/[.08]' : ''}`}
+                style={{ '--i': i } as React.CSSProperties}
+                className={`relative overflow-hidden ${isMe ? 'bg-brand/[.06]' : ''}`}
               >
-                <span className="w-7 shrink-0 text-center text-sm font-bold text-content-muted">
-                  {MEDALS[i] ?? i + 1}
-                </span>
-                <span className="text-lg leading-none">{s.profile.avatar_emoji}</span>
-                <span className="min-w-0 flex-1">
-                  <span className={`block truncate font-semibold ${isMe ? 'text-brand' : 'text-white'}`}>
-                    {s.profile.display_name}
-                    {isMe && <span className="ml-1.5 text-xs font-normal text-brand/70">tú</span>}
+                {/* Barra de fondo proporcional a los puntos. */}
+                <span
+                  className={`absolute inset-y-0 left-0 transition-[width] duration-1000 ease-smooth ${
+                    i === 0 ? 'bg-gold/[.07]' : 'bg-white/[.025]'
+                  }`}
+                  style={{ width: `${width}%` }}
+                />
+                <div className="relative flex items-center gap-3 px-4 py-3.5">
+                  <span
+                    className={`num w-6 shrink-0 text-center text-sm font-bold ${
+                      i === 0 ? 'text-gold' : 'text-content-faint'
+                    }`}
+                  >
+                    {podium?.medal ?? i + 1}
                   </span>
-                  <span className="num block text-xs text-content-muted">
-                    {s.settled > 0 ? `${s.won}/${s.settled} acertadas` : 'sin apuestas cerradas'}
-                    {s.staked > 0 && ` · ${points(s.staked)} en juego`}
+
+                  <Avatar
+                    profile={s.profile}
+                    ring={i === 0 ? 'gold' : isMe ? 'brand' : undefined}
+                  />
+
+                  <span className="min-w-0 flex-1">
+                    <span
+                      className={`block truncate font-semibold ${isMe ? 'text-brand' : 'text-white'}`}
+                    >
+                      {s.profile.display_name}
+                      {isMe && <span className="ml-1.5 text-2xs font-normal text-brand/60">tú</span>}
+                    </span>
+                    <span className="num block text-2xs text-content-faint">
+                      {s.settled > 0
+                        ? `${s.won}/${s.settled} acertadas`
+                        : 'sin apuestas cerradas'}
+                      {s.staked > 0 && (
+                        <span className="text-info"> · {points(s.staked)} en juego</span>
+                      )}
+                    </span>
                   </span>
-                </span>
-                <span className="shrink-0 text-right">
-                  <span className={`num block text-lg font-bold ${isMe ? 'text-brand' : 'text-white'}`}>
-                    {points(total)}
+
+                  <span className="shrink-0 text-right">
+                    <span
+                      className={`num block text-lg font-bold ${isMe ? 'text-brand' : 'text-white'}`}
+                    >
+                      {points(total)}
+                    </span>
+                    <Delta value={total - start} />
                   </span>
-                  <Delta value={total - Number(group.starting_points)} />
-                </span>
+                </div>
               </li>
             );
           })}
         </ul>
 
         {top && standings.length > 1 && (
-          <p className="mt-3 text-center text-xs text-content-muted">
+          <p className="mt-3 text-center text-2xs text-content-faint">
             {top.profile.display_name} va primero por{' '}
             <span className="num text-content-muted">
               {points(top.points + top.staked - (standings[1].points + standings[1].staked))}
@@ -84,7 +122,7 @@ export default async function RankingPage({ params }: { params: Promise<{ groupI
       {(history ?? []).length > 0 && (
         <section>
           <SectionTitle>Los que han ganado semanas</SectionTitle>
-          <ul className="card hairline">
+          <ul className="card hairline overflow-hidden">
             {(history ?? []).map((h) => {
               const who = members.find((m) => m.id === h.user_id);
               return (
@@ -92,11 +130,12 @@ export default async function RankingPage({ params }: { params: Promise<{ groupI
                   key={h.season_number}
                   className="flex items-center justify-between gap-3 px-4 py-3"
                 >
-                  <span className="text-sm text-content-muted">
-                    🏆 Semana {h.season_number} ·{' '}
+                  <span className="flex items-center gap-2.5 text-sm text-content-muted">
+                    <span className="text-base">🏆</span>
+                    Semana {h.season_number} ·{' '}
                     <strong className="text-white">{who?.display_name ?? 'Alguien'}</strong>
                   </span>
-                  <span className="num text-sm text-content-muted">{points(h.points)} pts</span>
+                  <span className="num text-sm text-content-faint">{points(h.points)} pts</span>
                 </li>
               );
             })}
@@ -114,7 +153,7 @@ export default async function RankingPage({ params }: { params: Promise<{ groupI
 
 function Delta({ value }: { value: number }) {
   if (Math.abs(value) < 0.01) {
-    return <span className="block text-2xs text-content-muted">igual</span>;
+    return <span className="block text-2xs text-content-faint">igual</span>;
   }
   const up = value > 0;
   return (

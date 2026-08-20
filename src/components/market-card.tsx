@@ -1,27 +1,36 @@
 import Link from 'next/link';
 import type { MarketWithOptions, Wager } from '@/lib/types';
-import { countdown, points } from '@/lib/format';
+import { points } from '@/lib/format';
 import { MarketBadge } from '@/components/ui';
 import { OddsFace } from '@/components/odds-button';
+import { Countdown } from '@/components/countdown';
+import { Avatar } from '@/components/avatar';
 
 export function MarketCard({
   market,
   groupId,
   myWagers,
+  index = 0,
 }: {
   market: MarketWithOptions;
   groupId: string;
   myWagers: Wager[];
+  index?: number;
 }) {
   const mine = myWagers.filter((w) => w.market_id === market.id && w.status === 'active');
+  const myStake = mine.reduce((a, w) => a + Number(w.stake), 0);
   const totalPool = market.market_options.reduce((a, o) => a + Number(o.pool), 0);
   const winner = market.market_options.find((o) => o.id === market.winning_option);
   const settled = market.status === 'resolved' || market.status === 'cancelled';
+  const iWon = mine.length === 0 && myWagers.some((w) => w.market_id === market.id && w.status === 'won');
 
   return (
     <Link
       href={`/grupos/${groupId}/apuesta/${market.id}`}
-      className="card-interactive block p-4 sm:p-5"
+      style={{ '--i': index } as React.CSSProperties}
+      className={`card-interactive block p-4 sm:p-5 ${
+        myStake > 0 ? 'ring-1 ring-inset ring-info/20' : ''
+      }`}
     >
       <div className="mb-2 flex items-start justify-between gap-3">
         <h3 className="text-[0.975rem] font-semibold leading-snug text-white">{market.title}</h3>
@@ -29,13 +38,16 @@ export function MarketCard({
       </div>
 
       <div className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-2xs text-content-faint">
-        <span className="text-content-muted">
-          {market.creator?.avatar_emoji} {market.creator?.display_name}
-        </span>
+        {market.creator && (
+          <span className="flex items-center gap-1.5 text-content-muted">
+            <Avatar profile={market.creator} size="sm" />
+            {market.creator.display_name}
+          </span>
+        )}
         <Dot />
         {market.status === 'open' ? (
-          <span>
-            cierra en <span className="num text-content-muted">{countdown(market.closes_at)}</span>
+          <span className="flex items-center gap-1">
+            cierra en <Countdown to={market.closes_at} className="text-content-muted" />
           </span>
         ) : winner ? (
           <span className="text-brand">ganó «{winner.label}»</span>
@@ -56,19 +68,27 @@ export function MarketCard({
             <span title="No se ve quién ha apostado">a ciegas</span>
           </>
         )}
+        {iWon && (
+          <span className="chip ml-auto border-brand/25 bg-brand/[.08] text-brand">
+            🎉 la ganaste
+          </span>
+        )}
       </div>
 
       <div className="grid gap-2 sm:grid-cols-2">
         {market.market_options.slice(0, 4).map((option) => {
           const bet = mine.find((w) => w.option_id === option.id);
-          const isWinner = option.id === market.winning_option;
           return (
             <OddsFace
               key={option.id}
               option={option}
               share={totalPool > 0 ? (Number(option.pool) / totalPool) * 100 : 0}
-              state={isWinner ? 'winner' : settled ? 'muted' : 'idle'}
-              mine={bet ? { stake: Number(bet.stake), lockedOdds: Number(bet.locked_odds) } : undefined}
+              state={
+                option.id === market.winning_option ? 'winner' : settled ? 'muted' : 'idle'
+              }
+              mine={
+                bet ? { stake: Number(bet.stake), lockedOdds: Number(bet.locked_odds) } : undefined
+              }
               compact
             />
           );

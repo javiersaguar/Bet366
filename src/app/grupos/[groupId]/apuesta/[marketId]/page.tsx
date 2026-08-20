@@ -3,9 +3,12 @@ import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { loadGroup } from '@/lib/data';
 import type { MarketWithOptions, Profile, Wager } from '@/lib/types';
-import { dateTime, countdown, points } from '@/lib/format';
+import { dateTime, points } from '@/lib/format';
 import { MarketBadge } from '@/components/ui';
 import { OddsFace } from '@/components/odds-button';
+import { Countdown } from '@/components/countdown';
+import { Avatar } from '@/components/avatar';
+import { Celebrate } from '@/components/celebrate';
 import { BetSlip } from '@/components/bet-slip';
 import { BettorList } from '@/components/bettor-list';
 import { DisputePanel } from '@/components/dispute-panel';
@@ -57,14 +60,17 @@ export default async function MarketPage({
     .eq('market_id', marketId);
 
   const profilesById = new Map<string, Profile>(members.map((m) => [m.id, m]));
+  const iWon = wagers.some((w) => w.user_id === me.id && w.status === 'won');
 
   return (
     <div className="space-y-6">
+      <Celebrate fire={iWon} />
       <Link
         href={`/grupos/${groupId}`}
-        className="inline-block text-sm text-content-muted hover:text-content"
+        className="group inline-flex items-center gap-1.5 text-sm text-content-muted transition-colors hover:text-content"
       >
-        ← El tablón
+        <span className="transition-transform duration-200 group-hover:-translate-x-0.5">←</span>
+        El tablón
       </Link>
 
       <header className="space-y-3">
@@ -78,14 +84,20 @@ export default async function MarketPage({
           </p>
         )}
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-content-muted">
-          <span>
-            La lanzó {market.creator?.avatar_emoji} {market.creator?.display_name}
+          <span className="flex items-center gap-1.5">
+            La lanzó
+            {market.creator && <Avatar profile={market.creator} size="sm" />}
+            <span className="text-content-muted">{market.creator?.display_name}</span>
           </span>
           <span className="text-content-faint/40">·</span>
-          <span>
-            {market.status === 'open'
-              ? `cierra en ${countdown(market.closes_at)} (${dateTime(market.closes_at)})`
-              : `cerró el ${dateTime(market.closes_at)}`}
+          <span className="flex items-center gap-1">
+            {market.status === 'open' ? (
+              <>
+                cierra en <Countdown to={market.closes_at} className="text-content-muted" />
+              </>
+            ) : (
+              `cerró el ${dateTime(market.closes_at)}`
+            )}
           </span>
           {totalPool > 0 && (
             <>
@@ -160,16 +172,17 @@ export default async function MarketPage({
 function OddsBoard({ market, totalPool }: { market: MarketWithOptions; totalPool: number }) {
   const settled = market.status === 'resolved' || market.status === 'cancelled';
   return (
-    <div className="grid gap-2 sm:grid-cols-2">
-      {market.market_options.map((option) => (
+    <div className="stagger grid gap-2 sm:grid-cols-2">
+      {market.market_options.map((option, i) => (
+        <div key={option.id} style={{ '--i': i } as React.CSSProperties}>
         <OddsFace
-          key={option.id}
           option={option}
           share={totalPool > 0 ? (Number(option.pool) / totalPool) * 100 : 0}
           state={
             option.id === market.winning_option ? 'winner' : settled ? 'muted' : 'idle'
           }
         />
+        </div>
       ))}
     </div>
   );

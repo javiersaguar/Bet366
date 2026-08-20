@@ -117,6 +117,7 @@ src/
     grupos/                lista de grupos, crear, unirse por código
       [groupId]/           tablón · nueva apuesta · detalle · mis apuestas · ranking
   components/              piezas de interfaz reutilizables
+                           (cuotas, avatares, contadores, toasts, esqueletos)
   lib/
     engine/                motor de cuotas y guardia anti-arbitraje (+ tests)
     supabase/              clientes de navegador, servidor y middleware
@@ -188,6 +189,11 @@ pantalla de inicio y se comporta como una app.
 npm test                    # motor de cuotas y anti-arbitraje (vitest)
 ./supabase/tests/run.sh     # lógica completa contra un Postgres local
 ```
+
+Con `npm run dev` hay además una **guía de estilos** en
+[`/estilos`](http://localhost:3000/estilos): todas las piezas de interfaz y
+todos sus estados en una sola página, para no tener que reproducir cada
+situación en la app real. En producción esa ruta devuelve 404.
 
 El segundo levanta un Postgres, aplica las migraciones sobre un stub mínimo de
 lo que aporta Supabase (`auth.users`, `auth.uid()`) y comprueba el ciclo entero:

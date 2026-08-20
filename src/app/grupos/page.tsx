@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server';
 import { points } from '@/lib/format';
 import { JoinGroupForm } from './join-form';
 import { Empty } from '@/components/ui';
+import { Avatar } from '@/components/avatar';
+import { Wordmark } from '@/components/logo';
 import { signOutAction } from '@/lib/actions';
 
 export const dynamic = 'force-dynamic';
@@ -64,12 +66,12 @@ export default async function GroupsPage() {
           hint="Crea uno para tu pandilla o entra con el código que te hayan pasado."
         />
       ) : (
-        <ul className="space-y-3">
-          {groups.map(({ group, role }) => (
-            <li key={group.id}>
+        <ul className="stagger space-y-3">
+          {groups.map(({ group, role }, i) => (
+            <li key={group.id} style={{ '--i': i } as React.CSSProperties}>
               <Link
                 href={`/grupos/${group.id}`}
-                className="card flex items-center justify-between gap-4 px-5 py-4 transition hover:border-brand/40 hover:bg-surface-raised"
+                className="card-interactive flex items-center justify-between gap-4 px-5 py-4 hover:border-brand/40"
               >
                 <div className="min-w-0">
                   <p className="truncate font-semibold text-white">{group.name}</p>
@@ -94,9 +96,11 @@ export default async function GroupsPage() {
         <JoinGroupForm />
         <Link
           href="/grupos/nuevo"
-          className="card grid place-content-center gap-1 px-5 py-6 text-center transition hover:border-brand/40 hover:bg-surface-raised"
+          className="card-interactive grid place-content-center gap-1 px-5 py-6 text-center hover:border-brand/40"
         >
-          <span className="text-2xl">🎯</span>
+          <span className="mx-auto grid h-11 w-11 place-items-center rounded-xl border border-line bg-surface-sunken text-xl">
+            🎯
+          </span>
           <span className="font-semibold text-white">Crear un grupo</span>
           <span className="text-xs text-content-muted">Y repartir el código a la pandilla</span>
         </Link>

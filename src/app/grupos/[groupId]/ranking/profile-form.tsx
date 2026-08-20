@@ -5,7 +5,7 @@ import type { Profile } from '@/lib/types';
 import { updateProfileAction, signOutAction } from '@/lib/actions';
 import { Alert, SubmitButton } from '@/components/ui';
 
-const EMOJIS = ['🎲', '🍺', '🔥', '🐐', '🦅', '🥷', '🤡', '👑', '🦍', '🌊', '⚡', '🍀'];
+const EMOJIS = ['🎲', '🍺', '🔥', '🐐', '🦅', '🥷', '🤡', '👑', '🦍', '🌊', '⚡', '🍀', '🎯', '💀', '🧠', '🚀'];
 
 export function ProfileForm({ me }: { me: Profile }) {
   const [state, action] = useActionState(updateProfileAction, {});
@@ -33,7 +33,7 @@ export function ProfileForm({ me }: { me: Profile }) {
           {EMOJIS.map((e) => (
             <label
               key={e}
-              className="cursor-pointer rounded-xl border border-line px-2.5 py-1.5 text-lg transition hover:border-brand/50 has-[:checked]:border-brand has-[:checked]:bg-brand/[.08]"
+              className="cursor-pointer rounded-xl border border-line px-2.5 py-1.5 text-lg transition-all duration-200 ease-snap hover:-translate-y-0.5 hover:border-brand/50 has-[:checked]:border-brand has-[:checked]:bg-brand/[.08] has-[:checked]:shadow-glow-brand"
             >
               <input
                 type="radio"

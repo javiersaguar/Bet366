@@ -5,8 +5,15 @@ import type { MarketWithOptions, Profile, Wager } from '@/lib/types';
 import { relative } from '@/lib/format';
 import { castVoteAction, openDisputeAction } from '@/lib/actions';
 import { Alert, SubmitButton } from '@/components/ui';
+import { DeadlineRing } from '@/components/countdown';
 
-type Dispute = { market_id: string; opened_by: string; reason: string; closes_at: string } | null;
+type Dispute = {
+  market_id: string;
+  opened_by: string;
+  reason: string;
+  opened_at: string;
+  closes_at: string;
+} | null;
 type Vote = { market_id: string; user_id: string; option_id: string | null };
 
 export function DisputePanel({
@@ -33,11 +40,15 @@ export function DisputePanel({
 
   if (market.status === 'pending') {
     return (
-      <section className="card border-info/25 p-5">
+      <section className="card animate-rise flex gap-4 border-info/25 p-5">
+        {market.result_set_at && market.dispute_until && (
+          <DeadlineRing from={market.result_set_at} to={market.dispute_until} />
+        )}
+        <div className="min-w-0 flex-1">
         <h2 className="eyebrow !text-info">
           Plazo para impugnar
         </h2>
-        <p className="mt-1 text-sm text-content-muted">
+        <p className="mt-1 text-sm leading-relaxed text-content-muted">
           El creador dice que ganó <strong className="text-white">{declared?.label}</strong>. Si nadie
           lo discute, los puntos se reparten{' '}
           {market.dispute_until ? relative(market.dispute_until) : 'en breve'}.
@@ -45,10 +56,11 @@ export function DisputePanel({
         {hasSkin ? (
           <DisputeForm groupId={groupId} marketId={market.id} />
         ) : (
-          <p className="mt-3 text-xs text-content-muted">
+          <p className="mt-3 text-2xs text-content-faint">
             Solo puede impugnar quien tenga puntos en juego.
           </p>
         )}
+        </div>
       </section>
     );
   }
@@ -63,12 +75,15 @@ export function DisputePanel({
   const myVote = votes.find((v) => v.user_id === me.id);
 
   return (
-    <section className="card border-info/25 p-5">
-      <h2 className="eyebrow !text-info">
+    <section className="card animate-rise border-vote/25 p-5">
+      <div className="flex gap-4">
+        {dispute && <DeadlineRing from={dispute.opened_at} to={dispute.closes_at} tone="vote" />}
+        <div className="min-w-0 flex-1">
+      <h2 className="eyebrow !text-vote">
         Lo decide el grupo
       </h2>
       {dispute && (
-        <p className="mt-1 text-sm text-content-muted">
+        <p className="mt-1 text-sm leading-relaxed text-content-muted">
           <strong className="text-white">
             {profilesById[dispute.opened_by]?.display_name ?? 'Alguien'}
           </strong>{' '}
@@ -85,6 +100,8 @@ export function DisputePanel({
         totalVotes={votes.length}
         memberCount={memberCount}
       />
+        </div>
+      </div>
     </section>
   );
 }
@@ -164,18 +181,18 @@ function VoteForm({
               type="submit"
               name="option_id"
               value={c.value}
-              className={`relative block w-full overflow-hidden rounded-xl border px-4 py-3 text-left transition ${
+              className={`relative block w-full overflow-hidden rounded-xl border px-4 py-3 text-left transition-all duration-200 ease-smooth active:scale-[.985] ${
                 mine
-                  ? 'border-info/60 bg-info/10'
-                  : 'border-line hover:border-line-strong'
+                  ? 'border-vote/60 bg-vote/10 shadow-glow-vote'
+                  : 'border-line hover:border-line-strong hover:bg-surface-raised/50'
               }`}
             >
               <span
-                className="absolute inset-y-0 left-0 bg-info/10 transition-[width] duration-500"
+                className="absolute inset-y-0 left-0 bg-vote/[.14] transition-[width] duration-700 ease-smooth"
                 style={{ width: `${pct}%` }}
               />
               <span className="relative flex items-center justify-between gap-3">
-                <span className={`text-sm font-semibold ${mine ? 'text-info' : 'text-content'}`}>
+                <span className={`text-sm font-semibold ${mine ? 'text-vote' : 'text-content'}`}>
                   {mine && '✓ '}
                   {c.label}
                 </span>

@@ -52,7 +52,15 @@ export function LoginForm({ next }: { next: string }) {
 
   return (
     <div className="card p-6">
-      <div className="grid grid-cols-2 gap-1 p-1 mb-6 rounded-xl border border-line bg-surface-sunken">
+      <div className="relative mb-6 grid grid-cols-2 gap-1 rounded-xl border border-line bg-surface-sunken p-1">
+        {/* Píldora que se desliza entre las dos pestañas. */}
+        <span
+          aria-hidden
+          className="absolute inset-y-1 left-1 w-[calc(50%_-_0.25rem)] rounded-[9px] bg-brand shadow-[0_2px_14px_-5px_rgba(43,224,140,.95)] transition-transform duration-300 ease-snap"
+          style={{
+            transform: mode === 'signin' ? 'translateX(0)' : 'translateX(calc(100% + 0.5rem))',
+          }}
+        />
         {(['signin', 'signup'] as const).map((m) => (
           <button
             key={m}
@@ -61,10 +69,8 @@ export function LoginForm({ next }: { next: string }) {
               setMode(m);
               setError(null);
             }}
-            className={`rounded-[9px] py-2 text-sm font-semibold tracking-tight transition duration-200 ${
-              mode === m
-                ? 'bg-brand text-canvas shadow-[0_2px_10px_-4px_rgba(43,224,140,.8)]'
-                : 'text-content-muted hover:text-content'
+            className={`relative z-10 rounded-[9px] py-2 text-sm font-semibold tracking-tight transition-colors duration-200 ${
+              mode === m ? 'text-brand-ink' : 'text-content-muted hover:text-content'
             }`}
           >
             {m === 'signin' ? 'Entrar' : 'Crear cuenta'}
