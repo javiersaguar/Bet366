@@ -24,10 +24,10 @@ export function InviteCode({ code, groupName }: { code: string; groupName: strin
   }
 
   return (
-    <section className="card flex flex-wrap items-center justify-between gap-3 overflow-hidden px-5 py-4">
+    <section className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5">
       <div>
-        <p className="text-sm font-semibold text-white">Que se apunte más gente</p>
-        <p className="text-micro text-content-muted">Pásales este código</p>
+        <p className="text-body font-medium text-white">Que se apunte más gente</p>
+        <p className="text-caption text-content-faint">Pásales este código</p>
       </div>
       <button
         onClick={share}

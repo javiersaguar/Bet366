@@ -1,5 +1,5 @@
 import { BoardScreen } from '@/screens/board';
-import { DEMO_GROUP_ID, GROUP, MARKETS, MEMBERS, SEASON, WAGERS, ME } from '@/lib/fixtures';
+import { GROUP, MARKETS, MEMBERS, SEASON, WAGERS, ME } from '@/lib/fixtures';
 
 export default function DemoBoard() {
   return (

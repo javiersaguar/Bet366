@@ -1,14 +1,18 @@
 import Link from 'next/link';
+import { Plus } from '@phosphor-icons/react/dist/ssr';
 import type { Group, MarketWithOptions, Profile, Season, Wager } from '@/lib/types';
-import { MarketCard } from '@/components/market-card';
-import { Empty, SectionTitle } from '@/components/ui';
+import { MarketRow } from '@/components/market-row';
+import { Empty } from '@/components/ui';
 import { InviteCode } from '@/components/invite-code';
-import { CountUp } from '@/components/count-up';
+import { points } from '@/lib/format';
 import { Countdown } from '@/components/countdown';
 
 /**
- * El tablón. Recibe los datos ya cargados, así que la misma pantalla sirve
- * para la app real y para la vista de demostración.
+ * El tablón.
+ *
+ * Sin tarjetas contenedoras: con esta densidad, envolver cada bloque en su
+ * marco gasta el ancho en cromo y hace que todo pese lo mismo. La jerarquía
+ * la marcan el tamaño del texto, el espacio y alguna línea de un píxel.
  */
 export function BoardScreen({
   basePath,
@@ -18,7 +22,6 @@ export function BoardScreen({
   markets,
   myWagers,
 }: {
-  /** `/grupos/<id>` en la app, `/demo` en la demostración. */
   basePath: string;
   group: Group;
   season: Season;
@@ -39,93 +42,97 @@ export function BoardScreen({
   );
 
   return (
-    <div className="space-y-8">
-      <section className="card animate-rise overflow-hidden">
-        <div className="flex items-start justify-between gap-4 p-5 pb-4">
-          <div className="min-w-0">
-            <h1 className="text-xl font-bold">El tablón</h1>
-            <p className="mt-0.5 text-sm text-content-muted">
-              {members.length} {members.length === 1 ? 'persona' : 'personas'} · acaba en{' '}
-              <Countdown to={season.ends_at} className="text-content" urgentUnder={7200_000} />
-            </p>
-          </div>
-          <Link
-            href={`${basePath}/nueva`}
-            className="btn-primary sheen hidden shrink-0 sm:inline-flex"
-          >
-            Lanzar apuesta
-          </Link>
-        </div>
+    <div className="space-y-7">
+      {/* Resumen de la semana. Tres cifras sueltas sobre el fondo, separadas
+          por líneas verticales: no necesitan marco para leerse como grupo. */}
+      <section>
+        <h1 className="text-display font-semibold">El tablón</h1>
+        <p className="mt-1 text-body text-content-muted">
+          {members.length} {members.length === 1 ? 'persona' : 'personas'} · acaba en{' '}
+          <Countdown to={season.ends_at} className="text-content" urgentUnder={7200_000} />
+        </p>
 
-        {/* Las tres cifras que resumen la semana, con las etiquetas en una línea. */}
-        <div className="grid grid-cols-3 divide-x divide-line border-t border-line bg-surface-sunken/60">
-          <Pulse label="Abiertas" value={live.length} />
-          <Pulse label="En el bote" value={totalPool} />
-          <Pulse label="En juego" value={inPlay} accent={inPlay > 0} />
-        </div>
-
-        {/* En móvil el botón va abajo y a todo el ancho: se llega mejor con el pulgar. */}
-        <div className="border-t border-line p-3 sm:hidden">
-          <Link href={`${basePath}/nueva`} className="btn-primary sheen w-full">
-            Lanzar apuesta
-          </Link>
-        </div>
+        <dl className="mt-5 grid grid-cols-3 divide-x divide-line border-y border-line">
+          <Figure label="Abiertas" value={String(live.length)} />
+          <Figure label="En el bote" value={points(totalPool)} />
+          <Figure label="En juego" value={points(inPlay)} tone={inPlay > 0 ? 'info' : 'plain'} />
+        </dl>
       </section>
 
-      {markets.length === 0 && (
+      {markets.length === 0 ? (
         <Empty
           title="Aún no hay ninguna apuesta"
           hint="Lanza la primera: «¿a que fulanito se lía con menganito?»"
           action={
-            <Link href={`${basePath}/nueva`} className="btn-primary !py-2 text-micro">
+            <Link href={`${basePath}/nueva`} className="btn-primary">
               Lanzar la primera
             </Link>
           }
         />
+      ) : (
+        <>
+          <Section title="Abiertas" count={live.length}>
+            {live.map((m) => (
+              <MarketRow key={m.id} market={m} basePath={basePath} myWagers={myWagers} />
+            ))}
+          </Section>
+
+          <Section title="Esperando resultado" count={awaiting.length}>
+            {awaiting.map((m) => (
+              <MarketRow key={m.id} market={m} basePath={basePath} myWagers={myWagers} />
+            ))}
+          </Section>
+
+          <Section title="Historial" count={done.length}>
+            {done.map((m) => (
+              <MarketRow key={m.id} market={m} basePath={basePath} myWagers={myWagers} />
+            ))}
+          </Section>
+        </>
       )}
 
-      {live.length > 0 && (
-        <Section title="Abiertas" count={live.length}>
-          {live.map((m, i) => (
-            <MarketCard key={m.id} market={m} basePath={basePath} myWagers={myWagers} index={i} />
-          ))}
-        </Section>
-      )}
-
-      {awaiting.length > 0 && (
-        <Section title="Esperando resultado" count={awaiting.length}>
-          {awaiting.map((m, i) => (
-            <MarketCard key={m.id} market={m} basePath={basePath} myWagers={myWagers} index={i} />
-          ))}
-        </Section>
-      )}
-
-      {done.length > 0 && (
-        <Section title="Historial" count={done.length}>
-          {done.map((m, i) => (
-            <MarketCard key={m.id} market={m} basePath={basePath} myWagers={myWagers} index={i} />
-          ))}
-        </Section>
-      )}
+      {/* En escritorio el botón central de la barra queda lejos del cursor. */}
+      <Link
+        href={`${basePath}/nueva`}
+        className="btn-primary hidden w-full sm:inline-flex"
+      >
+        <Plus size={17} weight="bold" />
+        Lanzar apuesta
+      </Link>
 
       <InviteCode code={group.invite_code} groupName={group.name} />
     </div>
   );
 }
 
-function Pulse({ label, value, accent }: { label: string; value: number; accent?: boolean }) {
+function Figure({
+  label,
+  value,
+  tone = 'plain',
+}: {
+  label: string;
+  value: string;
+  tone?: 'plain' | 'info';
+}) {
   return (
-    <div className="px-3 py-3 text-center sm:px-4 sm:text-left">
-      <p className="field-label !mb-1 !whitespace-nowrap ">{label}</p>
-      <CountUp
-        value={value}
-        duration={750}
-        className={`block text-lg font-bold leading-none ${accent ? 'text-info' : 'text-white'}`}
-      />
+    <div className="px-3 py-3 first:pl-0">
+      <dt className="field-label">{label}</dt>
+      <dd
+        className={`tnum mt-1 text-figure font-semibold ${
+          tone === 'info' ? 'text-info' : 'text-white'
+        }`}
+      >
+        {value}
+      </dd>
     </div>
   );
 }
 
+/**
+ * Encabezado de sección: título en caja normal con su recuento al lado. Sin
+ * antetítulo en versalitas: repetirlo en cada sección es la marca de agua de
+ * una plantilla, y aquí el título ya dice lo que hay.
+ */
 function Section({
   title,
   count,
@@ -135,10 +142,15 @@ function Section({
   count: number;
   children: React.ReactNode;
 }) {
+  if (count === 0) return null;
+
   return (
     <section>
-      <SectionTitle count={count}>{title}</SectionTitle>
-      <div className="stagger space-y-2.5">{children}</div>
+      <div className="mb-1 flex items-baseline gap-2">
+        <h2 className="text-title-lg font-semibold">{title}</h2>
+        <span className="tnum text-caption text-content-faint">{count}</span>
+      </div>
+      <ul className="-mx-4 divide-y divide-line border-y border-line sm:-mx-5">{children}</ul>
     </section>
   );
 }
