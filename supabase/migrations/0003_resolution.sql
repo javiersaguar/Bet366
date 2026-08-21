@@ -8,8 +8,9 @@ create or replace function public.settle_market(
   p_market uuid, p_option uuid, p_reason text default null
 ) returns void language plpgsql security definer set search_path = public as $$
 declare
-  v_m public.markets;
-  v_w public.wagers;
+  v_m     public.markets;
+  v_w     public.wagers;
+  v_label text;
 begin
   select * into v_m from public.markets where id = p_market for update;
   if v_m.status in ('resolved', 'cancelled') then return; end if;
@@ -20,6 +21,11 @@ begin
       update public.wagers set status = 'refunded', settled_at = now() where id = v_w.id;
       perform public.apply_points(v_m.group_id, v_m.season_number, v_w.user_id, v_w.stake,
                                   'wager_refund', p_market, v_w.id, p_reason);
+      perform public.notify(
+        v_m.group_id, array[v_w.user_id], 'market_cancelled',
+        'Apuesta anulada: ' || v_m.title,
+        coalesce(p_reason, 'Se te devuelven los puntos.'), p_market, v_w.stake
+      );
     end loop;
     update public.markets
        set status = 'cancelled', resolved_at = now(),
@@ -28,14 +34,24 @@ begin
     return;
   end if;
 
+  select label into v_label from public.market_options where id = p_option;
+
   for v_w in select * from public.wagers where market_id = p_market and status = 'active' loop
     if v_w.option_id = p_option then
       update public.wagers set status = 'won', settled_at = now() where id = v_w.id;
       -- Sin banca: se cobra apuesta x cuota bloqueada.
       perform public.apply_points(v_m.group_id, v_m.season_number, v_w.user_id, v_w.to_win,
                                   'wager_won', p_market, v_w.id, null);
+      perform public.notify(
+        v_m.group_id, array[v_w.user_id], 'wager_won',
+        'Has ganado ' || v_m.title, 'Salió «' || v_label || '»', p_market, v_w.to_win
+      );
     else
       update public.wagers set status = 'lost', settled_at = now() where id = v_w.id;
+      perform public.notify(
+        v_m.group_id, array[v_w.user_id], 'wager_lost',
+        'Se te fue ' || v_m.title, 'Salió «' || v_label || '»', p_market, v_w.stake
+      );
     end if;
   end loop;
 
@@ -97,7 +113,14 @@ begin
   -- Si no ha apostado nadie no hay nada que impugnar: se cierra en el acto.
   if v_bets = 0 then
     perform public.settle_market(p_market, p_option, null);
+    return;
   end if;
+
+  perform public.notify(
+    v_m.group_id, public.market_bettors(p_market, auth.uid()), 'result_published',
+    'Ya hay resultado: ' || v_m.title,
+    'Tienes ' || v_hours || ' h para impugnarlo si no te cuadra.', p_market
+  );
 end; $$;
 
 -- ---------------------------------------------------------------- impugnar
@@ -128,6 +151,15 @@ begin
   insert into public.dispute_votes (market_id, user_id, option_id)
   values (p_market, v_m.creator_id, v_m.winning_option)
   on conflict (market_id, user_id) do nothing;
+
+  perform public.notify(
+    v_m.group_id,
+    array(select unnest(public.market_bettors(p_market, v_uid))
+          union select v_m.creator_id where v_m.creator_id <> v_uid),
+    'dispute_opened',
+    'Impugnada: ' || v_m.title,
+    'Vota tú también, decide la mayoría.', p_market
+  );
 end; $$;
 
 -- Vota cualquier miembro del grupo. option_id null = anular y devolver puntos.
@@ -236,6 +268,13 @@ begin
     perform public.apply_points(p_group, v_season + 1, v_member.user_id, v_start,
                                 'season_start', null, null, 'Puntos iniciales de la semana');
   end loop;
+
+  perform public.notify(
+    p_group, public.group_member_ids(p_group), 'season_rolled',
+    'Semana ' || (v_season + 1) || ' en marcha',
+    'Todos volvéis a ' || v_start || ' puntos. El ranking de la semana ' || v_season ||
+    ' ya está cerrado.', null, v_start
+  );
 end; $$;
 
 -- ---------------------------------------------------------------- tareas pendientes
@@ -245,9 +284,18 @@ create or replace function public.process_due(p_group uuid)
 returns void language plpgsql security definer set search_path = public as $$
 declare r record;
 begin
-  update public.markets
-     set status = 'closed'
-   where group_id = p_group and status = 'open' and now() >= closes_at;
+  -- Cierre por fecha: se avisa al creador de que le toca poner el resultado.
+  for r in
+    update public.markets
+       set status = 'closed'
+     where group_id = p_group and status = 'open' and now() >= closes_at
+    returning id, creator_id, title
+  loop
+    perform public.notify(
+      p_group, array[r.creator_id], 'market_closed',
+      'Te toca: ' || r.title, 'Ha cerrado. Dinos qué pasó para repartir los puntos.', r.id
+    );
+  end loop;
 
   for r in select id, winning_option from public.markets
            where group_id = p_group and status = 'pending' and now() >= dispute_until loop

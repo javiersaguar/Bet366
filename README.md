@@ -105,6 +105,24 @@ si no, no podría detectar las fraudulentas. Esto **no** es una decisión de
 interfaz: está en las políticas de Row Level Security, así que tampoco se puede
 sacar leyendo la API a mano.
 
+### Avisos
+
+Cada vez que pasa algo que te afecta —alguien lanza una apuesta, cierra una
+tuya y te toca resolverla, publican un resultado donde tienes puntos, te
+impugnan, ganas, pierdes, te anulan una apuesta o empieza semana nueva— se
+guarda un aviso para ti.
+
+Se generan **dentro de las mismas funciones que mueven los puntos y en la misma
+transacción**: si el pago ocurre, el aviso existe; si el pago se cae, el aviso
+tampoco queda. No hay ningún proceso aparte que pueda desincronizarse.
+
+Los avisos son estrictamente personales: la política de RLS solo deja ver los
+propios, y la tabla no acepta escrituras directas, así que nadie puede
+inventarse un «has ganado 5.000 puntos».
+
+Falta la parte de que suene el móvil (push web), que necesita la app publicada
+con HTTPS para poder registrar el service worker.
+
 ### La semana
 
 Cada grupo va por semanas. Al cerrarse una:
@@ -161,6 +179,9 @@ supabase/migrations/0003_resolution.sql
 supabase/migrations/0004_policies.sql
 ```
 
+Si algo falla, para ahí y no sigas con el siguiente: cada uno depende del
+anterior.
+
 O con la CLI: `supabase db push`.
 
 En **Authentication → Providers → Email**, si quieres que la gente entre sin
@@ -201,29 +222,36 @@ npm test                    # motor de cuotas y anti-arbitraje (vitest)
 ./supabase/tests/run.sh     # lógica completa contra un Postgres local
 ```
 
-Con `npm run dev` hay además una **guía de estilos** en
-[`/estilos`](http://localhost:3000/estilos): todas las piezas de interfaz y
-todos sus estados en una sola página, para no tener que reproducir cada
-situación en la app real. En producción esa ruta devuelve 404.
+### Mirar el diseño sin montar nada
+
+`npm install && npm run dev` funciona **sin proyecto de Supabase**: la app
+redirige a `/configurar` con las instrucciones, y en
+[`/estilos`](http://localhost:3000/estilos) están todas las piezas de interfaz
+con todos sus estados en una sola página. Es la forma rápida de revisar el
+diseño sin reproducir cada situación en la app real. En producción esa ruta
+devuelve 404.
 
 El segundo levanta un Postgres, aplica las migraciones sobre un stub mínimo de
 lo que aporta Supabase (`auth.users`, `auth.uid()`) y comprueba el ciclo entero:
 apuestas, rechazo de arbitraje, anulación por fraude, publicación de resultado,
 impugnación con votación, pago, reinicio semanal y políticas de acceso.
 
-Entre los dos hay unas 70 comprobaciones. Las que más importan:
+Entre los dos hay 81 comprobaciones. Las que más importan:
 
 - ninguna secuencia de apuestas aceptada produce beneficio garantizado
   (comprobado además con 300 secuencias aleatorias);
 - `process_due()` es idempotente: llamarlo dos veces no paga dos veces;
 - desde fuera de un grupo no se ve nada de ese grupo;
-- no se pueden regalar puntos escribiendo directamente en las tablas.
+- no se pueden regalar puntos escribiendo directamente en las tablas;
+- cada aviso llega exactamente a quien le toca y a nadie más.
 
 ---
 
 ## Ideas para más adelante
 
-- Notificaciones push cuando cierra una apuesta tuya o alguien impugna.
+- Que suene el móvil: push web sobre los avisos que ya existen.
+- Comentarios en cada apuesta.
+- Cuotas que se mueven en pantalla sin recargar (Supabase Realtime).
+- Compartir una apuesta como imagen para WhatsApp.
+- Histórico del movimiento de la cuota en un gráfico.
 - Ligas de varias semanas además del ranking semanal.
-- Apuestas combinadas.
-- Histórico de movimiento de cuotas en un gráfico.

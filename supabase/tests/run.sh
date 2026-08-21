@@ -31,7 +31,7 @@ done
 $PSQL -d apuestas -q -c 'create schema if not exists test; grant usage on schema test to authenticated;'
 
 fail=0
-for f in "$ROOT"/supabase/tests/[123]0_*.sql; do
+for f in "$ROOT"/supabase/tests/[0-9][0-9]_*.sql; do
   echo "== $(basename "$f")"
   if ! $PSQL -d apuestas -v ON_ERROR_STOP=1 -f "$f" 2>&1 \
         | grep -E 'OK  |FALLO|ERROR' | sed 's/^.*NOTICE:  //;s/^/   /'; then fail=1; fi

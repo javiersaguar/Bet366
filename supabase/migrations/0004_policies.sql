@@ -15,6 +15,7 @@ alter table public.wagers         enable row level security;
 alter table public.disputes       enable row level security;
 alter table public.dispute_votes  enable row level security;
 alter table public.ledger         enable row level security;
+alter table public.notifications  enable row level security;
 
 -- ---------------------------------------------------------------- perfiles
 create policy "perfil propio: editar" on public.profiles
@@ -49,6 +50,10 @@ create policy "ver rankings de mis grupos" on public.season_results
   for select using (public.is_member(group_id));
 create policy "ver mi historial de puntos" on public.ledger
   for select using (user_id = auth.uid() and public.is_member(group_id));
+
+-- Los avisos son estrictamente personales: nadie ve los de otro.
+create policy "ver solo mis avisos" on public.notifications
+  for select using (user_id = auth.uid());
 
 -- ---------------------------------------------------------------- apuestas
 create policy "ver apuestas de mis grupos" on public.markets
@@ -93,7 +98,7 @@ grant select on all tables in schema public to authenticated;
 revoke insert, update, delete on
   public.groups, public.seasons, public.balances, public.season_results,
   public.markets, public.market_options, public.wagers,
-  public.disputes, public.dispute_votes, public.ledger
+  public.disputes, public.dispute_votes, public.ledger, public.notifications
 from anon, authenticated;
 
 revoke insert, update, delete on public.group_members from anon, authenticated;
@@ -112,7 +117,8 @@ grant execute on function
   public.cast_dispute_vote(uuid, uuid),
   public.process_due(uuid),
   public.is_member(uuid),
-  public.open_season(uuid)
+  public.open_season(uuid),
+  public.mark_notifications_read(uuid)
 to authenticated;
 
 -- Estas no las puede llamar nadie desde fuera: solo se usan internamente.
@@ -124,7 +130,10 @@ revoke execute on function
   public.resolve_dispute(uuid),
   public.roll_season(uuid),
   public.recompute_odds(uuid),
-  public.process_all_due()
+  public.process_all_due(),
+  public.notify(uuid, uuid[], public.notification_kind, text, text, uuid, numeric),
+  public.market_bettors(uuid, uuid),
+  public.group_member_ids(uuid, uuid)
 from public, anon, authenticated;
 
 -- ---------------------------------------------------------------- alta de perfil

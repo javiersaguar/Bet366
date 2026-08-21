@@ -82,3 +82,27 @@ export type MarketWithOptions = Market & {
   market_options: MarketOption[];
   creator: Profile | null;
 };
+
+export type NotificationKind =
+  | 'market_opened'
+  | 'market_closed'
+  | 'result_published'
+  | 'dispute_opened'
+  | 'wager_won'
+  | 'wager_lost'
+  | 'wager_voided'
+  | 'market_cancelled'
+  | 'season_rolled';
+
+export type Notification = {
+  id: number;
+  group_id: string;
+  user_id: string;
+  kind: NotificationKind;
+  market_id: string | null;
+  title: string;
+  body: string | null;
+  amount: number | null;
+  read_at: string | null;
+  created_at: string;
+};

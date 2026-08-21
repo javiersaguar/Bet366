@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
-import type { Group, MarketWithOptions, Profile, Season, Wager } from '@/lib/types';
+import type { Group, MarketWithOptions, Notification, Profile, Season, Wager } from '@/lib/types';
 
 export type GroupContext = {
   group: Group;
@@ -136,4 +136,26 @@ export async function loadStandings(
       };
     })
     .sort((a, b) => b.points + b.staked - (a.points + a.staked));
+}
+
+export async function loadNotifications(groupId: string, limit = 60): Promise<Notification[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from('notifications')
+    .select('*')
+    .eq('group_id', groupId)
+    .order('created_at', { ascending: false })
+    .limit(limit);
+  return (data ?? []) as Notification[];
+}
+
+/** Solo el contador, para la campana de la cabecera. */
+export async function countUnread(groupId: string): Promise<number> {
+  const supabase = await createClient();
+  const { count } = await supabase
+    .from('notifications')
+    .select('id', { count: 'exact', head: true })
+    .eq('group_id', groupId)
+    .is('read_at', null);
+  return count ?? 0;
 }

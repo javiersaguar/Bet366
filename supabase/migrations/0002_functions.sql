@@ -44,6 +44,45 @@ begin
   return v_after;
 end; $$;
 
+-- ---------------------------------------------------------------- avisos
+create or replace function public.notify(
+  p_group uuid,
+  p_users uuid[],
+  p_kind public.notification_kind,
+  p_title text,
+  p_body text default null,
+  p_market uuid default null,
+  p_amount numeric default null
+) returns void language sql security definer set search_path = public as $$
+  insert into public.notifications (group_id, user_id, kind, market_id, title, body, amount)
+  select p_group, u, p_kind, p_market, p_title, p_body, p_amount
+  from unnest(p_users) as u
+  where u is not null;
+$$;
+
+-- Quienes tienen puntos en juego en una apuesta.
+create or replace function public.market_bettors(p_market uuid, p_except uuid default null)
+returns uuid[] language sql stable security definer set search_path = public as $$
+  select coalesce(array_agg(distinct user_id), '{}')
+  from public.wagers
+  where market_id = p_market and status = 'active'
+    and (p_except is null or user_id <> p_except);
+$$;
+
+create or replace function public.group_member_ids(p_group uuid, p_except uuid default null)
+returns uuid[] language sql stable security definer set search_path = public as $$
+  select coalesce(array_agg(user_id), '{}')
+  from public.group_members
+  where group_id = p_group and (p_except is null or user_id <> p_except);
+$$;
+
+create or replace function public.mark_notifications_read(p_group uuid)
+returns void language sql security definer set search_path = public as $$
+  update public.notifications
+     set read_at = now()
+   where user_id = auth.uid() and group_id = p_group and read_at is null;
+$$;
+
 -- ---------------------------------------------------------------- motor de cuotas
 -- Espejo exacto de src/lib/engine/odds.ts (computeCurrentOdds).
 create or replace function public.recompute_odds(p_market uuid)
@@ -193,6 +232,11 @@ begin
             round((v_opt->>'odds')::numeric, 2), round((v_opt->>'odds')::numeric, 2));
   end loop;
 
+  perform public.notify(
+    p_group, public.group_member_ids(p_group, v_uid), 'market_opened',
+    'Apuesta nueva', p_title, v_market
+  );
+
   return v_market;
 end; $$;
 
@@ -293,6 +337,11 @@ begin
 
   perform public.apply_points(v_m.group_id, v_m.season_number, v_w.user_id, v_w.stake,
                               'wager_void', v_m.id, v_w.id, p_reason);
+
+  perform public.notify(
+    v_m.group_id, array[v_w.user_id], 'wager_voided',
+    'Te han anulado una apuesta', p_reason, v_m.id, v_w.stake
+  );
 
   perform public.recompute_odds(v_m.id);
 end; $$;

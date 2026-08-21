@@ -206,3 +206,9 @@ export async function signOutAction() {
   await supabase.auth.signOut();
   redirect('/login');
 }
+
+export async function markNotificationsReadAction(groupId: string): Promise<ActionResult> {
+  const result = await rpc('mark_notifications_read', { p_group: groupId });
+  if (result.ok) revalidatePath(`/grupos/${groupId}`, 'layout');
+  return result;
+}

@@ -10,6 +10,9 @@ import { Avatar } from '@/components/avatar';
 import { AVATAR_COLORS, AVATAR_SYMBOLS } from '@/lib/avatars';
 import { AvatarPickerDemo } from './picker-demo';
 import { BottomNav } from '@/components/bottom-nav';
+import { Bell } from '@/components/bell';
+import { NotificationRow } from '@/components/notification-row';
+import type { Notification } from '@/lib/types';
 import {
   IconEye,
   IconEyeOff,
@@ -119,6 +122,43 @@ const wagers: Wager[] = [
 
 const byId = { u1: javi, u2: lucia, u3: marcos };
 
+const aviso = (
+  id: number,
+  kind: Notification['kind'],
+  title: string,
+  body: string | null,
+  minutes: number,
+  amount: number | null = null,
+  read = false,
+): Notification => ({
+  id,
+  group_id: 'g',
+  user_id: 'u2',
+  kind,
+  market_id: 'm1',
+  title,
+  body,
+  amount,
+  read_at: read ? new Date().toISOString() : null,
+  created_at: new Date(Date.now() - minutes * 60e3).toISOString(),
+});
+
+const AVISOS: Notification[] = [
+  aviso(1, 'wager_won', 'Has ganado Nos bañamos de noche en la playa', 'Salió «Sí»', 12, 570),
+  aviso(2, 'market_closed', 'Te toca: ¿A que Fulanito se lía con Menganito?',
+    'Ha cerrado. Dinos qué pasó para repartir los puntos.', 45),
+  aviso(3, 'dispute_opened', 'Impugnada: Llueve el domingo por la tarde',
+    'Vota tú también, decide la mayoría.', 90),
+  aviso(4, 'result_published', 'Ya hay resultado: ¿Quién cae primero en la piscina?',
+    'Tienes 24 h para impugnarlo si no te cuadra.', 180, null, true),
+  aviso(5, 'wager_voided', 'Te han anulado una apuesta',
+    'Apostado 30 segundos después de que ya hubiera pasado', 240, 120, true),
+  aviso(6, 'wager_lost', 'Se te fue Llueve el domingo por la tarde', 'Salió «No»', 400, 80, true),
+  aviso(7, 'market_opened', 'Apuesta nueva', 'Marcos acaba en la piscina antes de las 3', 700, null, true),
+  aviso(8, 'season_rolled', 'Semana 3 en marcha',
+    'Todos volvéis a 1000 puntos. El ranking de la semana 2 ya está cerrado.', 1500, 1000, true),
+];
+
 const MARKET_STATES: MarketStatus[] = ['open', 'closed', 'pending', 'disputed', 'resolved', 'cancelled'];
 const WAGER_STATES: WagerStatus[] = ['active', 'won', 'lost', 'refunded', 'voided'];
 
@@ -127,7 +167,7 @@ export default function Styleguide() {
 
   return (
     <ToastProvider>
-      <div className="mx-auto w-full max-w-3xl space-y-12 px-5 py-10">
+      <div className="mx-auto w-full max-w-3xl space-y-12 px-5 pb-32 pt-10">
         <Block title="Marca">
           <div className="flex flex-wrap items-end gap-8">
             <Logo subtitle="Un día más que los profesionales." animated />
@@ -250,7 +290,7 @@ export default function Styleguide() {
           </div>
         </Block>
 
-        <Block title="Avisos">
+        <Block title="Mensajes en línea">
           <div className="space-y-2">
             <Alert kind="ok">Apuesta puesta. Suerte.</Alert>
             <Alert kind="info">
@@ -359,6 +399,19 @@ export default function Styleguide() {
               memberCount={4}
             />
           </div>
+        </Block>
+
+        <Block title="Avisos">
+          <div className="mb-4 flex items-center gap-3">
+            <Bell groupId="g" unread={0} />
+            <Bell groupId="g" unread={3} />
+            <Bell groupId="g" unread={42} />
+          </div>
+          <ul className="card hairline overflow-hidden">
+            {AVISOS.map((n, i) => (
+              <NotificationRow key={n.id} notification={n} groupId="g" index={i} />
+            ))}
+          </ul>
         </Block>
 
         <Block title="Navegación inferior">

@@ -1,10 +1,11 @@
 import Link from 'next/link';
-import { loadGroup } from '@/lib/data';
+import { countUnread, loadGroup } from '@/lib/data';
 import { Mark } from '@/components/logo';
 import { ToastProvider } from '@/components/toast';
 import { CountUp } from '@/components/count-up';
 import { BottomNav } from '@/components/bottom-nav';
 import { Countdown } from '@/components/countdown';
+import { Bell } from '@/components/bell';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,6 +18,7 @@ export default async function GroupLayout({
 }) {
   const { groupId } = await params;
   const { group, balance, me, season } = await loadGroup(groupId);
+  const unread = await countUnread(groupId);
 
   return (
     <ToastProvider>
@@ -37,12 +39,15 @@ export default async function GroupLayout({
               </span>
             </Link>
 
-            <div className="flex shrink-0 items-center gap-2 rounded-xl border border-line bg-surface px-3 py-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-brand shadow-[0_0_8px_rgba(43,224,140,.9)]" />
-              <span className="text-right leading-tight">
-                <CountUp value={balance} className="block text-sm font-bold text-brand" />
-                <span className="eyebrow block !text-[0.625rem]">puntos</span>
-              </span>
+            <div className="flex shrink-0 items-center gap-2">
+              <div className="flex items-center gap-2 rounded-xl border border-line bg-surface px-3 py-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-brand shadow-[0_0_8px_rgba(43,224,140,.9)]" />
+                <span className="text-right leading-tight">
+                  <CountUp value={balance} className="block text-sm font-bold text-brand" />
+                  <span className="eyebrow block !text-[0.625rem]">puntos</span>
+                </span>
+              </div>
+              <Bell groupId={groupId} unread={unread} />
             </div>
           </div>
         </header>

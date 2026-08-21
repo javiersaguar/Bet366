@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { BRAND } from '@/lib/brand';
 import { Logo } from '@/components/logo';
 import { IconLock, IconRepeat, IconTarget } from '@/components/icons';
@@ -10,6 +11,8 @@ export default async function LoginPage({
 }: {
   searchParams: Promise<{ next?: string }>;
 }) {
+  if (!isSupabaseConfigured()) redirect('/configurar');
+
   const supabase = await createClient();
   const {
     data: { user },

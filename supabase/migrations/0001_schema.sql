@@ -192,3 +192,36 @@ create table public.ledger (
   created_at    timestamptz not null default now()
 );
 create index on public.ledger (group_id, season_number, user_id, created_at desc);
+
+-- ---------------------------------------------------------------- avisos
+-- Se generan dentro de las mismas funciones que mueven puntos y en la misma
+-- transaccion: si el pago ocurre, el aviso existe; si el pago se cae, el
+-- aviso tampoco queda. Nada de procesos aparte que puedan desincronizarse.
+create type public.notification_kind as enum (
+  'market_opened',      -- alguien ha lanzado una apuesta nueva
+  'market_closed',      -- eres el creador y ha cerrado: te toca el resultado
+  'result_published',   -- hay resultado en una apuesta donde tienes puntos
+  'dispute_opened',     -- han impugnado
+  'wager_won',
+  'wager_lost',
+  'wager_voided',       -- el creador te ha anulado una apuesta
+  'market_cancelled',   -- apuesta anulada, puntos devueltos
+  'season_rolled'       -- semana nueva
+);
+
+create table public.notifications (
+  id         bigserial primary key,
+  group_id   uuid not null references public.groups(id) on delete cascade,
+  user_id    uuid not null references public.profiles(id) on delete cascade,
+  kind       public.notification_kind not null,
+  market_id  uuid references public.markets(id) on delete cascade,
+  title      text not null,
+  body       text,
+  amount     numeric(12,2),
+  read_at    timestamptz,
+  created_at timestamptz not null default now()
+);
+
+create index on public.notifications (user_id, group_id, created_at desc);
+create index notifications_unread
+  on public.notifications (user_id, group_id) where read_at is null;

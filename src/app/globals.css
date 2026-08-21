@@ -176,6 +176,21 @@
     @apply divide-y divide-line;
   }
 
+  /* Enlace dentro de un texto corrido. No se aplica a <a> en general porque
+     casi todos los enlaces de la app son tarjetas o botones. */
+  .link {
+    @apply font-medium text-brand underline decoration-brand/35 underline-offset-2
+           transition-colors hover:text-brand-bright hover:decoration-brand-bright/60;
+  }
+
+  /* Recorta a dos líneas sin dejar frases a medias en una sola. */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
   /* --- utilidades de movimiento --------------------------------------- */
 
   /* Entrada escalonada: cada hijo espera un pelín más que el anterior. */
