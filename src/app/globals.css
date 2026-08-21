@@ -108,6 +108,16 @@
     -moz-appearance: textfield;
   }
 
+  /* Foco de teclado.
+     No había ninguno: quien se mueve con el tabulador se quedaba con el anillo
+     por defecto del navegador, que sobre este fondo casi no se ve. Se usa
+     `outline` y no `ring` porque el contorno sigue solo el radio de cada
+     elemento, y `:focus-visible` para que no salte al hacer clic con el ratón. */
+  :where(a, button, summary, [role='button'], [tabindex]:not([tabindex='-1'])):focus-visible {
+    outline: 2px solid theme('colors.brand.DEFAULT');
+    outline-offset: 2px;
+  }
+
   /* Barras de scroll discretas en escritorio. */
   * {
     scrollbar-width: thin;

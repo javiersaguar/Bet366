@@ -7,6 +7,7 @@ import { InviteCode } from '@/components/invite-code';
 import { points } from '@/lib/format';
 import { Countdown } from '@/components/countdown';
 import { TodoCallout } from '@/components/todo-callout';
+import { Reveal } from '@/components/reveal';
 
 /**
  * El tablón.
@@ -34,7 +35,18 @@ export function BoardScreen({
 }) {
   const live = markets.filter((m) => m.status === 'open');
   const awaiting = markets.filter((m) => ['closed', 'pending', 'disputed'].includes(m.status));
-  const done = markets.filter((m) => ['resolved', 'cancelled'].includes(m.status));
+  /* Las abiertas van por orden de cierre (lo que antes vence, antes se ve) y
+     el historial al revés: lo último que pasó es lo que se recuerda. */
+  const done = markets
+    .filter((m) => ['resolved', 'cancelled'].includes(m.status))
+    .slice()
+    .sort((a, b) => new Date(b.closes_at).getTime() - new Date(a.closes_at).getTime());
+
+  /* El historial crece toda la semana. Se enseñan las dos últimas y el resto
+     se pide: el tablón está para lo que se puede tocar, no para lo ya pagado. */
+  const RECIENTES = 2;
+  const doneVisible = done.slice(0, RECIENTES);
+  const doneResto = done.slice(RECIENTES);
 
   const inPlay = myWagers
     .filter((w) => w.status === 'active')
@@ -88,8 +100,26 @@ export function BoardScreen({
             ))}
           </Section>
 
-          <Section title="Historial" count={done.length}>
-            {done.map((m, i) => (
+          <Section
+            title="Historial"
+            count={done.length}
+            extra={
+              <Reveal label="Ver el resto del historial" count={doneResto.length}>
+                <ul className="stagger mt-2.5 space-y-2.5">
+                  {doneResto.map((m, i) => (
+                    <MarketRow
+                      key={m.id}
+                      market={m}
+                      basePath={basePath}
+                      myWagers={myWagers}
+                      index={i}
+                    />
+                  ))}
+                </ul>
+              </Reveal>
+            }
+          >
+            {doneVisible.map((m, i) => (
               <MarketRow key={m.id} market={m} basePath={basePath} myWagers={myWagers} index={i} />
             ))}
           </Section>
@@ -142,10 +172,13 @@ function Section({
   title,
   count,
   children,
+  extra,
 }: {
   title: string;
   count: number;
   children: React.ReactNode;
+  /** Cola de la lista, si hay más de lo que cabe enseñar de entrada. */
+  extra?: React.ReactNode;
 }) {
   if (count === 0) return null;
 
@@ -156,6 +189,7 @@ function Section({
         <span className="tnum text-caption text-content-faint">{count}</span>
       </div>
       <ul className="stagger space-y-2.5">{children}</ul>
+      {extra}
     </section>
   );
 }
