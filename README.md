@@ -207,6 +207,17 @@ npm install
 npm run dev
 ```
 
+**En Windows**, si al arrancar sale `EACCES: permission denied 0.0.0.0:3000`, es
+que Hyper-V o WSL tienen reservado ese puerto. No es un problema de permisos:
+usa otro puerto.
+
+```powershell
+npm run dev -- -p 3005
+```
+
+Para ver qué rangos están reservados: `netsh interface ipv4 show excludedportrange protocol=tcp`.
+Y ojo con encadenar comandos: PowerShell 5 no admite `&&`, usa `;` o dos líneas.
+
 ### 4. Publicar
 
 Importa el repositorio en [Vercel](https://vercel.com), añade esas dos
