@@ -298,7 +298,6 @@ export default function Styleguide() {
         <Block title="Botones">
           <div className="flex flex-wrap gap-2">
             <button className="btn-primary">Principal</button>
-            <button className="btn-primary sheen">Con brillo</button>
             <button className="btn-ghost">Secundario</button>
             <button className="btn-quiet">Discreto</button>
             <button className="btn-danger">Peligro</button>

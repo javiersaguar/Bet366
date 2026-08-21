@@ -30,16 +30,27 @@ export function BetSlip({
 }) {
   const [selected, setSelected] = useState<string | null>(null);
   const [stake, setStake] = useState('');
+  const [saliendo, setSaliendo] = useState(false);
   const [state, action] = useActionState(placeWagerAction, {});
   const toast = useToast();
 
+  /* Al confirmar, el boleto no desaparece de golpe: se va por donde entró y
+     solo entonces se desmonta. Es el momento con más carga de la app y verlo
+     salir es la mitad de la confirmación; la otra mitad es tu importe
+     apareciendo en la opción de arriba. */
   useEffect(() => {
     if (state.ok) {
       toast('Apuesta puesta. Suerte.');
-      setStake('');
-      setSelected(null);
+      setSaliendo(true);
     }
   }, [state, toast]);
+
+  function alTerminarLaSalida(e: React.AnimationEvent<HTMLFormElement>) {
+    if (!saliendo || e.target !== e.currentTarget) return;
+    setSaliendo(false);
+    setStake('');
+    setSelected(null);
+  }
 
   const option = market.market_options.find((o) => o.id === selected) ?? null;
 
@@ -80,7 +91,8 @@ export function BetSlip({
               type="button"
               onClick={() => setSelected(selected === o.id ? null : o.id)}
               style={{ '--i': i } as React.CSSProperties}
-              className="block w-full text-left transition-transform duration-200 ease-out active:scale-[.985]"
+              className="block w-full text-left transition-transform duration-press ease-out
+                         active:scale-[.985]"
               aria-pressed={selected === o.id}
             >
               <OddsFace
@@ -103,7 +115,11 @@ export function BetSlip({
           Toca una opción para apostar.
         </p>
       ) : (
-        <form action={action} className="card animate-rise space-y-4 p-5">
+        <form
+          action={action}
+          onAnimationEnd={alTerminarLaSalida}
+          className={`card space-y-4 p-5 ${saliendo ? 'slip-out' : 'animate-rise'}`}
+        >
           <input type="hidden" name="market_id" value={market.id} />
           <input type="hidden" name="option_id" value={option.id} />
           <input type="hidden" name="group_id" value={groupId} />
@@ -185,7 +201,7 @@ export function BetSlip({
           {state.error && <Alert kind="error">{state.error}</Alert>}
 
           <SubmitButton
-            className={`btn-primary w-full !py-3 ${check?.ok ? 'sheen' : ''}`}
+            className="btn-primary w-full !py-3"
             pending="Poniendo…"
             disabled={!check?.ok}
           >
@@ -214,7 +230,9 @@ function Quick({
     <button
       type="button"
       onClick={onClick}
-      className={`num rounded-lg border px-3 py-1.5 text-micro font-semibold transition ${
+      className={`num rounded-lg border px-3 py-1.5 text-micro font-semibold
+                  transition-[transform,background-color,border-color,color] duration-press
+                  ease-out active:scale-[0.94] ${
         accent
           ? 'border-brand/35 text-brand hover:bg-brand/10'
           : 'border-line-strong text-content-muted hover:border-content-faint hover:text-content'

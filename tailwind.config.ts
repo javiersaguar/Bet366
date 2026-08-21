@@ -130,18 +130,9 @@ export default {
           '25%': { backgroundColor: 'rgba(255,107,107,.22)' },
           '100%': { backgroundColor: 'rgba(255,107,107,0)' },
         },
-        /* Trazo del logotipo al entrar. */
-        draw: {
-          from: { strokeDashoffset: '340' },
-          to: { strokeDashoffset: '0' },
-        },
         confetti: {
           '0%': { opacity: '1', transform: 'translate3d(0,0,0) rotate(0deg)' },
           '100%': { opacity: '0', transform: 'translate3d(var(--dx), var(--dy), 0) rotate(var(--dr))' },
-        },
-        sheen: {
-          '0%': { transform: 'translateX(-120%) skewX(-18deg)' },
-          '60%,100%': { transform: 'translateX(220%) skewX(-18deg)' },
         },
         /* Entrada de pantalla al cambiar de pestaña. */
         pageIn: {
@@ -158,9 +149,7 @@ export default {
         ping: 'ping 1.6s cubic-bezier(0,0,.2,1) infinite',
         'flash-up': 'flashUp 1.1s ease-out',
         'flash-down': 'flashDown 1.1s ease-out',
-        draw: 'draw 1s cubic-bezier(.22,.68,.28,1) both',
         confetti: 'confetti var(--dur,1.1s) cubic-bezier(.2,.6,.4,1) forwards',
-        sheen: 'sheen 2.6s cubic-bezier(.4,0,.2,1) infinite',
         'page-in': 'pageIn .32s cubic-bezier(.22,.68,.28,1) both',
       },
     },
