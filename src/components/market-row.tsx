@@ -10,22 +10,25 @@ import { Avatar } from '@/components/avatar';
 /**
  * Una apuesta en el tablón.
  *
- * Fila, no tarjeta. Con densidad alta una lista de tarjetas flotantes gasta
- * el ancho en sombras y bordes en vez de en información, y la repetición de
- * contenedores cansa. Las filas se separan con una línea de un píxel y el
- * ritmo lo marca el contenido.
+ * Cada apuesta va dentro de su propio marco. El tablón mezcla apuestas de dos
+ * y de tres opciones, con y sin resultado, y sin marco los bloques de cuotas
+ * de una se leían como si fueran de la de abajo. El borde dice dónde acaba
+ * cada una.
  *
- * El orden sigue la decisión de quien apuesta: qué apuesta, luego con qué
- * contexto, y por último a qué cuota, que es donde toca.
+ * Dentro, el orden sigue la decisión de quien apuesta: qué se apuesta, con qué
+ * contexto, y por último a qué cuota, que es lo que se toca.
  */
 export function MarketRow({
   market,
   basePath,
   myWagers,
+  index = 0,
 }: {
   market: MarketWithOptions;
   basePath: string;
   myWagers: Wager[];
+  /** Posición en la lista: alimenta la entrada escalonada. */
+  index?: number;
 }) {
   const mine = myWagers.filter((w) => w.market_id === market.id && w.status === 'active');
   const myStake = mine.reduce((a, w) => a + Number(w.stake), 0);
@@ -38,11 +41,10 @@ export function MarketRow({
   const showBadge = market.status !== 'open';
 
   return (
-    <li className="relative">
+    <li style={{ '--i': index } as React.CSSProperties}>
       <Link
         href={`${basePath}/apuesta/${market.id}`}
-        className="group block px-4 py-3.5 transition-colors duration-press ease-out
-                   active:bg-surface-raised/60 sm:px-5"
+        className="card-interactive group block px-4 py-4 sm:px-5"
       >
         <div className="mb-1.5 flex items-start gap-3">
           <h3 className="min-w-0 flex-1 text-title font-medium text-white">{market.title}</h3>

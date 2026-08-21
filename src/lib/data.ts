@@ -159,3 +159,113 @@ export async function countUnread(groupId: string): Promise<number> {
     .is('read_at', null);
   return count ?? 0;
 }
+
+// ------------------------------------------------------------------- el grupo
+
+export type MemberSummary = {
+  profile: Profile;
+  role: string;
+  joinedAt: string;
+  /** Saldo de la semana en curso. */
+  points: number;
+  /** Semanas terminadas en primera posición. */
+  weeksWon: number;
+  /** Semanas terminadas entre las tres primeras. */
+  podiums: number;
+  /** Apuestas ganadas y jugadas, sumando todas las semanas cerradas. */
+  wagersWon: number;
+  wagersTotal: number;
+};
+
+export type SeasonSummary = {
+  number: number;
+  startsAt: string;
+  endsAt: string;
+  winner: Profile | null;
+  winnerPoints: number;
+};
+
+export type GroupSummary = {
+  members: MemberSummary[];
+  /** Semanas cerradas, la más reciente primero. */
+  history: SeasonSummary[];
+  /** Apuestas lanzadas en el grupo desde el principio. */
+  marketsTotal: number;
+};
+
+/**
+ * Todo lo que hace falta para la ficha del grupo: quién está, cuánto lleva
+ * cada uno esta semana y qué ha pasado en las semanas ya cerradas.
+ *
+ * El palmarés sale de `season_results`, que se rellena al cerrar cada semana.
+ * Es la única foto fiable del pasado: los saldos se reinician cada lunes.
+ */
+export async function loadGroupSummary(
+  groupId: string,
+  seasonNumber: number,
+  members: Profile[],
+): Promise<GroupSummary> {
+  const supabase = await createClient();
+  const byId = new Map(members.map((m) => [m.id, m]));
+
+  const [{ data: memberRows }, { data: balances }, { data: results }, { data: seasons }, { count }] =
+    await Promise.all([
+      supabase.from('group_members').select('user_id, role, joined_at').eq('group_id', groupId),
+      supabase
+        .from('balances')
+        .select('user_id, points')
+        .eq('group_id', groupId)
+        .eq('season_number', seasonNumber),
+      supabase
+        .from('season_results')
+        .select('season_number, user_id, position, points, wagers_won, wagers_total')
+        .eq('group_id', groupId),
+      supabase
+        .from('seasons')
+        .select('number, starts_at, ends_at')
+        .eq('group_id', groupId)
+        .not('closed_at', 'is', null)
+        .order('number', { ascending: false }),
+      supabase
+        .from('markets')
+        .select('id', { count: 'exact', head: true })
+        .eq('group_id', groupId),
+    ]);
+
+  const rows = results ?? [];
+
+  const summaries: MemberSummary[] = members.map((profile) => {
+    const membership = (memberRows ?? []).find((r) => r.user_id === profile.id);
+    const mine = rows.filter((r) => r.user_id === profile.id);
+    return {
+      profile,
+      role: membership?.role ?? 'member',
+      joinedAt: membership?.joined_at ?? '',
+      points: Number((balances ?? []).find((b) => b.user_id === profile.id)?.points ?? 0),
+      weeksWon: mine.filter((r) => r.position === 1).length,
+      podiums: mine.filter((r) => r.position <= 3).length,
+      wagersWon: mine.reduce((a, r) => a + Number(r.wagers_won), 0),
+      wagersTotal: mine.reduce((a, r) => a + Number(r.wagers_total), 0),
+    };
+  });
+
+  // Primero quien más semanas ha ganado; a igualdad, quien más puntos lleva ahora.
+  summaries.sort((a, b) => b.weeksWon - a.weeksWon || b.points - a.points);
+
+  const history: SeasonSummary[] = (seasons ?? []).map((s) => {
+    const champ = rows.find((r) => r.season_number === s.number && r.position === 1);
+    return {
+      number: s.number,
+      startsAt: s.starts_at,
+      endsAt: s.ends_at,
+      winner: champ ? (byId.get(champ.user_id) ?? null) : null,
+      winnerPoints: champ ? Number(champ.points) : 0,
+    };
+  });
+
+  return {
+    members: summaries,
+    history,
+    marketsTotal: count ?? 0,
+  };
+}

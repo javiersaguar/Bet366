@@ -6,6 +6,7 @@ import { CountUp } from '@/components/count-up';
 import { BottomNav } from '@/components/bottom-nav';
 import { Countdown } from '@/components/countdown';
 import { Bell } from '@/components/bell';
+import { GroupSwitch } from '@/components/group-switch';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,7 +26,10 @@ export default async function GroupLayout({
       <div className="min-h-dvh">
         <header className="sticky top-0 z-30 border-b border-line bg-canvas/75 backdrop-blur-xl">
           <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-3 px-5 py-3">
-            <Link href="/grupos" className="group flex min-w-0 items-center gap-2.5">
+            <Link
+              href={`/grupos/${groupId}/grupo`}
+              className="group flex min-w-0 items-center gap-2.5"
+            >
               <Mark variant="compact" className="h-9 w-9 shrink-0 transition-transform duration-300 ease-out group-hover:scale-105" />
               <span className="min-w-0 leading-tight">
                 <span className="block truncate font-semibold text-white transition group-hover:text-brand">
@@ -47,6 +51,7 @@ export default async function GroupLayout({
                   <span className="field-label block ">puntos</span>
                 </span>
               </div>
+              <GroupSwitch />
               <Bell groupId={groupId} unread={unread} />
             </div>
           </div>

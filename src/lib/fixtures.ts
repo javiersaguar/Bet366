@@ -224,3 +224,34 @@ export const STANDINGS = [
   { profile: PEOPLE.bruno, points: 870, staked: 0, won: 1, settled: 4 },
   { profile: PEOPLE.ana, points: 640, staked: 120, won: 1, settled: 5 },
 ].sort((a, b) => b.points + b.staked - (a.points + a.staked));
+
+/**
+ * Palmarés inventado para la ficha del grupo: dos semanas ya cerradas con su
+ * ganador, y el historial acumulado de cada uno.
+ */
+export const GROUP_SUMMARY = {
+  marketsTotal: 17,
+  history: [
+    {
+      number: 2,
+      startsAt: agoHours(238),
+      endsAt: agoHours(70),
+      winner: PEOPLE.javi,
+      winnerPoints: 2140,
+    },
+    {
+      number: 1,
+      startsAt: agoHours(406),
+      endsAt: agoHours(238),
+      winner: PEOPLE.marcos,
+      winnerPoints: 1780,
+    },
+  ],
+  members: [
+    { profile: PEOPLE.javi, role: 'owner', joinedAt: agoHours(406), points: 1420, weeksWon: 1, podiums: 2, wagersWon: 9, wagersTotal: 14 },
+    { profile: PEOPLE.marcos, role: 'member', joinedAt: agoHours(404), points: 980, weeksWon: 1, podiums: 2, wagersWon: 7, wagersTotal: 15 },
+    { profile: ME, role: 'member', joinedAt: agoHours(400), points: 600, weeksWon: 0, podiums: 1, wagersWon: 6, wagersTotal: 13 },
+    { profile: PEOPLE.bruno, role: 'member', joinedAt: agoHours(240), points: 870, weeksWon: 0, podiums: 1, wagersWon: 3, wagersTotal: 8 },
+    { profile: PEOPLE.ana, role: 'member', joinedAt: agoHours(72), points: 640, weeksWon: 0, podiums: 0, wagersWon: 1, wagersTotal: 6 },
+  ],
+};

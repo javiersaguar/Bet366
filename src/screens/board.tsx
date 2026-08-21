@@ -10,9 +10,9 @@ import { Countdown } from '@/components/countdown';
 /**
  * El tablón.
  *
- * Sin tarjetas contenedoras: con esta densidad, envolver cada bloque en su
- * marco gasta el ancho en cromo y hace que todo pese lo mismo. La jerarquía
- * la marcan el tamaño del texto, el espacio y alguna línea de un píxel.
+ * Las cifras de la semana van sueltas sobre el fondo, separadas por líneas:
+ * son un dato, no un objeto. Las apuestas sí llevan marco, porque cada una es
+ * una cosa con la que se interactúa y hay que ver dónde empieza y dónde acaba.
  */
 export function BoardScreen({
   basePath,
@@ -43,8 +43,8 @@ export function BoardScreen({
 
   return (
     <div className="space-y-7">
-      {/* Resumen de la semana. Tres cifras sueltas sobre el fondo, separadas
-          por líneas verticales: no necesitan marco para leerse como grupo. */}
+      {/* Resumen de la semana: tres cifras sin contenedor, que no compiten con
+          los marcos de las apuestas. */}
       <section>
         <h1 className="text-display font-semibold">El tablón</h1>
         <p className="mt-1 text-body text-content-muted">
@@ -72,20 +72,20 @@ export function BoardScreen({
       ) : (
         <>
           <Section title="Abiertas" count={live.length}>
-            {live.map((m) => (
-              <MarketRow key={m.id} market={m} basePath={basePath} myWagers={myWagers} />
+            {live.map((m, i) => (
+              <MarketRow key={m.id} market={m} basePath={basePath} myWagers={myWagers} index={i} />
             ))}
           </Section>
 
           <Section title="Esperando resultado" count={awaiting.length}>
-            {awaiting.map((m) => (
-              <MarketRow key={m.id} market={m} basePath={basePath} myWagers={myWagers} />
+            {awaiting.map((m, i) => (
+              <MarketRow key={m.id} market={m} basePath={basePath} myWagers={myWagers} index={i} />
             ))}
           </Section>
 
           <Section title="Historial" count={done.length}>
-            {done.map((m) => (
-              <MarketRow key={m.id} market={m} basePath={basePath} myWagers={myWagers} />
+            {done.map((m, i) => (
+              <MarketRow key={m.id} market={m} basePath={basePath} myWagers={myWagers} index={i} />
             ))}
           </Section>
         </>
@@ -146,11 +146,11 @@ function Section({
 
   return (
     <section>
-      <div className="mb-1 flex items-baseline gap-2">
+      <div className="mb-3 flex items-baseline gap-2">
         <h2 className="text-title-lg font-semibold">{title}</h2>
         <span className="tnum text-caption text-content-faint">{count}</span>
       </div>
-      <ul className="-mx-4 divide-y divide-line border-y border-line sm:-mx-5">{children}</ul>
+      <ul className="stagger space-y-2.5">{children}</ul>
     </section>
   );
 }
