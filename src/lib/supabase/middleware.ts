@@ -2,7 +2,7 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import { SUPABASE_ANON_KEY, SUPABASE_URL, isSupabaseConfigured } from '@/lib/supabase/config';
 
-const PUBLIC_PATHS = ['/login', '/auth', '/estilos', '/configurar'];
+const PUBLIC_PATHS = ['/login', '/auth', '/estilos', '/configurar', '/demo'];
 
 export async function updateSession(request: NextRequest) {
   // Sin proyecto de Supabase no hay sesión que refrescar. Se deja pasar para

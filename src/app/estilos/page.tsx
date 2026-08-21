@@ -9,7 +9,6 @@ import { OddsFace } from '@/components/odds-button';
 import { Avatar } from '@/components/avatar';
 import { AVATAR_COLORS, AVATAR_SYMBOLS } from '@/lib/avatars';
 import { AvatarPickerDemo } from './picker-demo';
-import { BottomNav } from '@/components/bottom-nav';
 import { Bell } from '@/components/bell';
 import { NotificationRow } from '@/components/notification-row';
 import type { Notification } from '@/lib/types';
@@ -168,6 +167,21 @@ export default function Styleguide() {
   return (
     <ToastProvider>
       <div className="mx-auto w-full max-w-3xl space-y-12 px-5 pb-32 pt-10">
+        <div className="card border-gold/30 bg-gold/[.06] p-5">
+          <p className="eyebrow !text-gold">Guía de estilos</p>
+          <p className="mt-1 text-sm leading-relaxed text-content-muted">
+            Esto <b className="text-white">no es la app</b>: es el catálogo de piezas sueltas, con
+            datos inventados para poder verlas. Las apuestas que salen aquí no existen en tu grupo.
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <a href="/demo" className="btn-primary !py-2 text-2xs">
+              Ver la app con datos de ejemplo
+            </a>
+            <a href="/grupos" className="btn-ghost !py-2 text-2xs">
+              Ir a la app real
+            </a>
+          </div>
+        </div>
         <Block title="Marca">
           <div className="flex flex-wrap items-end gap-8">
             <Logo subtitle="Un día más que los profesionales." animated />
@@ -412,13 +426,6 @@ export default function Styleguide() {
               <NotificationRow key={n.id} notification={n} groupId="g" index={i} />
             ))}
           </ul>
-        </Block>
-
-        <Block title="Navegación inferior">
-          <p className="text-sm text-content-muted">
-            Va anclada al fondo de la pantalla, así que se ve ahí abajo mientras miras esta guía.
-          </p>
-          <BottomNav groupId="g" me={javi} />
         </Block>
 
         <Block title="Apostantes">

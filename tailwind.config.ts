@@ -114,6 +114,11 @@ export default {
           '0%': { transform: 'translateX(-120%) skewX(-18deg)' },
           '60%,100%': { transform: 'translateX(220%) skewX(-18deg)' },
         },
+        /* Entrada de pantalla al cambiar de pestaña. */
+        pageIn: {
+          from: { opacity: '0', transform: 'translateY(6px) scale(.995)' },
+          to: { opacity: '1', transform: 'none' },
+        },
       },
 
       animation: {
@@ -127,6 +132,7 @@ export default {
         draw: 'draw 1s cubic-bezier(.22,.68,.28,1) both',
         confetti: 'confetti var(--dur,1.1s) cubic-bezier(.2,.6,.4,1) forwards',
         sheen: 'sheen 2.6s cubic-bezier(.4,0,.2,1) infinite',
+        'page-in': 'pageIn .32s cubic-bezier(.22,.68,.28,1) both',
       },
     },
   },

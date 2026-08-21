@@ -235,12 +235,18 @@ npm test                    # motor de cuotas y anti-arbitraje (vitest)
 
 ### Mirar el diseño sin montar nada
 
-`npm install && npm run dev` funciona **sin proyecto de Supabase**: la app
-redirige a `/configurar` con las instrucciones, y en
-[`/estilos`](http://localhost:3000/estilos) están todas las piezas de interfaz
-con todos sus estados en una sola página. Es la forma rápida de revisar el
-diseño sin reproducir cada situación en la app real. En producción esa ruta
-devuelve 404.
+`npm install && npm run dev` funciona **sin proyecto de Supabase**. Hay dos
+rutas para ver cómo va, ambas solo en desarrollo (en producción devuelven 404):
+
+| Ruta | Qué es |
+| --- | --- |
+| `/demo` | **Las pantallas de verdad** con datos de ejemplo. Se navega con la barra inferior igual que la app. |
+| `/estilos` | El catálogo de piezas sueltas y todos sus estados, para revisar detalles. |
+
+`/demo` renderiza exactamente los mismos componentes que la app: las pantallas
+viven en `src/screens/` y reciben los datos por props, así que las páginas de
+`src/app/` solo se encargan de cargarlos. Lo que veas en la demostración es lo
+que verás con datos reales.
 
 El segundo levanta un Postgres, aplica las migraciones sobre un stub mínimo de
 lo que aporta Supabase (`auth.users`, `auth.uid()`) y comprueba el ciclo entero:

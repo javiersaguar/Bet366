@@ -149,8 +149,8 @@ describe('guardia anti-arbitraje', () => {
       maxStake: 66.66,
     });
     expect(checkStake(c, 'no', 2.5, 50, 1000)).toEqual({ ok: true });
-    expect(checkStake(c, 'no', 2.5, 50, 10).reason).toBe('insufficient_balance');
-    expect(checkStake(c, 'no', 2.5, 0, 1000).reason).toBe('invalid_stake');
+    expect(checkStake(c, 'no', 2.5, 50, 10)).toMatchObject({ reason: 'insufficient_balance' });
+    expect(checkStake(c, 'no', 2.5, 0, 1000)).toMatchObject({ reason: 'invalid_stake' });
   });
 
   it('propiedad: ninguna secuencia aceptada de apuestas garantiza beneficio', () => {

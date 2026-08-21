@@ -2,9 +2,10 @@ import Link from 'next/link';
 
 /** Campana con contador de avisos sin leer. */
 export function Bell({ groupId, unread }: { groupId: string; unread: number }) {
+  const href = groupId === 'demo' ? '/demo/avisos' : `/grupos/${groupId}/avisos`;
   return (
     <Link
-      href={`/grupos/${groupId}/avisos`}
+      href={href}
       aria-label={unread > 0 ? `${unread} avisos sin leer` : 'Avisos'}
       className="relative grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-line bg-surface text-content-muted transition-all duration-200 hover:border-line-strong hover:text-content"
     >
