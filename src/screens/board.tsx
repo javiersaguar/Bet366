@@ -6,6 +6,7 @@ import { Empty } from '@/components/ui';
 import { InviteCode } from '@/components/invite-code';
 import { points } from '@/lib/format';
 import { Countdown } from '@/components/countdown';
+import { TodoCallout } from '@/components/todo-callout';
 
 /**
  * El tablón.
@@ -18,6 +19,7 @@ export function BoardScreen({
   basePath,
   group,
   season,
+  me,
   members,
   markets,
   myWagers,
@@ -25,6 +27,7 @@ export function BoardScreen({
   basePath: string;
   group: Group;
   season: Season;
+  me: Profile;
   members: Profile[];
   markets: MarketWithOptions[];
   myWagers: Wager[];
@@ -58,6 +61,8 @@ export function BoardScreen({
           <Figure label="En juego" value={points(inPlay)} tone={inPlay > 0 ? 'info' : 'plain'} />
         </dl>
       </section>
+
+      <TodoCallout basePath={basePath} markets={markets} meId={me.id} />
 
       {markets.length === 0 ? (
         <Empty

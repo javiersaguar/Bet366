@@ -36,11 +36,14 @@ export function GroupsScreen({
   profile,
   groups,
   onSignOut,
+  codigoInvitacion = '',
 }: {
   profile: Profile | null;
   groups: GroupEntry[];
   /** Acción de servidor. En la vista de ejemplo no se pasa y el botón no sale. */
   onSignOut?: () => void;
+  /** Viene de un enlace de invitación: deja el campo listo para pulsar. */
+  codigoInvitacion?: string;
 }) {
   const total = groups.reduce((a, g) => a + g.balance, 0);
   const partida = groups.reduce((a, g) => a + g.startingPoints, 0);
@@ -125,10 +128,12 @@ export function GroupsScreen({
       <section className="animate-rise mt-10" style={{ animationDelay: '180ms' }}>
         <h2 className="text-title-lg font-semibold">Entrar en un grupo</h2>
         <p className="mt-1 text-body text-content-muted">
-          Pide el código a quien lo creó. Son seis caracteres.
+          {codigoInvitacion
+            ? 'Te han invitado. El código ya está puesto.'
+            : 'Pide el código a quien lo creó. Son seis caracteres.'}
         </p>
         <div className="mt-4">
-          <JoinGroupForm />
+          <JoinGroupForm inicial={codigoInvitacion} />
         </div>
 
         <div className="-mx-5 mt-6 border-y border-line">

@@ -25,12 +25,15 @@ export function GroupSummaryScreen({
   season,
   me,
   summary,
+  leaveForm,
 }: {
   basePath: string;
   group: Group;
   season: Season;
   me: Profile;
   summary: GroupSummary;
+  /** Solo en la app real, y solo si no eres quien montó el grupo. */
+  leaveForm?: React.ReactNode;
 }) {
   const { members, history, marketsTotal } = summary;
   const creator = members.find((m) => m.profile.id === group.created_by)?.profile ?? null;
@@ -225,6 +228,8 @@ export function GroupSummaryScreen({
             hint="Tus grupos y el código para entrar en otro"
           />
         </nav>
+
+        {leaveForm}
       </div>
     </div>
   );

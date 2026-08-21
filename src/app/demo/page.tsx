@@ -7,6 +7,7 @@ export default function DemoBoard() {
       basePath="/demo"
       group={GROUP}
       season={SEASON}
+      me={ME}
       members={MEMBERS}
       markets={MARKETS}
       myWagers={WAGERS.filter((w) => w.user_id === ME.id)}

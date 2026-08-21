@@ -4,8 +4,16 @@ import { GroupsScreen, type GroupEntry } from '@/screens/groups';
 
 export const dynamic = 'force-dynamic';
 
-export default async function GroupsPage() {
-  const { supabase, user } = await requireSession('/grupos');
+export default async function GroupsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ codigo?: string }>;
+}) {
+  const { codigo } = await searchParams;
+  const invitacion = (codigo ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+  const { supabase, user } = await requireSession(
+    invitacion ? `/grupos?codigo=${invitacion}` : '/grupos',
+  );
 
   /* `group_members` deja ver, por RLS, a todos los miembros de tus grupos, no
      solo tu propia fila. Sin este filtro un grupo de cinco personas salía
@@ -62,5 +70,12 @@ export default async function GroupsPage() {
     startingPoints: Number(group.starting_points ?? 0),
   }));
 
-  return <GroupsScreen profile={profile ?? null} groups={groups} onSignOut={signOutAction} />;
+  return (
+    <GroupsScreen
+      profile={profile ?? null}
+      groups={groups}
+      onSignOut={signOutAction}
+      codigoInvitacion={invitacion}
+    />
+  );
 }

@@ -206,6 +206,54 @@ export async function updateProfileAction(
   return { ok: true };
 }
 
+/**
+ * Salirse de un grupo.
+ *
+ * La base ya lo permitía (hay política de borrado sobre la propia fila de
+ * `group_members`) pero no había forma de hacerlo desde la app, así que la
+ * única salida era pedirle a alguien que te borrara a mano.
+ *
+ * Quien montó el grupo no puede irse: dejaría el grupo sin nadie que resuelva
+ * las apuestas y sin quien reparta el código. Los puntos y las apuestas ya
+ * jugadas se quedan donde están; lo único que desaparece es el acceso.
+ */
+export async function leaveGroupAction(
+  _prev: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  if (!isSupabaseConfigured()) return { error: SIN_PROYECTO };
+  const groupId = String(formData.get('group_id') ?? '');
+  if (!groupId) return { error: 'Falta el grupo.' };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: 'Tienes que entrar otra vez.' };
+
+  const { data: membership } = await supabase
+    .from('group_members')
+    .select('role')
+    .eq('group_id', groupId)
+    .eq('user_id', user.id)
+    .maybeSingle();
+
+  if (!membership) return { error: 'Ya no estás en ese grupo.' };
+  if (membership.role === 'owner') {
+    return { error: 'Montaste tú el grupo: no puedes salirte y dejarlo sin dueño.' };
+  }
+
+  const { error } = await supabase
+    .from('group_members')
+    .delete()
+    .eq('group_id', groupId)
+    .eq('user_id', user.id);
+
+  if (error) return { error: toMessage(error) };
+  revalidatePath('/grupos', 'layout');
+  redirect('/grupos');
+}
+
 export async function signOutAction() {
   const supabase = await createClient();
   await supabase.auth.signOut();

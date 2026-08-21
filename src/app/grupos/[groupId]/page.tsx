@@ -17,6 +17,7 @@ export default async function BoardPage({ params }: { params: Promise<{ groupId:
       basePath={`/grupos/${groupId}`}
       group={group}
       season={season}
+      me={me}
       members={members}
       markets={markets}
       myWagers={myWagers}
