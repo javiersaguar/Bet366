@@ -3,7 +3,7 @@ import { GROUP, ME, MEMBERS, PEOPLE, SEASON, STANDINGS } from '@/lib/fixtures';
 
 export default function DemoRanking() {
   return (
-    <RankingScreen
+    <RankingScreen basePath="/demo"
       group={GROUP}
       season={SEASON}
       me={ME}

@@ -1,6 +1,8 @@
+import { ArrowsLeftRight, UsersThree } from '@phosphor-icons/react/dist/ssr';
 import type { Group, Profile, Season } from '@/lib/types';
 import { points } from '@/lib/format';
 import { SectionTitle } from '@/components/ui';
+import { NavRow } from '@/components/nav-row';
 import { signOutAction } from '@/lib/actions';
 import { ProfileEditor } from '@/app/grupos/[groupId]/perfil/editor';
 
@@ -8,11 +10,13 @@ export type ProfileStats = { total: number; won: number; settled: number; inPlay
 
 /** Tu perfil, tus números de la semana y los ajustes del grupo. */
 export function ProfileScreen({
+  basePath,
   me,
   group,
   balance,
   stats,
 }: {
+  basePath: string;
   me: Profile;
   group: Group;
   season?: Season;
@@ -46,12 +50,20 @@ export function ProfileScreen({
 
       <section>
         <SectionTitle>Grupo</SectionTitle>
-        <div className="card hairline overflow-hidden">
-          <Row label="Nombre" value={group.name} />
-          <Row label="Código de invitación" value={group.invite_code} mono />
-          <Row label="Puntos por semana" value={points(group.starting_points)} mono />
-          <Row label="Horas para impugnar" value={`${group.dispute_hours} h`} mono />
-        </div>
+        <nav className="-mx-4 divide-y divide-line border-y border-line sm:-mx-5">
+          <NavRow
+            href={`${basePath}/grupo`}
+            icon={UsersThree}
+            title={group.name}
+            hint="La gente, el palmarés y las reglas de la casa"
+          />
+          <NavRow
+            href="/grupos"
+            icon={ArrowsLeftRight}
+            title="Cambiar de grupo"
+            hint="Tus grupos y el código para entrar en otro"
+          />
+        </nav>
       </section>
 
       <form action={signOutAction}>
@@ -75,17 +87,6 @@ function Stat({
     <div className="card px-4 py-3.5">
       <p className="field-label !mb-1 ">{label}</p>
       <p className={`num text-xl font-bold ${color}`}>{value}</p>
-    </div>
-  );
-}
-
-function Row({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
-  return (
-    <div className="flex items-center justify-between gap-4 px-4 py-3">
-      <span className="text-sm text-content-muted">{label}</span>
-      <span className={`text-sm font-semibold text-white ${mono ? 'num tracking-[0.12em]' : ''}`}>
-        {value}
-      </span>
     </div>
   );
 }

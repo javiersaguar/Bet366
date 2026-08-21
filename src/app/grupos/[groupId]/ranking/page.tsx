@@ -20,6 +20,7 @@ export default async function RankingPage({ params }: { params: Promise<{ groupI
 
   return (
     <RankingScreen
+      basePath={`/grupos/${groupId}`}
       group={group}
       season={season}
       me={me}

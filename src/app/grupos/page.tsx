@@ -1,18 +1,19 @@
-import { createClient } from '@/lib/supabase/server';
+import { requireSession } from '@/lib/sesion';
 import { signOutAction } from '@/lib/actions';
 import { GroupsScreen, type GroupEntry } from '@/screens/groups';
 
 export const dynamic = 'force-dynamic';
 
 export default async function GroupsPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { supabase, user } = await requireSession('/grupos');
 
+  /* `group_members` deja ver, por RLS, a todos los miembros de tus grupos, no
+     solo tu propia fila. Sin este filtro un grupo de cinco personas salía
+     cinco veces en la lista, cada una con el rol de otro. */
   const { data: memberships } = await supabase
     .from('group_members')
     .select('role, groups(id, name, invite_code, starting_points)')
+    .eq('user_id', user.id)
     .order('joined_at');
 
   const rows = (memberships ?? [])
@@ -37,9 +38,11 @@ export default async function GroupsPage() {
     const { data: saldos } = await supabase
       .from('balances')
       .select('group_id, season_number, points')
-      .eq('user_id', user!.id);
+      .eq('user_id', user.id);
     for (const s of seasons ?? []) {
-      const b = (saldos ?? []).find((r) => r.group_id === s.group_id && r.season_number === s.number);
+      const b = (saldos ?? []).find(
+        (r) => r.group_id === s.group_id && r.season_number === s.number,
+      );
       if (b) balances.set(s.group_id, Number(b.points));
     }
   }
@@ -47,8 +50,8 @@ export default async function GroupsPage() {
   const { data: profile } = await supabase
     .from('profiles')
     .select('id, username, display_name, avatar_symbol, avatar_color')
-    .eq('id', user!.id)
-    .single();
+    .eq('id', user.id)
+    .maybeSingle();
 
   const groups: GroupEntry[] = rows.map(({ group, role }) => ({
     id: group.id,

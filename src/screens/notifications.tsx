@@ -1,6 +1,7 @@
 import type { Notification } from '@/lib/types';
 import { NotificationRow } from '@/components/notification-row';
 import { Empty, SectionTitle } from '@/components/ui';
+import { BackLink } from '@/components/nav-row';
 import { MarkAllRead } from '@/app/grupos/[groupId]/avisos/mark-read';
 
 /** Agrupa por día para que la lista se lea como un diario del grupo. */
@@ -40,7 +41,8 @@ export function NotificationsScreen({
     <div className="space-y-8">
       <header className="flex items-end justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold">Avisos</h1>
+          <BackLink href={basePath}>El tablón</BackLink>
+          <h1 className="mt-3 text-xl font-bold">Avisos</h1>
           <p className="mt-0.5 text-sm text-content-muted">
             {unread > 0 ? `${unread} sin leer` : 'Todo al día'}
           </p>

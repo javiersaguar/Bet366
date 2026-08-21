@@ -3,7 +3,7 @@ import { BALANCE, GROUP, ME, SEASON } from '@/lib/fixtures';
 
 export default function DemoProfile() {
   return (
-    <ProfileScreen
+    <ProfileScreen basePath="/demo"
       me={ME}
       group={GROUP}
       season={SEASON}

@@ -23,6 +23,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ groupI
   const all = wagers ?? [];
   return (
     <ProfileScreen
+      basePath={`/grupos/${groupId}`}
       me={me}
       group={group}
       season={season}

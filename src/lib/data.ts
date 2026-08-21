@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { requireSession } from '@/lib/sesion';
 import type { Group, MarketWithOptions, Notification, Profile, Season, Wager } from '@/lib/types';
 
 export type GroupContext = {
@@ -16,11 +17,7 @@ export type GroupContext = {
  * reiniciar la semana), de forma que la app funciona sin necesidad de cron.
  */
 export async function loadGroup(groupId: string): Promise<GroupContext> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) notFound();
+  const { supabase, user } = await requireSession(`/grupos/${groupId}`);
 
   await supabase.rpc('process_due', { p_group: groupId });
 

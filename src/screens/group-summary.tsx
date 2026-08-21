@@ -1,11 +1,11 @@
-import Link from 'next/link';
-import { ArrowsLeftRight, Trophy } from '@phosphor-icons/react/dist/ssr';
+import { ArrowsLeftRight, ChartBar, SquaresFour, Trophy } from '@phosphor-icons/react/dist/ssr';
 import type { Group, Profile, Season } from '@/lib/types';
 import type { GroupSummary } from '@/lib/data';
 import { dateTime, points } from '@/lib/format';
 import { Avatar } from '@/components/avatar';
 import { InviteCode } from '@/components/invite-code';
 import { Countdown } from '@/components/countdown';
+import { BackLink, NavRow } from '@/components/nav-row';
 
 /**
  * La ficha del grupo.
@@ -39,7 +39,8 @@ export function GroupSummaryScreen({
   return (
     <div className="space-y-8">
       <section className="animate-rise">
-        <h1 className="text-display font-semibold">{group.name}</h1>
+        <BackLink href={basePath}>El tablón</BackLink>
+        <h1 className="mt-4 text-display font-semibold">{group.name}</h1>
         <p className="mt-1 text-body text-content-muted">
           {creator ? <>Lo montó {creator.display_name} · </> : null}
           semana {season.number}, acaba en{' '}
@@ -203,14 +204,27 @@ export function GroupSummaryScreen({
       <div className="animate-rise space-y-6" style={{ animationDelay: '240ms' }}>
         <InviteCode code={group.invite_code} groupName={group.name} />
 
-        <Link
-          href="/grupos"
-          className="btn-ghost w-full"
-          prefetch={basePath.startsWith('/demo') ? false : undefined}
-        >
-          <ArrowsLeftRight size={16} weight="bold" />
-          Cambiar de grupo
-        </Link>
+        {/* De aquí se sale a cualquier sitio sin tocar la barra de abajo. */}
+        <nav className="-mx-4 divide-y divide-line border-y border-line sm:-mx-5">
+          <NavRow
+            href={basePath}
+            icon={SquaresFour}
+            title="El tablón"
+            hint="Las apuestas abiertas de esta semana"
+          />
+          <NavRow
+            href={`${basePath}/ranking`}
+            icon={ChartBar}
+            title="Ranking de la semana"
+            hint="Cómo va la clasificación ahora mismo"
+          />
+          <NavRow
+            href="/grupos"
+            icon={ArrowsLeftRight}
+            title="Cambiar de grupo"
+            hint="Tus grupos y el código para entrar en otro"
+          />
+        </nav>
       </div>
     </div>
   );

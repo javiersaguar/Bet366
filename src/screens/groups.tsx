@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { CaretRight, Plus, SignOut } from '@phosphor-icons/react/dist/ssr';
+import { NavRow } from '@/components/nav-row';
 import { points } from '@/lib/format';
 import { Avatar } from '@/components/avatar';
 import { Wordmark } from '@/components/logo';
@@ -130,31 +131,15 @@ export function GroupsScreen({
           <JoinGroupForm />
         </div>
 
-        <Link
-          href="/grupos/nuevo"
-          className="group -mx-5 mt-6 flex items-center gap-4 border-y border-line px-5 py-4
-                     transition-colors duration-press ease-out active:bg-surface-raised/60"
-        >
-          <span
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-brand/30
-                       bg-brand/[.08] text-brand transition-transform duration-pop ease-out
-                       motion-safe:group-hover:scale-105"
-          >
-            <Plus size={18} weight="bold" />
-          </span>
-          <span className="min-w-0 flex-1">
-            <span className="block text-title font-semibold text-white">Crear un grupo</span>
-            <span className="mt-0.5 block text-caption text-content-muted">
-              Eliges los puntos de partida y repartes el código
-            </span>
-          </span>
-          <CaretRight
-            size={16}
-            weight="bold"
-            className="shrink-0 text-content-faint transition-transform duration-pop ease-out
-                       motion-safe:group-hover:translate-x-0.5"
+        <div className="-mx-5 mt-6 border-y border-line">
+          <NavRow
+            href="/grupos/nuevo"
+            icon={Plus}
+            tone="brand"
+            title="Crear un grupo"
+            hint="Eliges los puntos de partida y repartes el código"
           />
-        </Link>
+        </div>
       </section>
     </main>
   );

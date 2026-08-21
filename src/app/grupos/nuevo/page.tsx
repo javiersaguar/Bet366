@@ -1,20 +1,20 @@
-import Link from 'next/link';
-import { CaretLeft } from '@phosphor-icons/react/dist/ssr';
+import { requireSession } from '@/lib/sesion';
+import { BackLink } from '@/components/nav-row';
 import { NewGroupForm } from './form';
 
+export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Crear un grupo' };
 
-export default function NewGroupPage() {
+export default async function NewGroupPage() {
+  // Sin sesión el formulario no puede crear nada: mejor mandar a entrar antes
+  // de que rellene el nombre.
+  await requireSession('/grupos/nuevo');
+
   return (
     <main className="mx-auto w-full max-w-xl px-5 py-7 pb-20">
-      <Link
-        href="/grupos"
-        className="animate-rise -ml-1 inline-flex items-center gap-1 text-caption font-medium
-                   text-content-muted transition-colors duration-press ease-out hover:text-content"
-      >
-        <CaretLeft size={14} weight="bold" />
-        Tus grupos
-      </Link>
+      <div className="animate-rise">
+        <BackLink href="/grupos">Tus grupos</BackLink>
+      </div>
 
       <header className="animate-rise mt-5" style={{ animationDelay: '60ms' }}>
         <h1 className="text-display font-semibold">Crear un grupo</h1>

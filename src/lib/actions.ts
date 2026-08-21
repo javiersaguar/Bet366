@@ -3,9 +3,13 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { AVATAR_COLORS, AVATAR_SYMBOLS } from '@/lib/avatars';
 
 export type ActionResult = { error?: string; ok?: true };
+
+/** Mejor un mensaje que una excepcion cuando faltan las variables de entorno. */
+const SIN_PROYECTO = 'La app no tiene base de datos configurada todavía.';
 
 /** Los mensajes de las funciones SQL ya vienen en castellano y son de cara al usuario. */
 function toMessage(error: { message: string; code?: string } | null): string {
@@ -18,6 +22,7 @@ function toMessage(error: { message: string; code?: string } | null): string {
 }
 
 async function rpc(fn: string, args: Record<string, unknown>): Promise<ActionResult> {
+  if (!isSupabaseConfigured()) return { error: SIN_PROYECTO };
   const supabase = await createClient();
   const { error } = await supabase.rpc(fn, args);
   return error ? { error: toMessage(error) } : { ok: true };

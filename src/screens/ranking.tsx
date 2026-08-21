@@ -4,13 +4,15 @@ import { points } from '@/lib/format';
 import { SectionTitle } from '@/components/ui';
 import { Avatar } from '@/components/avatar';
 import { Countdown } from '@/components/countdown';
-import { Trophy } from '@phosphor-icons/react/dist/ssr';
+import { Trophy, UsersThree } from '@phosphor-icons/react/dist/ssr';
 import { Medal } from '@/components/medal';
+import { NavRow } from '@/components/nav-row';
 
 export type PastWinner = { season_number: number; points: number; user_id: string };
 
 /** Ranking de la semana, podio y palmarés. */
 export function RankingScreen({
+  basePath,
   group,
   season,
   me,
@@ -18,6 +20,7 @@ export function RankingScreen({
   standings,
   history,
 }: {
+  basePath: string;
   group: Group;
   season: Season;
   me: Profile;
@@ -139,6 +142,15 @@ export function RankingScreen({
         </section>
       )}
 
+      {/* El palmares completo y la ficha de cada uno viven en el grupo. */}
+      <nav className="-mx-4 border-y border-line sm:-mx-5">
+        <NavRow
+          href={`${basePath}/grupo`}
+          icon={UsersThree}
+          title={group.name}
+          hint="La gente, el palmarés y las reglas de la casa"
+        />
+      </nav>
     </div>
   );
 }
