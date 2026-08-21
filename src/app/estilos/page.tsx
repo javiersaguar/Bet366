@@ -188,10 +188,11 @@ export default function Styleguide() {
         <Block title="Marca">
           <div className="flex flex-wrap items-end gap-8">
             <Logo subtitle="Un día más que los profesionales." animated />
-            <div className="flex items-center gap-4">
-              <Mark className="h-8 w-8" />
-              <Mark className="h-12 w-12" />
+            <div className="flex items-end gap-4">
               <Mark className="h-20 w-20" />
+              <Mark className="h-12 w-12" />
+              <Mark variant="compact" className="h-9 w-9" />
+              <Mark variant="compact" className="h-7 w-7" />
             </div>
             <Wordmark className="text-3xl" />
           </div>

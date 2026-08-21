@@ -32,7 +32,7 @@ export default function DemoLayout({ children }: { children: React.ReactNode }) 
         <header className="sticky top-0 z-30 border-b border-line bg-canvas/75 backdrop-blur-xl">
           <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-3 px-5 py-3">
             <Link href="/demo" className="group flex min-w-0 items-center gap-2.5">
-              <Mark className="h-9 w-9 shrink-0 transition-transform duration-300 ease-out group-hover:scale-105" />
+              <Mark variant="compact" className="h-9 w-9 shrink-0 transition-transform duration-300 ease-out group-hover:scale-105" />
               <span className="min-w-0 leading-tight">
                 <span className="block truncate font-semibold text-white transition group-hover:text-brand">
                   {GROUP.name}

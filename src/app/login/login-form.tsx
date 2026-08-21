@@ -1,7 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useId, useState } from 'react';
+import { Eye } from '@phosphor-icons/react/dist/csr/Eye';
+import { EyeSlash } from '@phosphor-icons/react/dist/csr/EyeSlash';
 import { createClient } from '@/lib/supabase/client';
+import { Alert } from '@/components/ui';
 
 type Mode = 'signin' | 'signup';
 
@@ -9,10 +12,12 @@ export function LoginForm({ next }: { next: string }) {
   const [mode, setMode] = useState<Mode>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [reveal, setReveal] = useState(false);
   const [name, setName] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const uid = useId();
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -51,12 +56,19 @@ export function LoginForm({ next }: { next: string }) {
   }
 
   return (
-    <div className="card p-6">
-      <div className="relative mb-6 grid grid-cols-2 gap-1 rounded-xl border border-line bg-surface-sunken p-1">
-        {/* Píldora que se desliza entre las dos pestañas. */}
+    <div>
+      {/* Conmutador con píldora deslizante: el movimiento explica que las dos
+          pestañas son el mismo sitio con dos modos, no dos pantallas. */}
+      <div
+        role="tablist"
+        aria-label="Entrar o crear cuenta"
+        className="relative grid grid-cols-2 gap-1 rounded-xl border border-line bg-surface-sunken p-1"
+      >
         <span
           aria-hidden
-          className="absolute inset-y-1 left-1 w-[calc(50%_-_0.25rem)] rounded-[9px] bg-brand shadow-[0_2px_14px_-5px_rgba(43,224,140,.95)] transition-transform duration-300 ease-out"
+          className="absolute inset-y-1 left-1 w-[calc(50%_-_0.25rem)] rounded-[9px] bg-brand
+                     shadow-[0_2px_14px_-5px_rgba(43,224,140,.95)]
+                     transition-transform duration-panel ease-out"
           style={{
             transform: mode === 'signin' ? 'translateX(0)' : 'translateX(calc(100% + 0.5rem))',
           }}
@@ -64,46 +76,52 @@ export function LoginForm({ next }: { next: string }) {
         {(['signin', 'signup'] as const).map((m) => (
           <button
             key={m}
+            role="tab"
             type="button"
+            aria-selected={mode === m}
             onClick={() => {
               setMode(m);
               setError(null);
+              setNotice(null);
             }}
-            className={`relative z-10 rounded-[9px] py-2 text-sm font-semibold tracking-tight transition-colors duration-200 ${
-              mode === m ? 'text-brand-ink' : 'text-content-muted hover:text-content'
-            }`}
+            className={`relative z-10 rounded-[9px] py-2 text-body font-semibold
+                        transition-colors duration-press ease-out ${
+                          mode === m ? 'text-brand-ink' : 'text-content-muted hover:text-content'
+                        }`}
           >
             {m === 'signin' ? 'Entrar' : 'Crear cuenta'}
           </button>
         ))}
       </div>
 
-      <form onSubmit={submit} className="space-y-4">
+      <form onSubmit={submit} className="mt-6 space-y-4">
         {mode === 'signup' && (
-          <div>
-            <label className="label" htmlFor="name">
+          <div className="animate-rise">
+            <label className="label" htmlFor={`${uid}-name`}>
               Cómo te llaman
             </label>
             <input
-              id="name"
-              className="w-full"
+              id={`${uid}-name`}
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Javi"
               autoComplete="nickname"
+              maxLength={40}
             />
+            <p className="mt-1.5 text-micro leading-relaxed text-content-faint">
+              Es el nombre que verá tu grupo en el ranking. Se puede cambiar después.
+            </p>
           </div>
         )}
 
         <div>
-          <label className="label" htmlFor="email">
+          <label className="label" htmlFor={`${uid}-email`}>
             Correo
           </label>
           <input
-            id="email"
+            id={`${uid}-email`}
             type="email"
             required
-            className="w-full"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="tu@correo.com"
@@ -112,34 +130,40 @@ export function LoginForm({ next }: { next: string }) {
         </div>
 
         <div>
-          <label className="label" htmlFor="password">
+          <label className="label" htmlFor={`${uid}-password`}>
             Contraseña
           </label>
-          <input
-            id="password"
-            type="password"
-            required
-            minLength={6}
-            className="w-full"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
-            autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
-          />
+          <div className="relative">
+            <input
+              id={`${uid}-password`}
+              type={reveal ? 'text' : 'password'}
+              required
+              minLength={6}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder={mode === 'signup' ? 'Mínimo 6 caracteres' : '••••••••'}
+              autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
+              className="pr-11"
+            />
+            <button
+              type="button"
+              onClick={() => setReveal((v) => !v)}
+              aria-label={reveal ? 'Ocultar la contraseña' : 'Ver la contraseña'}
+              className="absolute inset-y-0 right-0 grid w-11 place-items-center text-content-faint
+                         transition-colors duration-press ease-out hover:text-content"
+            >
+              {reveal ? <EyeSlash size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
         </div>
 
-        {error && (
-          <p className="rounded-xl border border-lose/30 bg-lose/10 px-3.5 py-2.5 text-sm text-lose">
-            {error}
-          </p>
-        )}
-        {notice && (
-          <p className="rounded-xl border border-brand/30 bg-brand/[.08] px-3.5 py-2.5 text-sm text-brand-bright">
-            {notice}
-          </p>
-        )}
+        {error && <Alert kind="error">{error}</Alert>}
+        {notice && <Alert kind="ok">{notice}</Alert>}
 
         <button type="submit" disabled={busy} className="btn-primary w-full">
+          {busy && (
+            <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent opacity-70" />
+          )}
           {busy ? 'Un momento…' : mode === 'signin' ? 'Entrar' : 'Crear cuenta'}
         </button>
       </form>
@@ -151,6 +175,10 @@ function traducir(message: string): string {
   if (/invalid login credentials/i.test(message)) return 'Correo o contraseña incorrectos.';
   if (/already registered/i.test(message)) return 'Ese correo ya tiene cuenta. Prueba a entrar.';
   if (/password should be/i.test(message)) return 'La contraseña necesita al menos 6 caracteres.';
+  if (/email not confirmed/i.test(message)) {
+    return 'Te falta confirmar el correo. Mira tu bandeja de entrada.';
+  }
   if (/email/i.test(message) && /invalid/i.test(message)) return 'Ese correo no parece válido.';
+  if (/rate limit|too many/i.test(message)) return 'Demasiados intentos seguidos. Prueba en un minuto.';
   return message;
 }
