@@ -45,7 +45,7 @@ export function DisputePanel({
           <DeadlineRing from={market.result_set_at} to={market.dispute_until} />
         )}
         <div className="min-w-0 flex-1">
-        <h2 className="eyebrow !text-info">
+        <h2 className="field-label !text-info">
           Plazo para impugnar
         </h2>
         <p className="mt-1 text-sm leading-relaxed text-content-muted">
@@ -56,7 +56,7 @@ export function DisputePanel({
         {hasSkin ? (
           <DisputeForm groupId={groupId} marketId={market.id} />
         ) : (
-          <p className="mt-3 text-2xs text-content-faint">
+          <p className="mt-3 text-micro text-content-faint">
             Solo puede impugnar quien tenga puntos en juego.
           </p>
         )}
@@ -79,7 +79,7 @@ export function DisputePanel({
       <div className="flex gap-4">
         {dispute && <DeadlineRing from={dispute.opened_at} to={dispute.closes_at} tone="vote" />}
         <div className="min-w-0 flex-1">
-      <h2 className="eyebrow !text-vote">
+      <h2 className="field-label !text-vote">
         Lo decide el grupo
       </h2>
       {dispute && (
@@ -181,14 +181,14 @@ function VoteForm({
               type="submit"
               name="option_id"
               value={c.value}
-              className={`relative block w-full overflow-hidden rounded-xl border px-4 py-3 text-left transition-all duration-200 ease-smooth active:scale-[.985] ${
+              className={`relative block w-full overflow-hidden rounded-xl border px-4 py-3 text-left transition-[transform,border-color,color,background-color] duration-pop ease-out active:scale-[.985] ${
                 mine
                   ? 'border-vote/60 bg-vote/10 shadow-glow-vote'
                   : 'border-line hover:border-line-strong hover:bg-surface-raised/50'
               }`}
             >
               <span
-                className="absolute inset-y-0 left-0 bg-vote/[.14] transition-[width] duration-700 ease-smooth"
+                className="absolute inset-y-0 left-0 bg-vote/[.14] transition-[width] duration-panel ease-out"
                 style={{ width: `${pct}%` }}
               />
               <span className="relative flex items-center justify-between gap-3">
@@ -207,7 +207,7 @@ function VoteForm({
 
       {state.error && <Alert kind="error">{state.error}</Alert>}
 
-      <p className="text-2xs text-content-faint">
+      <p className="text-micro text-content-faint">
         Han votado {totalVotes} de {memberCount}. Gana la mayoría; si hay empate se devuelven los
         puntos. Puedes cambiar tu voto hasta que acabe el plazo.
       </p>

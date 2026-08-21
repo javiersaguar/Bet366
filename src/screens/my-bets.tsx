@@ -107,7 +107,7 @@ export function MyBetsScreen({
           action={
             <Link
               href={`${basePath}/nueva`}
-              className="text-2xs font-semibold uppercase tracking-[0.08em] text-brand hover:text-brand-bright"
+              className="text-micro font-semibold uppercase tracking-[0.08em] text-brand hover:text-brand-bright"
             >
               + Nueva
             </Link>
@@ -120,7 +120,7 @@ export function MyBetsScreen({
             title="No has lanzado ninguna"
             hint="Se te tiene que ocurrir algo bueno."
             action={
-              <Link href={`${basePath}/nueva`} className="btn-ghost !py-2 text-2xs">
+              <Link href={`${basePath}/nueva`} className="btn-ghost !py-2 text-micro">
                 Lanzar la primera
               </Link>
             }
@@ -158,7 +158,7 @@ export function MyBetsScreen({
 function Stat({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
     <div className="card px-4 py-3.5">
-      <p className="eyebrow !mb-1 !text-[0.625rem]">{label}</p>
+      <p className="field-label !mb-1 ">{label}</p>
       <p className={`num text-xl font-bold ${accent ? 'text-info' : 'text-white'}`}>{value}</p>
     </div>
   );

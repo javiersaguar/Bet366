@@ -73,7 +73,7 @@ function Stat({
   const color = { brand: 'text-brand', info: 'text-info', plain: 'text-white' }[tone];
   return (
     <div className="card px-4 py-3.5">
-      <p className="eyebrow !mb-1 !text-[0.625rem]">{label}</p>
+      <p className="field-label !mb-1 ">{label}</p>
       <p className={`num text-xl font-bold ${color}`}>{value}</p>
     </div>
   );

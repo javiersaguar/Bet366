@@ -77,7 +77,7 @@ export function BoardScreen({
           title="Aún no hay ninguna apuesta"
           hint="Lanza la primera: «¿a que fulanito se lía con menganito?»"
           action={
-            <Link href={`${basePath}/nueva`} className="btn-primary !py-2 text-2xs">
+            <Link href={`${basePath}/nueva`} className="btn-primary !py-2 text-micro">
               Lanzar la primera
             </Link>
           }
@@ -116,7 +116,7 @@ export function BoardScreen({
 function Pulse({ label, value, accent }: { label: string; value: number; accent?: boolean }) {
   return (
     <div className="px-3 py-3 text-center sm:px-4 sm:text-left">
-      <p className="eyebrow !mb-1 !whitespace-nowrap !text-[0.625rem]">{label}</p>
+      <p className="field-label !mb-1 !whitespace-nowrap ">{label}</p>
       <CountUp
         value={value}
         duration={750}

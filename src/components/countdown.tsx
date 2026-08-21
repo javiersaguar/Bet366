@@ -120,11 +120,11 @@ export function DeadlineRing({
           strokeLinecap="round"
           strokeDasharray={c}
           strokeDashoffset={c * (1 - pct)}
-          className="transition-[stroke-dashoffset] duration-1000 ease-smooth"
+          className="transition-[stroke-dashoffset] duration-panel ease-out"
         />
       </svg>
       <span
-        className="num absolute inset-0 grid place-items-center text-2xs font-bold transition-opacity duration-300"
+        className="num absolute inset-0 grid place-items-center text-micro font-bold transition-opacity duration-300"
         style={{ color, opacity: now === null ? 0 : 1 }}
       >
         {Math.ceil(left / 3600_000)}h

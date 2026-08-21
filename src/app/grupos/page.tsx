@@ -4,7 +4,7 @@ import { points } from '@/lib/format';
 import { JoinGroupForm } from './join-form';
 import { Empty } from '@/components/ui';
 import { Avatar } from '@/components/avatar';
-import { IconTarget } from '@/components/icons';
+import { Target } from '@phosphor-icons/react/dist/ssr';
 import { Wordmark } from '@/components/logo';
 import { signOutAction } from '@/lib/actions';
 
@@ -54,7 +54,7 @@ export default async function GroupsPage() {
         <div className="mb-7 flex items-center justify-between">
           <Wordmark className="text-lg" />
           <form action={signOutAction}>
-            <button className="btn-quiet !px-3 !py-1.5 text-2xs">Salir</button>
+            <button className="btn-quiet !px-3 !py-1.5 text-micro">Salir</button>
           </form>
         </div>
         <div className="flex items-center gap-3.5">
@@ -91,7 +91,7 @@ export default async function GroupsPage() {
               >
                 <div className="min-w-0">
                   <p className="truncate font-semibold text-white">{group.name}</p>
-                  <p className="text-2xs text-content-faint">
+                  <p className="text-micro text-content-faint">
                     {role === 'owner' ? 'Eres el jefe' : 'Miembro'} · código{' '}
                     <span className="num text-content-muted">{group.invite_code}</span>
                   </p>
@@ -100,7 +100,7 @@ export default async function GroupsPage() {
                   <p className="num text-lg font-bold text-brand">
                     {points(balances.get(group.id) ?? 0)}
                   </p>
-                  <p className="eyebrow">puntos</p>
+                  <p className="field-label">puntos</p>
                 </div>
               </Link>
             </li>
@@ -115,10 +115,10 @@ export default async function GroupsPage() {
           className="card-interactive grid place-content-center gap-1 px-5 py-6 text-center hover:border-brand/40"
         >
           <span className="mx-auto grid h-11 w-11 place-items-center rounded-xl border border-line bg-surface-sunken text-brand">
-            <IconTarget className="h-5 w-5" />
+            <Target size={20} />
           </span>
           <span className="font-semibold text-white">Crear un grupo</span>
-          <span className="text-2xs text-content-muted">Y repartir el código a la pandilla</span>
+          <span className="text-micro text-content-muted">Y repartir el código a la pandilla</span>
         </Link>
       </div>
     </main>

@@ -26,12 +26,12 @@ export default async function GroupLayout({
         <header className="sticky top-0 z-30 border-b border-line bg-canvas/75 backdrop-blur-xl">
           <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-3 px-5 py-3">
             <Link href="/grupos" className="group flex min-w-0 items-center gap-2.5">
-              <Mark className="h-9 w-9 shrink-0 transition-transform duration-300 ease-snap group-hover:scale-105" />
+              <Mark className="h-9 w-9 shrink-0 transition-transform duration-300 ease-out group-hover:scale-105" />
               <span className="min-w-0 leading-tight">
                 <span className="block truncate font-semibold text-white transition group-hover:text-brand">
                   {group.name}
                 </span>
-                <span className="eyebrow flex items-center gap-1.5">
+                <span className="field-label flex items-center gap-1.5">
                   Semana {season.number}
                   <span className="text-content-faint/40">·</span>
                   <Countdown to={season.ends_at} urgentUnder={7200_000} className="!tracking-[0.06em]" />
@@ -44,7 +44,7 @@ export default async function GroupLayout({
                 <span className="h-1.5 w-1.5 rounded-full bg-brand shadow-[0_0_8px_rgba(43,224,140,.9)]" />
                 <span className="text-right leading-tight">
                   <CountUp value={balance} className="block text-sm font-bold text-brand" />
-                  <span className="eyebrow block !text-[0.625rem]">puntos</span>
+                  <span className="field-label block ">puntos</span>
                 </span>
               </div>
               <Bell groupId={groupId} unread={unread} />

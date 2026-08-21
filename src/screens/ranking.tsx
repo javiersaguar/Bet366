@@ -4,7 +4,8 @@ import { points } from '@/lib/format';
 import { SectionTitle } from '@/components/ui';
 import { Avatar } from '@/components/avatar';
 import { Countdown } from '@/components/countdown';
-import { IconTrophy, Medal } from '@/components/icons';
+import { Trophy } from '@phosphor-icons/react/dist/ssr';
+import { Medal } from '@/components/medal';
 
 export type PastWinner = { season_number: number; points: number; user_id: string };
 
@@ -56,7 +57,7 @@ export function RankingScreen({
                 {/* Barra de puntos. Se desvanece hacia la derecha para que no
                     parezca un rectángulo cortado a mitad de fila. */}
                 <span
-                  className="absolute inset-y-0 left-0 transition-[width] duration-[1200ms] ease-smooth"
+                  className="absolute inset-y-0 left-0 transition-[width] duration-panel ease-out"
                   style={{
                     width: `${width}%`,
                     background: `linear-gradient(90deg, ${
@@ -77,9 +78,9 @@ export function RankingScreen({
                       className={`block truncate font-semibold ${isMe ? 'text-brand' : 'text-white'}`}
                     >
                       {s.profile.display_name}
-                      {isMe && <span className="ml-1.5 text-2xs font-normal text-brand/60">tú</span>}
+                      {isMe && <span className="ml-1.5 text-micro font-normal text-brand/60">tú</span>}
                     </span>
-                    <span className="num block text-2xs text-content-faint">
+                    <span className="num block text-micro text-content-faint">
                       {s.settled > 0
                         ? `${s.won}/${s.settled} acertadas`
                         : 'sin apuestas cerradas'}
@@ -91,7 +92,7 @@ export function RankingScreen({
 
                   <span className="shrink-0 text-right">
                     <span
-                      className={`num block text-lg font-bold ${isMe ? 'text-brand' : 'text-white'}`}
+                      className={`tnum block text-figure font-semibold ${isMe ? 'text-brand' : 'text-white'}`}
                     >
                       {points(total)}
                     </span>
@@ -104,7 +105,7 @@ export function RankingScreen({
         </ul>
 
         {top && standings.length > 1 && (
-          <p className="mt-3 text-center text-2xs text-content-faint">
+          <p className="mt-3 text-center text-micro text-content-faint">
             {top.profile.display_name} va primero por{' '}
             <span className="num text-content-muted">
               {points(top.points + top.staked - (standings[1].points + standings[1].staked))}
@@ -126,7 +127,7 @@ export function RankingScreen({
                   className="flex items-center justify-between gap-3 px-4 py-3"
                 >
                   <span className="flex items-center gap-2.5 text-sm text-content-muted">
-                    <IconTrophy className="h-4 w-4 text-gold" />
+                    <Trophy size={16} weight="fill" className="text-gold" />
                     Semana {h.season_number} ·{' '}
                     <strong className="text-white">{who?.display_name ?? 'Alguien'}</strong>
                   </span>
@@ -144,11 +145,11 @@ export function RankingScreen({
 
 function Delta({ value }: { value: number }) {
   if (Math.abs(value) < 0.01) {
-    return <span className="block text-2xs text-content-faint">igual</span>;
+    return <span className="block text-micro text-content-faint">igual</span>;
   }
   const up = value > 0;
   return (
-    <span className={`num block text-2xs ${up ? 'text-brand' : 'text-lose'}`}>
+    <span className={`num block text-micro ${up ? 'text-brand' : 'text-lose'}`}>
       {up ? '▲' : '▼'} {points(Math.abs(value))}
     </span>
   );

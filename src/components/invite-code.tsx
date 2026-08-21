@@ -27,11 +27,11 @@ export function InviteCode({ code, groupName }: { code: string; groupName: strin
     <section className="card flex flex-wrap items-center justify-between gap-3 overflow-hidden px-5 py-4">
       <div>
         <p className="text-sm font-semibold text-white">Que se apunte más gente</p>
-        <p className="text-2xs text-content-muted">Pásales este código</p>
+        <p className="text-micro text-content-muted">Pásales este código</p>
       </div>
       <button
         onClick={share}
-        className="num group relative overflow-hidden rounded-xl border border-line-strong bg-surface-sunken px-4 py-2.5 text-lg font-bold tracking-[0.28em] text-brand transition-all duration-200 hover:border-brand/50 hover:shadow-glow-brand active:scale-[.97]"
+        className="num group relative overflow-hidden rounded-xl border border-line-strong bg-surface-sunken px-4 py-2.5 text-lg font-bold tracking-[0.28em] text-brand transition-[transform,border-color,color,background-color] duration-pop hover:border-brand/50 hover:shadow-glow-brand active:scale-[.97]"
       >
         <span className={copied ? 'opacity-0' : 'transition-opacity'}>{code}</span>
         {copied && (

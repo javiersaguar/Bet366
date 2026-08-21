@@ -102,9 +102,17 @@
     background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0));
   }
 
+  /* El hover solo existe donde hay puntero fino: en táctil se dispara al
+     tocar y deja el elemento levantado. */
   .card-interactive {
-    @apply card transition-all duration-300 ease-smooth
-           hover:-translate-y-0.5 hover:border-line-strong hover:shadow-lift;
+    @apply card transition-[transform,border-color,box-shadow] duration-pop ease-out
+           active:scale-[0.995];
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .card-interactive:hover {
+      @apply -translate-y-px border-line-strong shadow-lift;
+    }
   }
 
   /* Realce superior de 1px: hace que la tarjeta parezca tener volumen. */
@@ -121,10 +129,14 @@
   }
 
   /* --- botones ------------------------------------------------------- */
+  /* Propiedades nombradas, nunca `all`: `all` anima también lo que no debe
+     y arrastra layout. La presión responde en 140ms, dentro del presupuesto
+     de feedback (100-160ms). */
   .btn {
     @apply relative inline-flex select-none items-center justify-center gap-2 overflow-hidden
-           rounded-xl px-4 py-2.5 text-sm font-semibold tracking-tight
-           transition-all duration-200 ease-smooth active:scale-[.97]
+           rounded-xl px-4 py-2.5 text-body font-medium
+           transition-[transform,background-color,border-color,color,box-shadow]
+           duration-press ease-out active:scale-[0.97]
            disabled:pointer-events-none disabled:!border-line disabled:!bg-surface-raised
            disabled:!text-content-faint disabled:!shadow-none;
   }
@@ -140,6 +152,25 @@
            hover:border-content-faint hover:bg-surface-high;
   }
 
+  /* Dos niveles de cifra, y la diferencia importa.
+
+     .num  -> texto normal con numerales tabulares. Para cifras dentro de una
+              frase: "500 pts", "cierra en 2d 12h". Sigue siendo Geist Sans,
+              así que la línea se lee como prosa y no como consola.
+
+     .tnum -> Geist Mono. Solo donde las cifras forman columna y el ojo las
+              compara verticalmente: la cuota, el saldo, el ranking. */
+  .num {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+  }
+
+  .tnum {
+    font-family: theme('fontFamily.mono');
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+  }
+
   .btn-quiet {
     @apply btn text-content-muted hover:bg-surface-raised hover:text-content;
   }
@@ -150,26 +181,23 @@
 
   /* --- tipografía ----------------------------------------------------- */
   .label {
-    @apply mb-2 block text-2xs font-semibold uppercase tracking-[0.09em] text-content-muted;
+    @apply mb-2 block text-caption font-medium text-content-muted;
   }
 
-  .eyebrow {
-    @apply text-2xs font-semibold uppercase tracking-[0.12em] text-content-muted;
+  /* Etiqueta de dato, no adorno: nombra la cifra que tiene debajo. No se usa
+     como antetítulo decorativo sobre los encabezados de sección. */
+  .field-label {
+    @apply text-micro font-medium uppercase tracking-[0.07em] text-content-faint;
   }
 
-  /* Cifras siempre tabulares: no bailan al actualizarse. */
-  .num {
-    font-variant-numeric: tabular-nums;
-    @apply tracking-tight;
-  }
-
+  /* La cuota es la cifra protagonista: mono, peso alto y tracking cerrado. */
   .odds {
-    @apply num font-bold tracking-tightest text-white;
+    @apply tnum text-odds font-semibold text-white;
   }
 
   .chip {
     @apply inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-1
-           text-2xs font-semibold uppercase tracking-[0.06em];
+           text-micro font-semibold uppercase tracking-[0.06em];
   }
 
   .hairline {
@@ -194,9 +222,11 @@
   /* --- utilidades de movimiento --------------------------------------- */
 
   /* Entrada escalonada: cada hijo espera un pelín más que el anterior. */
+  /* Entrada escalonada: 45ms entre elementos, tope a los 6 para que una
+     lista larga no tarde en asentarse. Es decorativa y no bloquea el toque. */
   .stagger > * {
-    animation: rise 0.4s cubic-bezier(0.22, 0.68, 0.28, 1) both;
-    animation-delay: calc(var(--i, 0) * 55ms);
+    animation: rise 260ms cubic-bezier(0.23, 1, 0.32, 1) both;
+    animation-delay: calc(min(var(--i, 0), 6) * 45ms);
   }
 
   /* Esqueleto de carga. */

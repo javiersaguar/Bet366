@@ -56,7 +56,7 @@ export function LoginForm({ next }: { next: string }) {
         {/* Píldora que se desliza entre las dos pestañas. */}
         <span
           aria-hidden
-          className="absolute inset-y-1 left-1 w-[calc(50%_-_0.25rem)] rounded-[9px] bg-brand shadow-[0_2px_14px_-5px_rgba(43,224,140,.95)] transition-transform duration-300 ease-snap"
+          className="absolute inset-y-1 left-1 w-[calc(50%_-_0.25rem)] rounded-[9px] bg-brand shadow-[0_2px_14px_-5px_rgba(43,224,140,.95)] transition-transform duration-300 ease-out"
           style={{
             transform: mode === 'signin' ? 'translateX(0)' : 'translateX(calc(100% + 0.5rem))',
           }}

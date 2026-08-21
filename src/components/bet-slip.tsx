@@ -80,7 +80,7 @@ export function BetSlip({
               type="button"
               onClick={() => setSelected(selected === o.id ? null : o.id)}
               style={{ '--i': i } as React.CSSProperties}
-              className="block w-full text-left transition-transform duration-200 ease-snap active:scale-[.985]"
+              className="block w-full text-left transition-transform duration-200 ease-out active:scale-[.985]"
               aria-pressed={selected === o.id}
             >
               <OddsFace
@@ -110,7 +110,7 @@ export function BetSlip({
 
           <header className="flex items-center justify-between gap-3 border-b border-line pb-3">
             <div className="min-w-0">
-              <p className="eyebrow">Tu boleto</p>
+              <p className="field-label">Tu boleto</p>
               <p className="truncate font-semibold text-white">{option.label}</p>
             </div>
             <span className="odds shrink-0 rounded-lg border border-brand/40 bg-brand/10 px-3 py-1.5 text-lg text-brand">
@@ -123,7 +123,7 @@ export function BetSlip({
               <label className="label" htmlFor="stake">
                 Cuánto pones
               </label>
-              <span className="num text-2xs text-content-faint">
+              <span className="num text-micro text-content-faint">
                 tienes {points(balance)} pts
               </span>
             </div>
@@ -156,7 +156,7 @@ export function BetSlip({
 
           <div className="grid grid-cols-2 overflow-hidden rounded-xl border border-line bg-surface-sunken">
             <div className="border-r border-line px-4 py-3">
-              <p className="eyebrow !mb-1">Ganancia</p>
+              <p className="field-label !mb-1">Ganancia</p>
               <CountUp
                 value={profit}
                 prefix={profit > 0 ? '+' : ''}
@@ -165,7 +165,7 @@ export function BetSlip({
               />
             </div>
             <div className="px-4 py-3">
-              <p className="eyebrow !mb-1">Cobras</p>
+              <p className="field-label !mb-1">Cobras</p>
               <CountUp value={payout} className="text-lg font-bold text-brand" duration={350} />
             </div>
           </div>
@@ -192,7 +192,7 @@ export function BetSlip({
             {valid ? `Apostar ${points(stakeNumber)} pts` : 'Apostar'}
           </SubmitButton>
 
-          <p className="text-center text-2xs leading-relaxed text-content-faint">
+          <p className="text-center text-micro leading-relaxed text-content-faint">
             La cuota se te queda bloqueada en {fmtOdds(option.current_odds)} aunque luego se mueva.
           </p>
         </form>
@@ -214,7 +214,7 @@ function Quick({
     <button
       type="button"
       onClick={onClick}
-      className={`num rounded-lg border px-3 py-1.5 text-2xs font-semibold transition ${
+      className={`num rounded-lg border px-3 py-1.5 text-micro font-semibold transition ${
         accent
           ? 'border-brand/35 text-brand hover:bg-brand/10'
           : 'border-line-strong text-content-muted hover:border-content-faint hover:text-content'

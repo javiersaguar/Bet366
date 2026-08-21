@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { IconWarning } from '@/components/icons';
+import { Warning } from '@phosphor-icons/react/dist/ssr';
 
 export default function GlobalError({
   error,
@@ -18,7 +18,7 @@ export default function GlobalError({
     <main className="grid min-h-dvh place-items-center px-5 text-center">
       <div className="animate-rise space-y-5">
         <span className="mx-auto grid h-16 w-16 place-items-center rounded-2xl border border-lose/30 bg-lose/[.07] text-lose">
-          <IconWarning className="h-7 w-7" />
+          <Warning size={28} />
         </span>
         <div className="space-y-1.5">
           <h1 className="text-2xl font-bold">Se ha roto algo</h1>

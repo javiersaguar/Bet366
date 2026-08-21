@@ -34,7 +34,7 @@ export function AvatarPicker({
         <Avatar
           profile={{ id: userId, avatar_symbol: symbol, avatar_color: color }}
           size="xl"
-          className="transition-transform duration-300 ease-snap"
+          className="transition-transform duration-300 ease-out"
         />
         <div className="min-w-0">
           <p className="truncate text-lg font-bold text-white">{displayName || 'Sin nombre'}</p>
@@ -57,7 +57,7 @@ export function AvatarPicker({
                 onClick={() => onChange({ symbol, color: c })}
                 aria-label={c}
                 aria-pressed={active}
-                className={`h-8 w-8 rounded-full border-2 transition-all duration-200 ease-snap ${
+                className={`h-8 w-8 rounded-full border-2 transition-[transform,border-color,color,background-color] duration-pop ease-out ${
                   active ? 'scale-110' : 'border-transparent hover:scale-105'
                 }`}
                 style={{
@@ -84,7 +84,7 @@ export function AvatarPicker({
                 title={SYMBOL_LABELS[sym]}
                 aria-label={SYMBOL_LABELS[sym]}
                 aria-pressed={active}
-                className={`grid aspect-square place-items-center rounded-xl border transition-all duration-200 ease-snap ${
+                className={`grid aspect-square place-items-center rounded-xl border transition-[transform,border-color,color,background-color] duration-pop ease-out ${
                   active
                     ? 'scale-[1.06] border-transparent'
                     : 'border-line bg-surface-sunken hover:-translate-y-0.5 hover:border-line-strong'

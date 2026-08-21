@@ -45,7 +45,7 @@ export function CountUp({
   }, [value, duration]);
 
   return (
-    <span className={`num ${className}`}>
+    <span className={`tnum ${className}`}>
       {prefix}
       {fmt(shown)}
     </span>

@@ -36,17 +36,17 @@ export default function SetupPage() {
           </Step>
         </ol>
 
-        <pre className="num overflow-x-auto rounded-xl border border-line bg-surface-sunken px-4 py-3 text-2xs leading-relaxed text-content">
+        <pre className="num overflow-x-auto rounded-xl border border-line bg-surface-sunken px-4 py-3 text-micro leading-relaxed text-content">
           {`NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOi...`}
         </pre>
 
-        <p className="text-2xs leading-relaxed text-content-faint">
+        <p className="text-micro leading-relaxed text-content-faint">
           Después reinicia el servidor. Los pasos completos están en el README.
         </p>
       </div>
 
-      <p className="mt-6 text-center text-2xs leading-relaxed text-content-faint">
+      <p className="mt-6 text-center text-micro leading-relaxed text-content-faint">
         Mientras tanto puedes recorrer la app con datos de ejemplo en{' '}
         <a href="/demo" className="link">/demo</a>.
       </p>
@@ -57,7 +57,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOi...`}
 function Step({ n, children }: { n: number; children: React.ReactNode }) {
   return (
     <li className="flex gap-3">
-      <span className="num grid h-6 w-6 shrink-0 place-items-center rounded-full border border-line-strong text-2xs font-bold text-content-muted">
+      <span className="num grid h-6 w-6 shrink-0 place-items-center rounded-full border border-line-strong text-micro font-bold text-content-muted">
         {n}
       </span>
       <span className="text-content-muted">{children}</span>
@@ -67,7 +67,7 @@ function Step({ n, children }: { n: number; children: React.ReactNode }) {
 
 function Code({ children }: { children: React.ReactNode }) {
   return (
-    <code className="rounded border border-line bg-surface-raised px-1.5 py-0.5 text-2xs">
+    <code className="rounded border border-line bg-surface-raised px-1.5 py-0.5 text-micro">
       {children}
     </code>
   );

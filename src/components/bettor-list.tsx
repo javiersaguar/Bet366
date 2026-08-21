@@ -64,13 +64,13 @@ export function BettorList({
                     {w.user_id === meId ? 'Tú' : (who?.display_name ?? 'Alguien')}
                     <span className="font-normal text-content-muted"> · {labelOf(w.option_id)}</span>
                   </p>
-                  <p className="num mt-0.5 text-2xs text-content-faint">
+                  <p className="num mt-0.5 text-micro text-content-faint">
                     {points(w.stake)} pts a {fmtOdds(w.locked_odds)} →{' '}
                     <span className={w.status === 'won' ? 'text-brand' : ''}>{points(w.to_win)}</span>{' '}
                     · {dateTime(w.created_at)}
                   </p>
                   {w.void_reason && (
-                    <p className="mt-1 text-2xs text-lose/80">Anulada: {w.void_reason}</p>
+                    <p className="mt-1 text-micro text-lose/80">Anulada: {w.void_reason}</p>
                   )}
                 </div>
                 <div className="flex shrink-0 items-center gap-2">
@@ -96,7 +96,7 @@ function VoidButton({ wagerId, groupId }: { wagerId: string; groupId: string }) 
         type="button"
         onClick={() => setOpen(true)}
         title="Anular esta apuesta por fraudulenta"
-        className="rounded-lg border border-lose/30 px-2 py-1 text-2xs font-semibold text-lose transition hover:bg-lose/10"
+        className="rounded-lg border border-lose/30 px-2 py-1 text-micro font-semibold text-lose transition hover:bg-lose/10"
       >
         Anular
       </button>
@@ -112,17 +112,17 @@ function VoidButton({ wagerId, groupId }: { wagerId: string; groupId: string }) 
         required
         maxLength={200}
         placeholder="Motivo (lo verá todo el grupo)"
-        className="w-56 !py-1.5 text-2xs"
+        className="w-56 !py-1.5 text-micro"
       />
       {state.error && <Alert kind="error">{state.error}</Alert>}
       <div className="flex gap-2">
-        <SubmitButton className="btn-danger !px-2.5 !py-1 text-2xs" pending="…">
+        <SubmitButton className="btn-danger !px-2.5 !py-1 text-micro" pending="…">
           Confirmar
         </SubmitButton>
         <button
           type="button"
           onClick={() => setOpen(false)}
-          className="btn-ghost !px-2.5 !py-1 text-2xs"
+          className="btn-ghost !px-2.5 !py-1 text-micro"
         >
           Cancelar
         </button>

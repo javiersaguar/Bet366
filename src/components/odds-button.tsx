@@ -58,13 +58,13 @@ export function OddsFace({
 
   return (
     <div
-      className={`group/odds relative overflow-hidden rounded-xl border transition-all duration-300 ease-smooth ${frame} ${
+      className={`group/odds relative overflow-hidden rounded-xl border transition-[transform,border-color,box-shadow] duration-panel ease-out ${frame} ${
         flash === 'up' ? 'animate-flash-up' : flash === 'down' ? 'animate-flash-down' : ''
       }`}
     >
       <div className="absolute inset-x-0 bottom-0 h-[2px] bg-white/[.04]">
         <div
-          className={`h-full transition-[width] duration-1000 ease-smooth ${
+          className={`h-full transition-[width] duration-panel ease-out ${
             state === 'selected' || state === 'winner' ? 'bg-brand/70' : 'bg-white/20'
           }`}
           style={{ width: `${Math.min(100, share)}%` }}
@@ -85,7 +85,7 @@ export function OddsFace({
             {state === 'winner' && <span className="text-brand">✓ </span>}
             {option.label}
           </p>
-          <p className="num mt-0.5 flex items-center gap-1.5 text-2xs text-content-faint">
+          <p className="num mt-0.5 flex items-center gap-1.5 text-micro text-content-faint">
             <span>{points(option.pool)} pts</span>
             {moved && (
               <span
@@ -106,7 +106,7 @@ export function OddsFace({
         </div>
 
         <span
-          className={`odds shrink-0 rounded-lg border px-3 py-1.5 transition-all duration-200 ease-snap
+          className={`odds shrink-0 rounded-lg border px-3 py-1.5 transition-[transform,border-color,color,background-color] duration-pop ease-out
             group-hover/odds:scale-[1.04] ${pill} ${compact ? 'text-base' : 'text-lg'}`}
         >
           {fmtOdds(current)}

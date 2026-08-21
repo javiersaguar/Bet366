@@ -116,7 +116,7 @@ export function NewMarketForm({
                 key={p.name}
                 type="button"
                 onClick={() => setOptions(p.options)}
-                className="rounded-lg border border-line-strong px-2.5 py-1 text-2xs font-semibold text-content-muted transition hover:border-brand/50 hover:text-brand"
+                className="rounded-lg border border-line-strong px-2.5 py-1 text-micro font-semibold text-content-muted transition hover:border-brand/50 hover:text-brand"
               >
                 {p.name}
               </button>

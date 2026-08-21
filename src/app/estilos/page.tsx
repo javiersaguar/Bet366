@@ -13,16 +13,16 @@ import { Bell } from '@/components/bell';
 import { NotificationRow } from '@/components/notification-row';
 import type { Notification } from '@/lib/types';
 import {
-  IconEye,
-  IconEyeOff,
-  IconLock,
-  IconRepeat,
-  IconSpark,
-  IconTarget,
-  IconTrophy,
-  IconWarning,
-  Medal,
-} from '@/components/icons';
+  ArrowsClockwise,
+  Eye,
+  EyeSlash,
+  Lock,
+  Sparkle,
+  Target,
+  Trophy,
+  Warning,
+} from '@phosphor-icons/react/dist/ssr';
+import { Medal } from '@/components/medal';
 import { Logo, Mark, Wordmark } from '@/components/logo';
 import { ToastProvider } from '@/components/toast';
 import { SkeletonMarketCard, SkeletonRows } from '@/components/skeleton';
@@ -168,16 +168,16 @@ export default function Styleguide() {
     <ToastProvider>
       <div className="mx-auto w-full max-w-3xl space-y-12 px-5 pb-32 pt-10">
         <div className="card border-gold/30 bg-gold/[.06] p-5">
-          <p className="eyebrow !text-gold">Guía de estilos</p>
+          <p className="field-label !text-gold">Guía de estilos</p>
           <p className="mt-1 text-sm leading-relaxed text-content-muted">
             Esto <b className="text-white">no es la app</b>: es el catálogo de piezas sueltas, con
             datos inventados para poder verlas. Las apuestas que salen aquí no existen en tu grupo.
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
-            <a href="/demo" className="btn-primary !py-2 text-2xs">
+            <a href="/demo" className="btn-primary !py-2 text-micro">
               Ver la app con datos de ejemplo
             </a>
-            <a href="/grupos" className="btn-ghost !py-2 text-2xs">
+            <a href="/grupos" className="btn-ghost !py-2 text-micro">
               Ir a la app real
             </a>
           </div>
@@ -206,7 +206,7 @@ export default function Styleguide() {
             ].map(([name, cls]) => (
               <div key={name} className="space-y-1.5">
                 <div className={`h-14 rounded-xl ${cls}`} />
-                <p className="text-2xs text-content-muted">{name}</p>
+                <p className="text-micro text-content-muted">{name}</p>
               </div>
             ))}
           </div>
@@ -219,7 +219,7 @@ export default function Styleguide() {
             ].map(([name, cls]) => (
               <div key={name} className="space-y-1.5">
                 <div className={`h-12 rounded-xl border border-line ${cls}`} />
-                <p className="text-2xs text-content-muted">{name}</p>
+                <p className="text-micro text-content-muted">{name}</p>
               </div>
             ))}
           </div>
@@ -233,7 +233,7 @@ export default function Styleguide() {
             <Avatar profile={javi} size="lg" ring="gold" />
             <Avatar profile={lucia} size="xl" ring="brand" />
           </div>
-          <p className="eyebrow mb-2">Los doce emblemas</p>
+          <p className="field-label mb-2">Los doce emblemas</p>
           <div className="mb-5 grid grid-cols-6 gap-2 sm:grid-cols-12">
             {AVATAR_SYMBOLS.map((sym, i) => (
               <Avatar
@@ -247,7 +247,7 @@ export default function Styleguide() {
               />
             ))}
           </div>
-          <p className="eyebrow mb-2">Los ocho colores</p>
+          <p className="field-label mb-2">Los ocho colores</p>
           <div className="grid grid-cols-8 gap-2">
             {AVATAR_COLORS.map((c) => (
               <Avatar key={c} profile={{ id: c, avatar_symbol: 'bolt', avatar_color: c }} size="md" />
@@ -263,14 +263,14 @@ export default function Styleguide() {
 
         <Block title="Iconos">
           <div className="flex flex-wrap items-center gap-4 text-content-muted">
-            <IconTarget className="h-5 w-5" />
-            <IconLock className="h-5 w-5" />
-            <IconRepeat className="h-5 w-5" />
-            <IconEye className="h-5 w-5" />
-            <IconEyeOff className="h-5 w-5" />
-            <IconTrophy className="h-5 w-5 text-gold" />
-            <IconWarning className="h-5 w-5 text-lose" />
-            <IconSpark className="h-5 w-5 text-brand" />
+            <Target size={20} />
+            <Lock size={20} />
+            <ArrowsClockwise size={20} />
+            <Eye size={20} />
+            <EyeSlash size={20} />
+            <Trophy size={20} weight="fill" className="text-gold" />
+            <Warning size={20} className="text-lose" />
+            <Sparkle size={20} weight="fill" className="text-brand" />
             <Medal position={1} />
             <Medal position={2} />
             <Medal position={3} />
@@ -351,7 +351,7 @@ export default function Styleguide() {
           <Empty
             title="Aún no hay ninguna apuesta"
             hint="Lanza la primera: «¿a que fulanito se lía con menganito?»"
-            action={<button className="btn-primary !py-2 text-2xs">Lanzar la primera</button>}
+            action={<button className="btn-primary !py-2 text-micro">Lanzar la primera</button>}
           />
         </Block>
 

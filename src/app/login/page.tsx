@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { BRAND } from '@/lib/brand';
 import { Logo } from '@/components/logo';
-import { IconLock, IconRepeat, IconTarget } from '@/components/icons';
+import { ArrowsClockwise, Lock, Target } from '@phosphor-icons/react/dist/ssr';
 import { LoginForm } from './login-form';
 
 export default async function LoginPage({
@@ -36,13 +36,13 @@ export default async function LoginPage({
           className="animate-rise mt-8 space-y-2.5"
           style={{ animationDelay: '180ms' }}
         >
-          <Perk icon={<IconTarget />}>Tú pones las cuotas de tus apuestas</Perk>
-          <Perk icon={<IconLock />}>Imposible ganar apostando a todo</Perk>
-          <Perk icon={<IconRepeat />}>Ranking y puntos nuevos cada semana</Perk>
+          <Perk icon={<Target size={19} />}>Tú pones las cuotas de tus apuestas</Perk>
+          <Perk icon={<Lock size={19} />}>Imposible ganar apostando a todo</Perk>
+          <Perk icon={<ArrowsClockwise size={19} />}>Ranking y puntos nuevos cada semana</Perk>
         </ul>
 
         <p
-          className="animate-rise mt-8 text-center text-2xs leading-relaxed text-content-faint"
+          className="animate-rise mt-8 text-center text-micro leading-relaxed text-content-faint"
           style={{ animationDelay: '260ms' }}
         >
           Aquí no se juega con dinero real. Solo puntos, que además se reinician cada semana.

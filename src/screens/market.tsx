@@ -6,7 +6,7 @@ import { OddsFace } from '@/components/odds-button';
 import { Countdown } from '@/components/countdown';
 import { Avatar } from '@/components/avatar';
 import { Celebrate } from '@/components/celebrate';
-import { IconEye, IconEyeOff } from '@/components/icons';
+import { Eye, EyeSlash } from '@phosphor-icons/react/dist/ssr';
 import { BetSlip } from '@/components/bet-slip';
 import { BettorList } from '@/components/bettor-list';
 import { DisputePanel } from '@/components/dispute-panel';
@@ -101,11 +101,11 @@ export function MarketScreen({
           <span className="flex items-center gap-1.5">
             {market.stakes_public ? (
               <>
-                <IconEye className="h-3.5 w-3.5" /> apostantes a la vista
+                <Eye size={14} /> apostantes a la vista
               </>
             ) : (
               <>
-                <IconEyeOff className="h-3.5 w-3.5" /> apuestas a ciegas
+                <EyeSlash size={14} /> apuestas a ciegas
               </>
             )}
           </span>
@@ -114,7 +114,7 @@ export function MarketScreen({
 
       {winner && market.status === 'resolved' && (
         <div className="card border-brand/40 bg-brand/[.08] px-5 py-4">
-          <p className="eyebrow !text-brand/70">Resultado</p>
+          <p className="field-label !text-brand/70">Resultado</p>
           <p className="text-lg font-bold text-brand">{winner.label}</p>
           {market.result_note && <p className="mt-1 text-sm text-brand/80">{market.result_note}</p>}
         </div>
@@ -122,7 +122,7 @@ export function MarketScreen({
 
       {market.status === 'cancelled' && (
         <div className="card px-5 py-4">
-          <p className="eyebrow">Anulada</p>
+          <p className="field-label">Anulada</p>
           <p className="text-sm text-content-muted">
             {market.cancel_reason ?? 'Se anuló y cada uno recuperó sus puntos.'}
           </p>

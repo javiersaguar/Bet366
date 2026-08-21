@@ -5,7 +5,7 @@ import { MarketBadge } from '@/components/ui';
 import { OddsFace } from '@/components/odds-button';
 import { Countdown } from '@/components/countdown';
 import { Avatar } from '@/components/avatar';
-import { IconSpark } from '@/components/icons';
+import { Sparkle } from '@phosphor-icons/react/dist/ssr';
 
 export function MarketCard({
   market,
@@ -39,7 +39,7 @@ export function MarketCard({
         <MarketBadge status={market.status} />
       </div>
 
-      <div className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-2xs text-content-faint">
+      <div className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-micro text-content-faint">
         {market.creator && (
           <span className="flex items-center gap-1.5 text-content-muted">
             <Avatar profile={market.creator} size="sm" />
@@ -72,7 +72,7 @@ export function MarketCard({
         )}
         {iWon && (
           <span className="chip ml-auto border-brand/25 bg-brand/[.08] text-brand">
-            <IconSpark className="h-3 w-3" /> la ganaste
+            <Sparkle size={12} weight="fill" /> la ganaste
           </span>
         )}
       </div>
@@ -98,7 +98,7 @@ export function MarketCard({
       </div>
 
       {market.market_options.length > 4 && (
-        <p className="mt-2 text-2xs text-content-faint">
+        <p className="mt-2 text-micro text-content-faint">
           +{market.market_options.length - 4} opciones más
         </p>
       )}

@@ -18,7 +18,7 @@ export function MarkAllRead({ groupId }: { groupId: string }) {
           if (result.error) toast(result.error, 'error');
         })
       }
-      className="btn-ghost !py-2 text-2xs"
+      className="btn-ghost !py-2 text-micro"
     >
       {pending ? 'Marcando…' : 'Marcar todo leído'}
     </button>

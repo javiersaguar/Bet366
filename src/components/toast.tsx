@@ -41,7 +41,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
             className={`animate-pop-in pointer-events-auto flex max-w-sm items-center gap-2.5 rounded-xl border bg-surface-high/95 px-4 py-2.5 text-sm font-medium text-content shadow-lift backdrop-blur-xl ${TONE[t.kind]}`}
           >
             <span
-              className={`grid h-5 w-5 shrink-0 place-items-center rounded-full border text-2xs font-bold ${TONE[t.kind]}`}
+              className={`grid h-5 w-5 shrink-0 place-items-center rounded-full border text-micro font-bold ${TONE[t.kind]}`}
             >
               {ICON[t.kind]}
             </span>

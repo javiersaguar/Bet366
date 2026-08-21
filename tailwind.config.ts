@@ -48,10 +48,29 @@ export default {
       },
 
       fontFamily: {
-        sans: ['var(--font-inter)', 'system-ui', '-apple-system', 'sans-serif'],
+        sans: ['var(--font-geist-sans)', 'system-ui', '-apple-system', 'sans-serif'],
+        mono: ['var(--font-geist-mono)', 'ui-monospace', 'monospace'],
       },
+
+      /**
+       * Escala tipográfica real: cada nivel lleva su interlineado y su
+       * tracking. El tracking depende del tamaño (Apple, WWDC20): negativo
+       * al crecer, ligeramente positivo al encoger. Un solo letter-spacing
+       * para todo está mal en algún sitio por definición.
+       */
       fontSize: {
-        '2xs': ['0.6875rem', { lineHeight: '1rem', letterSpacing: '0.04em' }],
+        micro: ['0.6875rem', { lineHeight: '0.875rem', letterSpacing: '0.02em' }],
+        caption: ['0.75rem', { lineHeight: '1rem', letterSpacing: '0.01em' }],
+        body: ['0.875rem', { lineHeight: '1.35rem', letterSpacing: '0' }],
+        'body-lg': ['1rem', { lineHeight: '1.5rem', letterSpacing: '-0.006em' }],
+        title: ['1.0625rem', { lineHeight: '1.3rem', letterSpacing: '-0.014em' }],
+        'title-lg': ['1.375rem', { lineHeight: '1.6rem', letterSpacing: '-0.02em' }],
+        display: ['1.75rem', { lineHeight: '1.95rem', letterSpacing: '-0.028em' }],
+        'display-lg': ['2.25rem', { lineHeight: '2.4rem', letterSpacing: '-0.034em' }],
+        /* Cifras: leading ajustado para que no descoloquen la fila. */
+        odds: ['1.125rem', { lineHeight: '1.125rem', letterSpacing: '-0.02em' }],
+        'odds-lg': ['1.5rem', { lineHeight: '1.5rem', letterSpacing: '-0.026em' }],
+        figure: ['1.375rem', { lineHeight: '1.375rem', letterSpacing: '-0.024em' }],
       },
       letterSpacing: { tightest: '-0.035em' },
       borderRadius: { lg: '10px', xl: '13px', '2xl': '18px', '3xl': '26px' },
@@ -64,9 +83,19 @@ export default {
         inset: 'inset 0 1px 0 rgba(255,255,255,.05)',
       },
 
+      /* Curvas tomadas de la skill de animación, no aproximadas. */
       transitionTimingFunction: {
-        smooth: 'cubic-bezier(.22,.68,.28,1)',
-        snap: 'cubic-bezier(.2,.9,.3,1.08)',
+        out: 'cubic-bezier(0.23, 1, 0.32, 1)',
+        'in-out': 'cubic-bezier(0.77, 0, 0.175, 1)',
+        drawer: 'cubic-bezier(0.32, 0.72, 0, 1)',
+      },
+
+      /* Presupuesto de duración: la interfaz no pasa de 300ms. */
+      transitionDuration: {
+        press: '140ms',
+        pop: '180ms',
+        panel: '240ms',
+        sheet: '300ms',
       },
 
       keyframes: {

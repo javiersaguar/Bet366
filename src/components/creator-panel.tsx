@@ -19,7 +19,7 @@ export function CreatorPanel({
 
   return (
     <section className="card border-brand/25 p-5">
-      <h2 className="eyebrow !mb-1.5 !text-brand">
+      <h2 className="field-label !mb-1.5 !text-brand">
         Tú lanzaste esta apuesta
       </h2>
       <p className="mb-4 text-sm leading-relaxed text-content-muted">
@@ -96,7 +96,7 @@ function ResultForm({ groupId, market }: { groupId: string; market: MarketWithOp
         {market.status === 'pending' ? 'Corregir resultado' : 'Publicar resultado'}
       </SubmitButton>
 
-      <p className="text-center text-2xs text-content-faint">
+      <p className="text-center text-micro text-content-faint">
         {market.status === 'pending' && market.dispute_until
           ? `Se paga ${relative(market.dispute_until)} si nadie lo impugna.`
           : 'Se abrirá un plazo para que el grupo lo impugne antes de repartir.'}
