@@ -7,12 +7,24 @@
 create extension if not exists "pgcrypto";
 
 -- ---------------------------------------------------------------- perfiles
+-- Avatares: un simbolo vectorial sobre un color, en vez de emojis (que
+-- cambian de aspecto en cada movil). Ver src/lib/avatars.ts.
+create type public.avatar_symbol as enum (
+  'bolt', 'crown', 'flame', 'star', 'target', 'diamond',
+  'shield', 'wave', 'peak', 'spade', 'horseshoe', 'orbit'
+);
+
+create type public.avatar_color as enum (
+  'mint', 'gold', 'sky', 'violet', 'rose', 'cyan', 'amber', 'lime'
+);
+
 create table public.profiles (
-  id           uuid primary key references auth.users(id) on delete cascade,
-  username     text not null unique check (username ~ '^[a-z0-9_]{3,20}$'),
-  display_name text not null check (char_length(display_name) between 2 and 40),
-  avatar_emoji text not null default '🎲',
-  created_at   timestamptz not null default now()
+  id            uuid primary key references auth.users(id) on delete cascade,
+  username      text not null unique check (username ~ '^[a-z0-9_]{3,20}$'),
+  display_name  text not null check (char_length(display_name) between 2 and 40),
+  avatar_symbol public.avatar_symbol not null default 'bolt',
+  avatar_color  public.avatar_color  not null default 'mint',
+  created_at    timestamptz not null default now()
 );
 
 -- ---------------------------------------------------------------- grupos

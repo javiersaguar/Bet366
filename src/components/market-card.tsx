@@ -5,6 +5,7 @@ import { MarketBadge } from '@/components/ui';
 import { OddsFace } from '@/components/odds-button';
 import { Countdown } from '@/components/countdown';
 import { Avatar } from '@/components/avatar';
+import { IconSpark } from '@/components/icons';
 
 export function MarketCard({
   market,
@@ -70,7 +71,7 @@ export function MarketCard({
         )}
         {iWon && (
           <span className="chip ml-auto border-brand/25 bg-brand/[.08] text-brand">
-            🎉 la ganaste
+            <IconSpark className="h-3 w-3" /> la ganaste
           </span>
         )}
       </div>

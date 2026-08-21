@@ -69,7 +69,7 @@ export default async function MyBetsPage({ params }: { params: Promise<{ groupId
       <section>
         <SectionTitle count={wagers.length}>Apuestas que he hecho</SectionTitle>
         {wagers.length === 0 ? (
-          <Empty icon="🎟️" title="Todavía no has apostado nada" hint="Date una vuelta por el tablón." />
+          <Empty title="Todavía no has apostado nada" hint="Date una vuelta por el tablón y busca algo que te suene." />
         ) : (
           <ul className="card hairline overflow-hidden">
             {wagers.map((w) => {
@@ -121,7 +121,15 @@ export default async function MyBetsPage({ params }: { params: Promise<{ groupId
           Apuestas que he lanzado
         </SectionTitle>
         {restLaunched.length === 0 && needsResult.length === 0 ? (
-          <Empty icon="📣" title="No has lanzado ninguna" hint="Se te tiene que ocurrir algo bueno." />
+          <Empty
+            title="No has lanzado ninguna"
+            hint="Se te tiene que ocurrir algo bueno."
+            action={
+              <Link href={`/grupos/${groupId}/nueva`} className="btn-ghost !py-2 text-2xs">
+                Lanzar la primera
+              </Link>
+            }
+          />
         ) : (
           <ul className="card hairline overflow-hidden">
             {restLaunched.map((m) => (

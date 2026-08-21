@@ -23,6 +23,8 @@ insert into auth.users (id, email) values
   ('33333333-3333-3333-3333-333333333333', 'marcos@bet366.test'),
   ('44444444-4444-4444-4444-444444444444', 'tramposo@bet366.test');
 select test.check('el alta de usuario crea perfil solo', (select count(*) from public.profiles) = 4);
+select test.check('a cada perfil se le reparte un emblema valido', (
+  select bool_and(avatar_symbol is not null and avatar_color is not null) from public.profiles));
 
 -- ======================================================= grupo y miembros
 set test.uid = '11111111-1111-1111-1111-111111111111';

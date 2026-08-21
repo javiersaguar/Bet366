@@ -45,7 +45,7 @@ export async function loadGroup(groupId: string): Promise<GroupContext> {
 
   const { data: memberRows } = await supabase
     .from('group_members')
-    .select('profiles(id, username, display_name, avatar_emoji)')
+    .select('profiles(id, username, display_name, avatar_symbol, avatar_color)')
     .eq('group_id', groupId);
 
   const members = (memberRows ?? [])

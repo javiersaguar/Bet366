@@ -12,7 +12,8 @@ export type Profile = {
   id: string;
   username: string;
   display_name: string;
-  avatar_emoji: string;
+  avatar_symbol: string;
+  avatar_color: string;
 };
 
 export type Group = {

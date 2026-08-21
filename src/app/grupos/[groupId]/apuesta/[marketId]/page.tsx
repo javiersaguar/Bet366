@@ -9,6 +9,7 @@ import { OddsFace } from '@/components/odds-button';
 import { Countdown } from '@/components/countdown';
 import { Avatar } from '@/components/avatar';
 import { Celebrate } from '@/components/celebrate';
+import { IconEye, IconEyeOff } from '@/components/icons';
 import { BetSlip } from '@/components/bet-slip';
 import { BettorList } from '@/components/bettor-list';
 import { DisputePanel } from '@/components/dispute-panel';
@@ -106,7 +107,17 @@ export default async function MarketPage({
             </>
           )}
           <span className="text-content-faint/40">·</span>
-          <span>{market.stakes_public ? '👀 apostantes a la vista' : '🔒 apuestas a ciegas'}</span>
+          <span className="flex items-center gap-1.5">
+            {market.stakes_public ? (
+              <>
+                <IconEye className="h-3.5 w-3.5" /> apostantes a la vista
+              </>
+            ) : (
+              <>
+                <IconEyeOff className="h-3.5 w-3.5" /> apuestas a ciegas
+              </>
+            )}
+          </span>
         </div>
       </header>
 

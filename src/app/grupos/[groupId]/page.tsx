@@ -55,9 +55,13 @@ export default async function BoardPage({ params }: { params: Promise<{ groupId:
 
       {markets.length === 0 && (
         <Empty
-          icon="🎲"
           title="Aún no hay ninguna apuesta"
           hint="Lanza la primera: «¿a que fulanito se lía con menganito?»"
+          action={
+            <Link href={`/grupos/${groupId}/nueva`} className="btn-primary !py-2 text-2xs">
+              Lanzar la primera
+            </Link>
+          }
         />
       )}
 

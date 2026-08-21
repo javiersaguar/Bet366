@@ -86,6 +86,17 @@ El creador puede además **anular apuestas sueltas que considere fraudulentas**
 un motivo que ve todo el grupo. Al anular, se devuelven los puntos y la cuota se
 recalcula.
 
+### Avatares
+
+Nada de emojis: cada persona lleva un emblema vectorial, un símbolo sobre un
+color. Doce símbolos por ocho colores dan 96 combinaciones, se ven igual en
+cualquier móvil y se eligen desde la pestaña de perfil. Al darse de alta se
+reparte uno al azar para que dos recién llegados no se confundan entre sí.
+
+Los símbolos viven en [`src/components/avatar-symbol.tsx`](src/components/avatar-symbol.tsx)
+y la paleta en [`src/lib/avatars.ts`](src/lib/avatars.ts); en la base de datos
+son dos enums, así que no cabe un valor inventado.
+
 ### Apostantes públicos o a ciegas
 
 Al lanzar una apuesta se elige si los apostantes y sus cantidades son visibles.

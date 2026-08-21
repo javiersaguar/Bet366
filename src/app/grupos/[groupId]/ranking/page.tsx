@@ -2,17 +2,11 @@ import { createClient } from '@/lib/supabase/server';
 import { loadGroup, loadStandings } from '@/lib/data';
 import { points, relative } from '@/lib/format';
 import { SectionTitle } from '@/components/ui';
+import { IconTrophy, Medal } from '@/components/icons';
 import { Avatar } from '@/components/avatar';
 import { Countdown } from '@/components/countdown';
-import { ProfileForm } from './profile-form';
 
 export const dynamic = 'force-dynamic';
-
-const PODIUM = [
-  { medal: '🥇', ring: 'gold' as const, glow: 'shadow-[0_0_0_1px_rgba(245,194,75,.25)]' },
-  { medal: '🥈', ring: undefined, glow: '' },
-  { medal: '🥉', ring: undefined, glow: '' },
-];
 
 export default async function RankingPage({ params }: { params: Promise<{ groupId: string }> }) {
   const { groupId } = await params;
@@ -47,7 +41,6 @@ export default async function RankingPage({ params }: { params: Promise<{ groupI
           {standings.map((s, i) => {
             const isMe = s.profile.id === me.id;
             const total = s.points + s.staked;
-            const podium = PODIUM[i];
             const width = best > 0 ? (total / best) * 100 : 0;
 
             return (
@@ -64,13 +57,7 @@ export default async function RankingPage({ params }: { params: Promise<{ groupI
                   style={{ width: `${width}%` }}
                 />
                 <div className="relative flex items-center gap-3 px-4 py-3.5">
-                  <span
-                    className={`num w-6 shrink-0 text-center text-sm font-bold ${
-                      i === 0 ? 'text-gold' : 'text-content-faint'
-                    }`}
-                  >
-                    {podium?.medal ?? i + 1}
-                  </span>
+                  <Medal position={i + 1} className="h-7 w-7 shrink-0" />
 
                   <Avatar
                     profile={s.profile}
@@ -131,7 +118,7 @@ export default async function RankingPage({ params }: { params: Promise<{ groupI
                   className="flex items-center justify-between gap-3 px-4 py-3"
                 >
                   <span className="flex items-center gap-2.5 text-sm text-content-muted">
-                    <span className="text-base">🏆</span>
+                    <IconTrophy className="h-4 w-4 text-gold" />
                     Semana {h.season_number} ·{' '}
                     <strong className="text-white">{who?.display_name ?? 'Alguien'}</strong>
                   </span>
@@ -143,10 +130,6 @@ export default async function RankingPage({ params }: { params: Promise<{ groupI
         </section>
       )}
 
-      <section>
-        <SectionTitle>Tu perfil</SectionTitle>
-        <ProfileForm me={me} />
-      </section>
     </div>
   );
 }

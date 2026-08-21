@@ -5,6 +5,7 @@ import type { MarketWithOptions, Profile, Wager } from '@/lib/types';
 import { dateTime, odds as fmtOdds, points } from '@/lib/format';
 import { voidWagerAction } from '@/lib/actions';
 import { Alert, SectionTitle, SubmitButton, WagerBadge } from '@/components/ui';
+import { Avatar } from '@/components/avatar';
 
 export function BettorList({
   market,
@@ -56,10 +57,10 @@ export function BettorList({
           const who = profilesById[w.user_id];
           return (
             <li key={w.id} className="px-4 py-3">
-              <div className="flex items-center justify-between gap-3">
-                <div className="min-w-0">
+              <div className="flex items-center gap-3">
+                {who && <Avatar profile={who} size="sm" />}
+                <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold text-content">
-                    {who?.avatar_emoji ?? '👤'}{' '}
                     {w.user_id === meId ? 'Tú' : (who?.display_name ?? 'Alguien')}
                     <span className="font-normal text-content-muted"> · {labelOf(w.option_id)}</span>
                   </p>

@@ -141,8 +141,16 @@ begin
     v_name := substr(v_base, 1, 16) || v_try::text;
   end loop;
 
-  insert into public.profiles (id, username, display_name)
-  values (new.id, v_name, coalesce(nullif(new.raw_user_meta_data->>'display_name', ''), v_name));
+  -- Se reparte un emblema al azar para que dos recien llegados no se
+  -- confundan entre si; cada uno puede cambiarlo luego en su perfil.
+  insert into public.profiles (id, username, display_name, avatar_symbol, avatar_color)
+  values (
+    new.id,
+    v_name,
+    coalesce(nullif(new.raw_user_meta_data->>'display_name', ''), v_name),
+    (enum_range(null::public.avatar_symbol))[1 + floor(random() * 12)::int],
+    (enum_range(null::public.avatar_color))[1 + floor(random() * 8)::int]
+  );
   return new;
 end; $$;
 

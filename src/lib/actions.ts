@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { AVATAR_COLORS, AVATAR_SYMBOLS } from '@/lib/avatars';
 
 export type ActionResult = { error?: string; ok?: true };
 
@@ -180,11 +181,18 @@ export async function updateProfileAction(
   } = await supabase.auth.getUser();
   if (!user) return { error: 'No has iniciado sesión.' };
 
+  const symbol = String(formData.get('avatar_symbol') ?? '');
+  const color = String(formData.get('avatar_color') ?? '');
+  if (!AVATAR_SYMBOLS.includes(symbol as never) || !AVATAR_COLORS.includes(color as never)) {
+    return { error: 'Ese avatar no es válido.' };
+  }
+
   const { error } = await supabase
     .from('profiles')
     .update({
       display_name: String(formData.get('display_name') ?? '').trim(),
-      avatar_emoji: String(formData.get('avatar_emoji') ?? '🎲').slice(0, 4),
+      avatar_symbol: symbol,
+      avatar_color: color,
     })
     .eq('id', user.id);
 

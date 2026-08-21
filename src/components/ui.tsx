@@ -71,15 +71,49 @@ export function WagerBadge({ status }: { status: WagerStatus }) {
   return <span className={`chip ${s.className}`}>{s.text}</span>;
 }
 
-export function Empty({ icon, title, hint }: { icon: string; title: string; hint?: string }) {
+export function Empty({
+  title,
+  hint,
+  action,
+}: {
+  title: string;
+  hint?: string;
+  action?: React.ReactNode;
+}) {
   return (
-    <div className="card grid place-items-center gap-2.5 px-6 py-16 text-center">
-      <span className="grid h-12 w-12 place-items-center rounded-2xl border border-line bg-surface-sunken text-xl">
-        {icon}
-      </span>
-      <p className="font-semibold text-white">{title}</p>
-      {hint && <p className="max-w-[26ch] text-sm leading-relaxed text-content-muted">{hint}</p>}
+    <div className="card grid place-items-center gap-3 px-6 py-16 text-center">
+      {/* Marca de agua: un boleto vacío, en lugar de un emoji. */}
+      <svg
+        viewBox="0 0 48 48"
+        className="h-12 w-12 text-content-faint/50"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden
+      >
+        <path d="M8 11a3 3 0 0 1 3-3h26a3 3 0 0 1 3 3v29l-5.3-3.2-5.4 3.2-5.3-3.2-5.4 3.2-5.3-3.2L8 40V11Z" />
+        <path d="M17 19h14M17 26h8" />
+      </svg>
+      <div className="space-y-1">
+        <p className="font-semibold text-white">{title}</p>
+        {hint && <p className="mx-auto max-w-[28ch] text-sm leading-relaxed text-content-muted">{hint}</p>}
+      </div>
+      {action}
     </div>
+  );
+}
+
+/** Botón en píldora para las cabeceras de sección. */
+export function PillLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <a
+      href={href}
+      className="inline-flex items-center gap-1 rounded-full border border-line-strong px-3 py-1 text-2xs font-semibold text-content-muted transition-all duration-200 hover:border-brand/50 hover:text-brand"
+    >
+      {children}
+    </a>
   );
 }
 

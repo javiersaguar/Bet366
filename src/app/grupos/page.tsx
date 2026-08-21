@@ -4,6 +4,7 @@ import { points } from '@/lib/format';
 import { JoinGroupForm } from './join-form';
 import { Empty } from '@/components/ui';
 import { Avatar } from '@/components/avatar';
+import { IconTarget } from '@/components/icons';
 import { Wordmark } from '@/components/logo';
 import { signOutAction } from '@/lib/actions';
 
@@ -43,25 +44,40 @@ export default async function GroupsPage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('display_name, avatar_emoji')
+    .select('display_name, avatar_symbol, avatar_color')
     .eq('id', user!.id)
     .single();
 
   return (
     <main className="mx-auto w-full max-w-2xl px-5 py-8 pb-24">
-      <header className="mb-8 flex items-start justify-between gap-4">
-        <div>
-          <p className="text-sm text-content-muted">Hola, {profile?.display_name ?? 'crack'}</p>
-          <h1 className="text-2xl font-bold text-white">Tus grupos</h1>
+      <header className="animate-rise mb-8">
+        <div className="mb-7 flex items-center justify-between">
+          <Wordmark className="text-lg" />
+          <form action={signOutAction}>
+            <button className="btn-quiet !px-3 !py-1.5 text-2xs">Salir</button>
+          </form>
         </div>
-        <form action={signOutAction}>
-          <button className="btn-ghost !px-3 !py-2 text-xs">Salir</button>
-        </form>
+        <div className="flex items-center gap-3.5">
+          {profile && (
+            <Avatar
+              profile={{
+                id: user!.id,
+                avatar_symbol: profile.avatar_symbol,
+                avatar_color: profile.avatar_color,
+              }}
+              size="lg"
+              ring="brand"
+            />
+          )}
+          <div>
+            <p className="text-sm text-content-muted">Hola, {profile?.display_name ?? 'crack'}</p>
+            <h1 className="text-2xl font-bold text-white">Tus grupos</h1>
+          </div>
+        </div>
       </header>
 
       {groups.length === 0 ? (
         <Empty
-          icon="🫂"
           title="Todavía no estás en ningún grupo"
           hint="Crea uno para tu pandilla o entra con el código que te hayan pasado."
         />
@@ -75,7 +91,7 @@ export default async function GroupsPage() {
               >
                 <div className="min-w-0">
                   <p className="truncate font-semibold text-white">{group.name}</p>
-                  <p className="text-xs text-content-muted">
+                  <p className="text-2xs text-content-faint">
                     {role === 'owner' ? 'Eres el jefe' : 'Miembro'} · código{' '}
                     <span className="num text-content-muted">{group.invite_code}</span>
                   </p>
@@ -98,11 +114,11 @@ export default async function GroupsPage() {
           href="/grupos/nuevo"
           className="card-interactive grid place-content-center gap-1 px-5 py-6 text-center hover:border-brand/40"
         >
-          <span className="mx-auto grid h-11 w-11 place-items-center rounded-xl border border-line bg-surface-sunken text-xl">
-            🎯
+          <span className="mx-auto grid h-11 w-11 place-items-center rounded-xl border border-line bg-surface-sunken text-brand">
+            <IconTarget className="h-5 w-5" />
           </span>
           <span className="font-semibold text-white">Crear un grupo</span>
-          <span className="text-xs text-content-muted">Y repartir el código a la pandilla</span>
+          <span className="text-2xs text-content-muted">Y repartir el código a la pandilla</span>
         </Link>
       </div>
     </main>

@@ -7,6 +7,20 @@ import { DisputePanel } from '@/components/dispute-panel';
 import { BettorList } from '@/components/bettor-list';
 import { OddsFace } from '@/components/odds-button';
 import { Avatar } from '@/components/avatar';
+import { AVATAR_COLORS, AVATAR_SYMBOLS } from '@/lib/avatars';
+import { AvatarPickerDemo } from './picker-demo';
+import { BottomNav } from '@/components/bottom-nav';
+import {
+  IconEye,
+  IconEyeOff,
+  IconLock,
+  IconRepeat,
+  IconSpark,
+  IconTarget,
+  IconTrophy,
+  IconWarning,
+  Medal,
+} from '@/components/icons';
 import { Logo, Mark, Wordmark } from '@/components/logo';
 import { ToastProvider } from '@/components/toast';
 import { SkeletonMarketCard, SkeletonRows } from '@/components/skeleton';
@@ -18,9 +32,9 @@ import type { MarketStatus, WagerStatus } from '@/lib/types';
  * Guía de estilos. Solo existe en desarrollo (`npm run dev`) y sirve para ver
  * todas las piezas juntas sin tener que reproducir cada estado en la app real.
  */
-const javi: Profile = { id: 'u1', username: 'javi', display_name: 'Javi', avatar_emoji: '👑' };
-const lucia: Profile = { id: 'u2', username: 'lucia', display_name: 'Lucía', avatar_emoji: '🔥' };
-const marcos: Profile = { id: 'u3', username: 'marcos', display_name: 'Marcos', avatar_emoji: '🐐' };
+const javi: Profile = { id: 'u1', username: 'javi', display_name: 'Javi', avatar_symbol: 'crown', avatar_color: 'gold' };
+const lucia: Profile = { id: 'u2', username: 'lucia', display_name: 'Lucía', avatar_symbol: 'flame', avatar_color: 'rose' };
+const marcos: Profile = { id: 'u3', username: 'marcos', display_name: 'Marcos', avatar_symbol: 'bolt', avatar_color: 'cyan' };
 
 const opts = (rows: [string, number, number, number][], mid: string) =>
   rows.map(([label, current_odds, pool, opening], i) => ({
@@ -129,12 +143,12 @@ export default function Styleguide() {
         <Block title="Color">
           <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
             {[
-              ['brand', 'bg-brand'],
-              ['win', 'bg-win'],
-              ['lose', 'bg-lose'],
-              ['info', 'bg-info'],
-              ['vote', 'bg-vote'],
-              ['gold', 'bg-gold'],
+              ['marca / ganada', 'bg-brand'],
+              ['perdida', 'bg-lose'],
+              ['en juego', 'bg-info'],
+              ['votación', 'bg-vote'],
+              ['ranking', 'bg-gold'],
+              ['fondo', 'bg-surface-high'],
             ].map(([name, cls]) => (
               <div key={name} className="space-y-1.5">
                 <div className={`h-14 rounded-xl ${cls}`} />
@@ -158,12 +172,55 @@ export default function Styleguide() {
         </Block>
 
         <Block title="Avatares">
-          <div className="flex items-center gap-3">
+          <div className="mb-5 flex flex-wrap items-end gap-3">
+            <Avatar profile={javi} size="xs" />
             <Avatar profile={javi} size="sm" />
-            <Avatar profile={lucia} />
-            <Avatar profile={marcos} size="lg" />
+            <Avatar profile={javi} />
             <Avatar profile={javi} size="lg" ring="gold" />
-            <Avatar profile={lucia} size="lg" ring="brand" />
+            <Avatar profile={lucia} size="xl" ring="brand" />
+          </div>
+          <p className="eyebrow mb-2">Los doce emblemas</p>
+          <div className="mb-5 grid grid-cols-6 gap-2 sm:grid-cols-12">
+            {AVATAR_SYMBOLS.map((sym, i) => (
+              <Avatar
+                key={sym}
+                profile={{
+                  id: sym,
+                  avatar_symbol: sym,
+                  avatar_color: AVATAR_COLORS[i % AVATAR_COLORS.length],
+                }}
+                size="md"
+              />
+            ))}
+          </div>
+          <p className="eyebrow mb-2">Los ocho colores</p>
+          <div className="grid grid-cols-8 gap-2">
+            {AVATAR_COLORS.map((c) => (
+              <Avatar key={c} profile={{ id: c, avatar_symbol: 'bolt', avatar_color: c }} size="md" />
+            ))}
+          </div>
+        </Block>
+
+        <Block title="Selector de perfil">
+          <div className="card p-5">
+            <AvatarPickerDemo />
+          </div>
+        </Block>
+
+        <Block title="Iconos">
+          <div className="flex flex-wrap items-center gap-4 text-content-muted">
+            <IconTarget className="h-5 w-5" />
+            <IconLock className="h-5 w-5" />
+            <IconRepeat className="h-5 w-5" />
+            <IconEye className="h-5 w-5" />
+            <IconEyeOff className="h-5 w-5" />
+            <IconTrophy className="h-5 w-5 text-gold" />
+            <IconWarning className="h-5 w-5 text-lose" />
+            <IconSpark className="h-5 w-5 text-brand" />
+            <Medal position={1} />
+            <Medal position={2} />
+            <Medal position={3} />
+            <Medal position={7} className="h-7 w-7" />
           </div>
         </Block>
 
@@ -238,9 +295,9 @@ export default function Styleguide() {
 
         <Block title="Vacío">
           <Empty
-            icon="🎲"
             title="Aún no hay ninguna apuesta"
             hint="Lanza la primera: «¿a que fulanito se lía con menganito?»"
+            action={<button className="btn-primary !py-2 text-2xs">Lanzar la primera</button>}
           />
         </Block>
 
@@ -302,6 +359,13 @@ export default function Styleguide() {
               memberCount={4}
             />
           </div>
+        </Block>
+
+        <Block title="Navegación inferior">
+          <p className="text-sm text-content-muted">
+            Va anclada al fondo de la pantalla, así que se ve ahí abajo mientras miras esta guía.
+          </p>
+          <BottomNav groupId="g" me={javi} />
         </Block>
 
         <Block title="Apostantes">

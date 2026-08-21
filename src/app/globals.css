@@ -5,6 +5,7 @@
 @layer base {
   :root {
     color-scheme: dark;
+    --glyph-idle: #6b7385;
   }
 
   html {
