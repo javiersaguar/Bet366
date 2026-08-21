@@ -23,6 +23,7 @@ import {
   Warning,
 } from '@phosphor-icons/react/dist/ssr';
 import { Medal } from '@/components/medal';
+import { BUILD_STAMP } from '@/lib/build';
 import { Logo, Mark, Wordmark } from '@/components/logo';
 import { ToastProvider } from '@/components/toast';
 import { SkeletonMarketCard, SkeletonRows } from '@/components/skeleton';
@@ -168,7 +169,9 @@ export default function Styleguide() {
     <ToastProvider>
       <div className="mx-auto w-full max-w-3xl space-y-12 px-5 pb-32 pt-10">
         <div className="card border-gold/30 bg-gold/[.06] p-5">
-          <p className="field-label !text-gold">Guía de estilos</p>
+          <p className="field-label !text-gold">
+            Guía de estilos <span className="tnum ml-1 opacity-70">{BUILD_STAMP}</span>
+          </p>
           <p className="mt-1 text-sm leading-relaxed text-content-muted">
             Esto <b className="text-white">no es la app</b>: es el catálogo de piezas sueltas, con
             datos inventados para poder verlas. Las apuestas que salen aquí no existen en tu grupo.

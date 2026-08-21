@@ -207,6 +207,10 @@ npm install
 npm run dev
 ```
 
+Si algo no aparece donde debería, `.\diagnostico.ps1` dice en qué estado está
+tu copia y qué rutas responden. La cabecera de `/demo` y `/estilos` muestra
+además el sello de la versión que estás viendo.
+
 **En Windows**, si al arrancar sale `EACCES: permission denied 0.0.0.0:3000`, es
 que Hyper-V o WSL tienen reservado ese puerto. No es un problema de permisos:
 usa otro puerto.

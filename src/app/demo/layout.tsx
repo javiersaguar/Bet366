@@ -7,6 +7,7 @@ import { CountUp } from '@/components/count-up';
 import { BottomNav } from '@/components/bottom-nav';
 import { Countdown } from '@/components/countdown';
 import { Bell } from '@/components/bell';
+import { BUILD_STAMP } from '@/lib/build';
 
 /**
  * Vista de demostración: las pantallas reales de la app con datos inventados.
@@ -25,6 +26,7 @@ export default function DemoLayout({ children }: { children: React.ReactNode }) 
           <Link href="/grupos" className="underline underline-offset-2">
             Ir a la app real
           </Link>
+          <span className="tnum ml-2 opacity-60">{BUILD_STAMP}</span>
         </div>
 
         <header className="sticky top-0 z-30 border-b border-line bg-canvas/75 backdrop-blur-xl">
