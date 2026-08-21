@@ -46,8 +46,9 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOi...`}
         </p>
       </div>
 
-      <p className="mt-6 text-center text-2xs text-content-faint">
-        Mientras tanto puedes ver todas las piezas de la interfaz en <a href="/estilos" className="link">/estilos</a>.
+      <p className="mt-6 text-center text-2xs leading-relaxed text-content-faint">
+        Mientras tanto puedes recorrer la app con datos de ejemplo en{' '}
+        <a href="/demo" className="link">/demo</a>.
       </p>
     </main>
   );

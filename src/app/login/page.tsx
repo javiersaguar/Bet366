@@ -46,6 +46,10 @@ export default async function LoginPage({
           style={{ animationDelay: '260ms' }}
         >
           Aquí no se juega con dinero real. Solo puntos, que además se reinician cada semana.
+          <br />
+          <a href="/demo" className="link">
+            Echa un vistazo sin registrarte
+          </a>
         </p>
       </div>
     </main>

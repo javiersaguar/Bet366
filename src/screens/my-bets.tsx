@@ -5,12 +5,12 @@ import { Empty, MarketBadge, SectionTitle, WagerBadge } from '@/components/ui';
 
 /** Lo que has apostado y lo que has lanzado tú. */
 export function MyBetsScreen({
-  groupId,
+  basePath,
   me,
   markets,
   wagers,
 }: {
-  groupId: string;
+  basePath: string;
   me: Profile;
   markets: MarketWithOptions[];
   wagers: Wager[];
@@ -42,7 +42,7 @@ export function MyBetsScreen({
             {needsResult.map((m) => (
               <Link
                 key={m.id}
-                href={`/grupos/${groupId}/apuesta/${m.id}`}
+                href={`${basePath}/apuesta/${m.id}`}
                 className="group card-interactive block border-gold/30 p-4 hover:border-gold/50"
               >
                 <p className="font-semibold text-white">{m.title}</p>
@@ -73,7 +73,7 @@ export function MyBetsScreen({
               return (
                 <li key={w.id}>
                   <Link
-                    href={`/grupos/${groupId}/apuesta/${w.market_id}`}
+                    href={`${basePath}/apuesta/${w.market_id}`}
                     className="block px-4 py-3.5 transition hover:bg-surface-raised"
                   >
                     <div className="flex items-start justify-between gap-3">
@@ -106,7 +106,7 @@ export function MyBetsScreen({
           count={launched.length}
           action={
             <Link
-              href={`/grupos/${groupId}/nueva`}
+              href={`${basePath}/nueva`}
               className="text-2xs font-semibold uppercase tracking-[0.08em] text-brand hover:text-brand-bright"
             >
               + Nueva
@@ -120,7 +120,7 @@ export function MyBetsScreen({
             title="No has lanzado ninguna"
             hint="Se te tiene que ocurrir algo bueno."
             action={
-              <Link href={`/grupos/${groupId}/nueva`} className="btn-ghost !py-2 text-2xs">
+              <Link href={`${basePath}/nueva`} className="btn-ghost !py-2 text-2xs">
                 Lanzar la primera
               </Link>
             }
@@ -130,7 +130,7 @@ export function MyBetsScreen({
             {restLaunched.map((m) => (
               <li key={m.id}>
                 <Link
-                  href={`/grupos/${groupId}/apuesta/${m.id}`}
+                  href={`${basePath}/apuesta/${m.id}`}
                   className="flex items-start justify-between gap-3 px-4 py-3.5 transition hover:bg-surface-raised"
                 >
                   <div className="min-w-0">

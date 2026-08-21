@@ -12,5 +12,5 @@ export default async function NotificationsPage({
   await loadGroup(groupId);
   const items = await loadNotifications(groupId);
 
-  return <NotificationsScreen groupId={groupId} items={items} />;
+  return <NotificationsScreen basePath={`/grupos/${groupId}`} groupId={groupId} items={items} />;
 }

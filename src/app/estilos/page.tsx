@@ -359,7 +359,7 @@ export default function Styleguide() {
           <div className="stagger space-y-2.5">
             {[m1, m2, m3].map((m, i) => (
               <div key={m.id} style={{ '--i': i } as React.CSSProperties}>
-                <MarketCard market={m} groupId="g" myWagers={wagers} />
+                <MarketCard market={m} basePath="/demo" myWagers={wagers} />
               </div>
             ))}
           </div>
@@ -423,7 +423,7 @@ export default function Styleguide() {
           </div>
           <ul className="card hairline overflow-hidden">
             {AVISOS.map((n, i) => (
-              <NotificationRow key={n.id} notification={n} groupId="g" index={i} />
+              <NotificationRow key={n.id} notification={n} basePath="/demo" index={i} />
             ))}
           </ul>
         </Block>

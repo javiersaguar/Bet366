@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
 import { BALANCE, DEMO_GROUP_ID, GROUP, ME, SEASON } from '@/lib/fixtures';
 import { countUnreadDemo } from '@/app/demo/unread';
 import { Mark } from '@/components/logo';
@@ -10,17 +9,22 @@ import { Countdown } from '@/components/countdown';
 import { Bell } from '@/components/bell';
 
 /**
- * Vista de demostración: las pantallas reales de la app con datos inventados,
- * para poder verlas sin montar Supabase. Solo existe en desarrollo.
+ * Vista de demostración: las pantallas reales de la app con datos inventados.
+ *
+ * Está disponible siempre, también en producción. Antes iba detrás de una
+ * comprobación de NODE_ENV y eso la hacía desaparecer justo donde más se
+ * quiere mirar: en el móvil, sobre el despliegue real. No hay nada que
+ * proteger aquí, los datos son inventados y no tocan la base.
  */
 export default function DemoLayout({ children }: { children: React.ReactNode }) {
-  if (process.env.NODE_ENV === 'production') notFound();
-
   return (
     <ToastProvider>
       <div className="min-h-dvh">
         <div className="border-b border-gold/25 bg-gold/[.07] px-5 py-2 text-center text-2xs font-semibold text-gold">
-          Vista de demostración · datos inventados · la app real está en /grupos
+          Demostración con datos inventados.{' '}
+          <Link href="/grupos" className="underline underline-offset-2">
+            Ir a la app real
+          </Link>
         </div>
 
         <header className="sticky top-0 z-30 border-b border-line bg-canvas/75 backdrop-blur-xl">

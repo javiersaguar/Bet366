@@ -16,9 +16,12 @@ function dayLabel(iso: string): string {
 
 /** El diario de lo que ha pasado en el grupo, solo lo tuyo. */
 export function NotificationsScreen({
+  basePath,
   groupId,
   items,
 }: {
+  basePath: string;
+  /** Necesario para marcar los avisos como leídos en la base. */
   groupId: string;
   items: Notification[];
 }) {
@@ -57,7 +60,7 @@ export function NotificationsScreen({
               <SectionTitle count={day.items.length}>{day.label}</SectionTitle>
               <ul className="stagger card hairline overflow-hidden">
                 {day.items.map((n, i) => (
-                  <NotificationRow key={n.id} notification={n} groupId={groupId} index={i} />
+                  <NotificationRow key={n.id} notification={n} basePath={basePath} index={i} />
                 ))}
               </ul>
             </section>

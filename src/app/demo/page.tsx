@@ -4,7 +4,7 @@ import { DEMO_GROUP_ID, GROUP, MARKETS, MEMBERS, SEASON, WAGERS, ME } from '@/li
 export default function DemoBoard() {
   return (
     <BoardScreen
-      groupId={DEMO_GROUP_ID}
+      basePath="/demo"
       group={GROUP}
       season={SEASON}
       members={MEMBERS}

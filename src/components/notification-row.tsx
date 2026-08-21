@@ -56,11 +56,11 @@ const STYLE: Record<NotificationKind, { tone: string; ring: string; icon: React.
 
 export function NotificationRow({
   notification,
-  groupId,
+  basePath,
   index = 0,
 }: {
   notification: Notification;
-  groupId: string;
+  basePath: string;
   index?: number;
 }) {
   const s = STYLE[notification.kind];
@@ -125,7 +125,7 @@ export function NotificationRow({
 
   return (
     <li style={{ '--i': index } as React.CSSProperties}>
-      <Link href={`/grupos/${groupId}/apuesta/${notification.market_id}`} className={className}>
+      <Link href={`${basePath}/apuesta/${notification.market_id}`} className={className}>
         {body}
       </Link>
     </li>

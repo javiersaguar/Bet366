@@ -9,12 +9,13 @@ import { IconSpark } from '@/components/icons';
 
 export function MarketCard({
   market,
-  groupId,
+  basePath,
   myWagers,
   index = 0,
 }: {
   market: MarketWithOptions;
-  groupId: string;
+  /** `/grupos/<id>` en la app, `/demo` en la demostración. */
+  basePath: string;
   myWagers: Wager[];
   index?: number;
 }) {
@@ -27,7 +28,7 @@ export function MarketCard({
 
   return (
     <Link
-      href={`/grupos/${groupId}/apuesta/${market.id}`}
+      href={`${basePath}/apuesta/${market.id}`}
       style={{ '--i': index } as React.CSSProperties}
       className={`card-interactive block p-4 sm:p-5 ${
         myStake > 0 ? 'ring-1 ring-inset ring-info/20' : ''

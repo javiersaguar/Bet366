@@ -21,6 +21,6 @@ export default async function MyBetsPage({ params }: { params: Promise<{ groupId
     .order('created_at', { ascending: false });
 
   return (
-    <MyBetsScreen groupId={groupId} me={me} markets={markets} wagers={(data ?? []) as Wager[]} />
+    <MyBetsScreen basePath={`/grupos/${groupId}`} me={me} markets={markets} wagers={(data ?? []) as Wager[]} />
   );
 }

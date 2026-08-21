@@ -11,14 +11,15 @@ import { Countdown } from '@/components/countdown';
  * para la app real y para la vista de demostración.
  */
 export function BoardScreen({
-  groupId,
+  basePath,
   group,
   season,
   members,
   markets,
   myWagers,
 }: {
-  groupId: string;
+  /** `/grupos/<id>` en la app, `/demo` en la demostración. */
+  basePath: string;
   group: Group;
   season: Season;
   members: Profile[];
@@ -49,7 +50,7 @@ export function BoardScreen({
             </p>
           </div>
           <Link
-            href={`/grupos/${groupId}/nueva`}
+            href={`${basePath}/nueva`}
             className="btn-primary sheen hidden shrink-0 sm:inline-flex"
           >
             Lanzar apuesta
@@ -65,7 +66,7 @@ export function BoardScreen({
 
         {/* En móvil el botón va abajo y a todo el ancho: se llega mejor con el pulgar. */}
         <div className="border-t border-line p-3 sm:hidden">
-          <Link href={`/grupos/${groupId}/nueva`} className="btn-primary sheen w-full">
+          <Link href={`${basePath}/nueva`} className="btn-primary sheen w-full">
             Lanzar apuesta
           </Link>
         </div>
@@ -76,7 +77,7 @@ export function BoardScreen({
           title="Aún no hay ninguna apuesta"
           hint="Lanza la primera: «¿a que fulanito se lía con menganito?»"
           action={
-            <Link href={`/grupos/${groupId}/nueva`} className="btn-primary !py-2 text-2xs">
+            <Link href={`${basePath}/nueva`} className="btn-primary !py-2 text-2xs">
               Lanzar la primera
             </Link>
           }
@@ -86,7 +87,7 @@ export function BoardScreen({
       {live.length > 0 && (
         <Section title="Abiertas" count={live.length}>
           {live.map((m, i) => (
-            <MarketCard key={m.id} market={m} groupId={groupId} myWagers={myWagers} index={i} />
+            <MarketCard key={m.id} market={m} basePath={basePath} myWagers={myWagers} index={i} />
           ))}
         </Section>
       )}
@@ -94,7 +95,7 @@ export function BoardScreen({
       {awaiting.length > 0 && (
         <Section title="Esperando resultado" count={awaiting.length}>
           {awaiting.map((m, i) => (
-            <MarketCard key={m.id} market={m} groupId={groupId} myWagers={myWagers} index={i} />
+            <MarketCard key={m.id} market={m} basePath={basePath} myWagers={myWagers} index={i} />
           ))}
         </Section>
       )}
@@ -102,7 +103,7 @@ export function BoardScreen({
       {done.length > 0 && (
         <Section title="Historial" count={done.length}>
           {done.map((m, i) => (
-            <MarketCard key={m.id} market={m} groupId={groupId} myWagers={myWagers} index={i} />
+            <MarketCard key={m.id} market={m} basePath={basePath} myWagers={myWagers} index={i} />
           ))}
         </Section>
       )}
