@@ -191,6 +191,81 @@ export const MARKETS: MarketWithOptions[] = [
   },
 ];
 
+/**
+ * Semanas ya cerradas. El historial de "mis apuestas" va de todas las semanas,
+ * no solo de la que está en curso, así que la demostración necesita pasado.
+ */
+const semanaPasada = { ...base, season_number: 2, status: 'resolved' as const };
+
+export const MARKETS_PASADOS: MarketWithOptions[] = [
+  {
+    ...semanaPasada,
+    id: 'v-cena',
+    creator_id: PEOPLE.javi.id,
+    creator: PEOPLE.javi,
+    title: 'Cenamos antes de las diez',
+    description: null,
+    winning_option: 'v-cena-o1',
+    closes_at: agoHours(120),
+    resolved_at: agoHours(118),
+    created_at: agoHours(160),
+    market_options: options('v-cena', [
+      ['Sí', 2.1, 2.4, 140],
+      ['No', 1.8, 1.6, 320],
+    ]),
+  },
+  {
+    ...semanaPasada,
+    id: 'v-tortilla',
+    creator_id: ME.id,
+    creator: ME,
+    title: 'Bruno se come la tortilla entera',
+    description: null,
+    winning_option: 'v-tortilla-o0',
+    closes_at: agoHours(150),
+    resolved_at: agoHours(148),
+    created_at: agoHours(200),
+    market_options: options('v-tortilla', [
+      ['Sí', 3.0, 2.8, 180],
+      ['No', 1.4, 1.45, 260],
+    ]),
+  },
+  {
+    ...semanaPasada,
+    season_number: 1,
+    id: 'v-madrugada',
+    creator_id: PEOPLE.marcos.id,
+    creator: PEOPLE.marcos,
+    title: 'Alguien aguanta hasta que amanezca',
+    description: null,
+    winning_option: 'v-madrugada-o0',
+    closes_at: agoHours(300),
+    resolved_at: agoHours(298),
+    created_at: agoHours(340),
+    market_options: options('v-madrugada', [
+      ['Sí', 1.7, 1.55, 400],
+      ['No', 2.2, 2.6, 110],
+    ]),
+  },
+  {
+    ...semanaPasada,
+    season_number: 1,
+    id: 'v-melon',
+    creator_id: PEOPLE.ana.id,
+    creator: PEOPLE.ana,
+    title: 'El melón sale bueno',
+    description: null,
+    winning_option: 'v-melon-o0',
+    closes_at: agoHours(320),
+    resolved_at: agoHours(318),
+    created_at: agoHours(360),
+    market_options: options('v-melon', [
+      ['Sí', 1.6, 1.7, 210],
+      ['No', 2.4, 2.2, 95],
+    ]),
+  },
+];
+
 export const WAGERS: Wager[] = [
   {
     id: 'w1', market_id: 'm-fiesta', option_id: 'm-fiesta-o0', user_id: ME.id,
@@ -222,6 +297,30 @@ export const WAGERS: Wager[] = [
     id: 'w6', market_id: 'm-lluvia', option_id: 'm-lluvia-o0', user_id: ME.id,
     stake: 80, locked_odds: 2.0, to_win: 160, status: 'active', void_reason: null,
     created_at: agoHours(40),
+  },
+
+  // Semana 2, ya cerrada.
+  {
+    id: 'w7', market_id: 'v-cena', option_id: 'v-cena-o1', user_id: ME.id,
+    stake: 250, locked_odds: 1.75, to_win: 437.5, status: 'won', void_reason: null,
+    created_at: agoHours(140),
+  },
+  {
+    id: 'w8', market_id: 'v-tortilla', option_id: 'v-tortilla-o1', user_id: ME.id,
+    stake: 180, locked_odds: 1.4, to_win: 252, status: 'lost', void_reason: null,
+    created_at: agoHours(170),
+  },
+
+  // Semana 1.
+  {
+    id: 'w9', market_id: 'v-madrugada', option_id: 'v-madrugada-o1', user_id: ME.id,
+    stake: 120, locked_odds: 2.2, to_win: 264, status: 'lost', void_reason: null,
+    created_at: agoHours(320),
+  },
+  {
+    id: 'w10', market_id: 'v-melon', option_id: 'v-melon-o0', user_id: ME.id,
+    stake: 60, locked_odds: 1.7, to_win: 102, status: 'won', void_reason: null,
+    created_at: agoHours(318),
   },
 ];
 

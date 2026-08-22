@@ -268,3 +268,53 @@ export async function loadGroupSummary(
     marketsTotal: count ?? 0,
   };
 }
+
+// -------------------------------------------------------------- mis apuestas
+
+/** Apuestas de todas las semanas, no solo la que está en curso. */
+export type MyBets = {
+  /** Los mercados a los que pertenece algo tuyo, más los de la semana actual. */
+  markets: MarketWithOptions[];
+  wagers: Wager[];
+};
+
+/** Tope de mercados que se traen. De sobra para un grupo de amigos. */
+const TOPE_HISTORIAL = 250;
+
+/**
+ * Todo lo tuyo en un grupo, con historial de verdad.
+ *
+ * Antes esta pantalla solo miraba la semana en curso, que es lo que necesita
+ * el tablón pero no lo que se espera de un historial: los puntos se reinician
+ * cada lunes y con ellos desaparecía todo lo apostado. Aquí se traen las
+ * apuestas de todas las semanas.
+ */
+export async function loadMyBets(groupId: string, userId: string): Promise<MyBets> {
+  const supabase = await createClient();
+
+  const { data } = await supabase
+    .from('markets')
+    .select('*, market_options(*), creator:profiles!markets_creator_id_fkey(*)')
+    .eq('group_id', groupId)
+    .order('closes_at', { ascending: false })
+    .limit(TOPE_HISTORIAL);
+
+  const markets = ((data ?? []) as unknown as MarketWithOptions[]).map((m) => ({
+    ...m,
+    market_options: [...m.market_options].sort((a, b) => a.position - b.position),
+  }));
+
+  if (markets.length === 0) return { markets, wagers: [] };
+
+  const { data: wagers } = await supabase
+    .from('wagers')
+    .select('*')
+    .eq('user_id', userId)
+    .in(
+      'market_id',
+      markets.map((m) => m.id),
+    )
+    .order('created_at', { ascending: false });
+
+  return { markets, wagers: (wagers ?? []) as Wager[] };
+}

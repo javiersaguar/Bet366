@@ -1,26 +1,15 @@
-import { createClient } from '@/lib/supabase/server';
-import { loadGroup, loadMarkets } from '@/lib/data';
-import type { Wager } from '@/lib/types';
+import { loadGroup, loadMyBets } from '@/lib/data';
 import { MyBetsScreen } from '@/screens/my-bets';
 
 export const dynamic = 'force-dynamic';
-
-const NO_MARKET = '00000000-0000-0000-0000-000000000000';
+export const metadata = { title: 'Mis apuestas' };
 
 export default async function MyBetsPage({ params }: { params: Promise<{ groupId: string }> }) {
   const { groupId } = await params;
-  const { season, me } = await loadGroup(groupId);
-  const markets = await loadMarkets(groupId, season.number);
-  const supabase = await createClient();
-
-  const { data } = await supabase
-    .from('wagers')
-    .select('*')
-    .eq('user_id', me.id)
-    .in('market_id', markets.length ? markets.map((m) => m.id) : [NO_MARKET])
-    .order('created_at', { ascending: false });
+  const { me } = await loadGroup(groupId);
+  const { markets, wagers } = await loadMyBets(groupId, me.id);
 
   return (
-    <MyBetsScreen basePath={`/grupos/${groupId}`} me={me} markets={markets} wagers={(data ?? []) as Wager[]} />
+    <MyBetsScreen basePath={`/grupos/${groupId}`} me={me} markets={markets} wagers={wagers} />
   );
 }
