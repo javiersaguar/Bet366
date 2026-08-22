@@ -256,11 +256,19 @@ despliegues de vista previa arrancan sin base de datos.
 Cuando algo de esto falla, la app no revienta: manda a `/configurar`, que
 enseña cuál de las dos variables no está llegando y por qué.
 
-Si la integración oficial de Supabase te conecta el proyecto, pone unas
-cuantas variables más (`SUPABASE_URL`, `POSTGRES_*`, la clave de servicio).
-Todas esas se quedan en el servidor a propósito y la app no las usa: sin el
-prefijo `NEXT_PUBLIC_` no llegan al navegador, que es donde hace falta la
-sesión.
+**Con la integración oficial de Supabase no hace falta poner nada a mano.**
+Ella deja `SUPABASE_URL` y `SUPABASE_ANON_KEY` sin el prefijo `NEXT_PUBLIC_`,
+que normalmente significa que no llegan al navegador; `next.config.mjs` las
+recoge y las incrusta al construir, así que la app arranca con lo que haya.
+Si además pones las `NEXT_PUBLIC_` a mano, esas mandan.
+
+Los nombres que se buscan, por orden, están en
+[`src/lib/supabase/nombres.json`](src/lib/supabase/nombres.json). Ahí solo
+puede haber información pública: la URL del proyecto y la clave anónima, que
+no da acceso a nada por sí sola porque quien manda son las políticas de fila.
+Una prueba comprueba que no se cuela nunca una clave de servicio, un secreto
+ni una contraseña, porque todo lo que aparezca en esa lista acaba dentro del
+JavaScript que descarga cualquiera.
 
 ---
 

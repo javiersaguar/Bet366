@@ -1,0 +1,24 @@
+{
+  "_comentario": [
+    "Nombres de variable de entorno de los que la app saca la URL del proyecto y",
+    "la clave publica de Supabase, por orden de preferencia.",
+    "",
+    "Estos dos valores acaban DENTRO del JavaScript que descarga el navegador,",
+    "asi que aqui solo puede haber informacion publica por diseño: la URL del",
+    "proyecto y la clave anonima (que no da acceso a nada por si sola, quien",
+    "manda son las politicas de fila).",
+    "",
+    "Nunca se añade aqui una clave de servicio, un secreto o una contraseña.",
+    "Hay una prueba que lo comprueba: src/lib/supabase/nombres.test.ts.",
+    "",
+    "Lo lee next.config.mjs para incrustarlos al construir, y config.ts para",
+    "poder decir en /configurar cuales valen."
+  ],
+  "url": ["NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_URL"],
+  "clave": [
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_PUBLISHABLE_KEY"
+  ]
+}

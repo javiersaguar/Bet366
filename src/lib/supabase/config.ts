@@ -3,41 +3,33 @@
  * puede mirar sin nada montado. Esto permite distinguir "falta configurar"
  * de "algo se ha roto", en vez de soltar un 500.
  *
- * Las variables se leen escritas enteras, nunca con `process.env[nombre]`:
- * Next sustituye `process.env.NEXT_PUBLIC_X` por su valor al construir, y con
- * un acceso dinámico no puede, así que en el navegador saldría vacío.
+ * Los nombres de variable que valen y el orden en que se buscan están en
+ * `next.config.mjs`, que es el único sitio donde se puede leer una variable
+ * sin el prefijo `NEXT_PUBLIC_` y aun así incrustarla en el paquete del
+ * navegador. Aquí solo llega ya resuelto, junto con el nombre de dónde salió.
  *
- * Solo valen nombres con `NEXT_PUBLIC_`. El resto de variables que pone la
- * integración de Supabase (`SUPABASE_URL`, `POSTGRES_*`, la clave de servicio)
- * se quedan en el servidor a propósito y no sirven aquí.
+ * Se escriben enteras y nunca con `process.env[nombre]`: Next sustituye
+ * `process.env.X` por su valor al construir, y con un acceso dinámico no
+ * puede, así que en el navegador saldría vacío.
  */
+/* La misma lista que usa `next.config.mjs` para resolverlas, para poder
+   enseñar qué nombres valen cuando no llega ninguno. */
+import NOMBRES from './nombres.json';
 
-/** Cómo llama Supabase a la clave pública, antes y ahora. */
-const CLAVES = [
-  ['NEXT_PUBLIC_SUPABASE_ANON_KEY', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY],
-  /* Supabase renombró la "anon key" a "publishable key", y su integración con
-     Vercel ya pone esta. Sirve igual: es la misma clave pública. */
-  ['NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY', process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY],
-] as const;
+export const SUPABASE_URL = process.env.BET366_SUPABASE_URL ?? '';
+export const SUPABASE_ANON_KEY = process.env.BET366_SUPABASE_CLAVE ?? '';
 
-const URLS = [['NEXT_PUBLIC_SUPABASE_URL', process.env.NEXT_PUBLIC_SUPABASE_URL]] as const;
-
-function primera(pares: ReadonlyArray<readonly [string, string | undefined]>) {
-  const encontrada = pares.find(([, valor]) => (valor ?? '').length > 0);
-  return { nombre: encontrada?.[0] ?? null, valor: encontrada?.[1] ?? '' };
-}
-
-export const SUPABASE_URL = primera(URLS).valor;
-export const SUPABASE_ANON_KEY = primera(CLAVES).valor;
+const URL_ORIGEN = process.env.BET366_SUPABASE_URL_ORIGEN ?? '';
+const CLAVE_ORIGEN = process.env.BET366_SUPABASE_CLAVE_ORIGEN ?? '';
 
 export function isSupabaseConfigured(): boolean {
   return SUPABASE_URL.startsWith('http') && SUPABASE_ANON_KEY.length > 20;
 }
 
 export type EstadoVariable = {
-  /** Todos los nombres que valen, para poder enseñarlos si no hay ninguno. */
+  /** Todos los nombres que valen, para poder enseñarlos si no llega ninguno. */
   nombres: readonly string[];
-  /** El que se ha usado, si hay alguno. */
+  /** El que ha traído el valor, si hay alguno. */
   usado: string | null;
   estado: 'falta' | 'rara' | 'bien';
   detalle: string;
@@ -51,27 +43,24 @@ export type EstadoVariable = {
  * sabe mirando el panel de Vercel.
  */
 export function estadoDelEntorno(): { url: EstadoVariable; clave: EstadoVariable } {
-  const url = primera(URLS);
-  const clave = primera(CLAVES);
-
   return {
     url: {
-      nombres: URLS.map(([n]) => n),
-      usado: url.nombre,
-      ...(!url.valor
+      nombres: NOMBRES.url,
+      usado: URL_ORIGEN || null,
+      ...(!SUPABASE_URL
         ? { estado: 'falta' as const, detalle: 'no llega a la app' }
-        : url.valor.startsWith('http')
-          ? { estado: 'bien' as const, detalle: url.valor }
+        : SUPABASE_URL.startsWith('http')
+          ? { estado: 'bien' as const, detalle: SUPABASE_URL }
           : { estado: 'rara' as const, detalle: 'no empieza por https://' }),
     },
     clave: {
-      nombres: CLAVES.map(([n]) => n),
-      usado: clave.nombre,
-      ...(!clave.valor
+      nombres: NOMBRES.clave,
+      usado: CLAVE_ORIGEN || null,
+      ...(!SUPABASE_ANON_KEY
         ? { estado: 'falta' as const, detalle: 'no llega a la app' }
-        : clave.valor.length > 20
-          ? { estado: 'bien' as const, detalle: `${clave.valor.length} caracteres` }
-          : { estado: 'rara' as const, detalle: `solo ${clave.valor.length} caracteres` }),
+        : SUPABASE_ANON_KEY.length > 20
+          ? { estado: 'bien' as const, detalle: `${SUPABASE_ANON_KEY.length} caracteres` }
+          : { estado: 'rara' as const, detalle: `solo ${SUPABASE_ANON_KEY.length} caracteres` }),
     },
   };
 }
