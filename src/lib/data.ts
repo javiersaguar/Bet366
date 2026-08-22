@@ -42,7 +42,9 @@ export async function loadGroup(groupId: string): Promise<GroupContext> {
 
   const { data: memberRows } = await supabase
     .from('group_members')
-    .select('profiles(id, username, display_name, avatar_symbol, avatar_color)')
+    /* La fila entera y no una lista de columnas: así la app sigue en pie en una
+       base donde todavía no se haya pasado la migración de Instagram. */
+    .select('profiles(*)')
     .eq('group_id', groupId);
 
   const members = (memberRows ?? [])

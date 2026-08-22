@@ -19,6 +19,15 @@
     font-feature-settings: 'cv05' 1, 'ss03' 1;
   }
 
+  /* El `viewport-fit: cover` del layout estira la página bajo la isla dinámica
+     y las esquinas redondeadas del iPhone. Eso está bien para el fondo, pero
+     el contenido tiene que respetar los márgenes seguros o el móvil se come la
+     cabecera. En horizontal también hay muescas laterales. */
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
   /* Ambiente del fondo: una aurora muy tenue que da profundidad sin ensuciar. */
   body::before {
     content: '';
@@ -138,6 +147,11 @@
 }
 
 @layer components {
+  /* Barra superior pegada arriba: deja pasar la isla dinámica por encima. */
+  .barra-superior {
+    padding-top: env(safe-area-inset-top);
+  }
+
   /* --- superficies --------------------------------------------------- */
   .card {
     @apply relative rounded-2xl border border-line bg-surface shadow-card;

@@ -49,7 +49,7 @@ export function GroupsScreen({
   const partida = groups.reduce((a, g) => a + g.startingPoints, 0);
 
   return (
-    <main className="mx-auto w-full max-w-2xl px-5 py-7 pb-20">
+    <main className="mx-auto w-full max-w-2xl px-5 py-7 pb-20 pt-[max(1.75rem,env(safe-area-inset-top))]">
       <div className="animate-rise mb-8 flex items-center justify-between">
         <Wordmark className="text-title" />
         {onSignOut && (

@@ -6,6 +6,7 @@ import { Avatar } from '@/components/avatar';
 import { InviteCode } from '@/components/invite-code';
 import { Countdown } from '@/components/countdown';
 import { BackLink, NavRow } from '@/components/nav-row';
+import { InstagramLink } from '@/components/instagram-link';
 
 /**
  * La ficha del grupo.
@@ -90,7 +91,12 @@ export function GroupSummaryScreen({
                       </span>
                     )}
                   </p>
-                  <p className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-caption text-content-faint">
+                  {m.profile.instagram && (
+                    <p className="mt-0.5">
+                      <InstagramLink usuario={m.profile.instagram} />
+                    </p>
+                  )}
+                  <p className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-caption text-content-faint">
                     {m.weeksWon > 0 ? (
                       <span className="flex items-center gap-1 text-gold">
                         <Trophy size={13} weight="fill" />
@@ -100,7 +106,6 @@ export function GroupSummaryScreen({
                     ) : (
                       <span>sin semanas ganadas</span>
                     )}
-                    <Dot />
                     {m.wagersTotal > 0 ? (
                       <span className="num">
                         {m.wagersWon} de {m.wagersTotal} apuestas acertadas
@@ -269,6 +274,3 @@ function Rule({
   );
 }
 
-function Dot() {
-  return <span aria-hidden className="text-content-faint/35">·</span>;
-}

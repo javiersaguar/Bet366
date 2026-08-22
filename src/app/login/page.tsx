@@ -32,7 +32,7 @@ export default async function LoginPage({
   const { next } = await searchParams;
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-sm flex-col justify-center px-5 py-12">
+    <main className="mx-auto flex min-h-dvh w-full max-w-sm flex-col justify-center px-5 py-12 pt-[max(3rem,env(safe-area-inset-top))]">
       <header className="animate-rise">
         <Mark
           className="h-[4.5rem] w-[4.5rem] drop-shadow-[0_14px_38px_rgba(43,224,140,.18)]"

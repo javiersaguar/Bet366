@@ -14,6 +14,12 @@ export type Profile = {
   display_name: string;
   avatar_symbol: string;
   avatar_color: string;
+  /**
+   * Nombre de usuario de Instagram, sin arroba. Opcional en el tipo porque la
+   * columna la añade la migración 0005 y la app tiene que seguir funcionando
+   * en una base que todavía no la tenga.
+   */
+  instagram?: string | null;
 };
 
 export type Group = {

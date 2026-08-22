@@ -57,7 +57,7 @@ export default async function GroupsPage({
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('id, username, display_name, avatar_symbol, avatar_color')
+    .select('*')
     .eq('id', user.id)
     .maybeSingle();
 

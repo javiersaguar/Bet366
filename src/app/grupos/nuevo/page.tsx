@@ -11,7 +11,7 @@ export default async function NewGroupPage() {
   await requireSession('/grupos/nuevo');
 
   return (
-    <main className="mx-auto w-full max-w-xl px-5 py-7 pb-20">
+    <main className="mx-auto w-full max-w-xl px-5 py-7 pb-20 pt-[max(1.75rem,env(safe-area-inset-top))]">
       <div className="animate-rise">
         <BackLink href="/grupos">Tus grupos</BackLink>
       </div>

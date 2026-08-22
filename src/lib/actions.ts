@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { AVATAR_COLORS, AVATAR_SYMBOLS } from '@/lib/avatars';
+import { limpiarInstagram } from '@/lib/instagram';
 
 export type ActionResult = { error?: string; ok?: true };
 
@@ -192,19 +193,41 @@ export async function updateProfileAction(
     return { error: 'Ese avatar no es válido.' };
   }
 
-  const { error } = await supabase
+  const instagram = limpiarInstagram(String(formData.get('instagram') ?? ''));
+  if (instagram === false) {
+    return { error: 'Ese usuario de Instagram no vale. Solo letras, números, punto y guion bajo.' };
+  }
+
+  const base = {
+    display_name: String(formData.get('display_name') ?? '').trim(),
+    avatar_symbol: symbol,
+    avatar_color: color,
+  };
+
+  let { error } = await supabase
     .from('profiles')
-    .update({
-      display_name: String(formData.get('display_name') ?? '').trim(),
-      avatar_symbol: symbol,
-      avatar_color: color,
-    })
+    .update({ ...base, instagram })
     .eq('id', user.id);
+
+  /* La columna `instagram` llega con la migración 0005. Si la base todavía no
+     la tiene, se guarda el resto y se dice qué falta, en vez de tirar el
+     cambio entero por una columna que el usuario ni ha tocado. PostgREST
+     responde PGRST204 "Could not find the 'instagram' column". */
+  if (error && (error.code === 'PGRST204' || /instagram/i.test(error.message))) {
+    const reintento = await supabase.from('profiles').update(base).eq('id', user.id);
+    if (reintento.error) return { error: toMessage(reintento.error) };
+    revalidatePath('/', 'layout');
+    return {
+      error:
+        'Guardado todo menos Instagram: falta pasar la migración 0005 en el SQL Editor de Supabase.',
+    };
+  }
 
   if (error) return { error: toMessage(error) };
   revalidatePath('/', 'layout');
   return { ok: true };
 }
+
 
 /**
  * Salirse de un grupo.

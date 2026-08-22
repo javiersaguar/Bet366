@@ -9,11 +9,11 @@ import type { Group, MarketWithOptions, Notification, Profile, Season, Wager } f
 export const DEMO_GROUP_ID = 'demo';
 
 export const PEOPLE: Record<string, Profile> = {
-  javi: { id: 'p-javi', username: 'javi', display_name: 'Javi', avatar_symbol: 'crown', avatar_color: 'gold' },
-  lucia: { id: 'p-lucia', username: 'lucia', display_name: 'Lucía', avatar_symbol: 'flame', avatar_color: 'rose' },
-  marcos: { id: 'p-marcos', username: 'marcos', display_name: 'Marcos', avatar_symbol: 'bolt', avatar_color: 'cyan' },
-  ana: { id: 'p-ana', username: 'ana', display_name: 'Ana', avatar_symbol: 'orbit', avatar_color: 'violet' },
-  bruno: { id: 'p-bruno', username: 'bruno', display_name: 'Bruno', avatar_symbol: 'peak', avatar_color: 'lime' },
+  javi: { id: 'p-javi', username: 'javi', display_name: 'Javi', avatar_symbol: 'crown', avatar_color: 'gold', instagram: 'javi' },
+  lucia: { id: 'p-lucia', username: 'lucia', display_name: 'Lucía', avatar_symbol: 'flame', avatar_color: 'rose', instagram: 'lucia.mp' },
+  marcos: { id: 'p-marcos', username: 'marcos', display_name: 'Marcos', avatar_symbol: 'bolt', avatar_color: 'cyan', instagram: null },
+  ana: { id: 'p-ana', username: 'ana', display_name: 'Ana', avatar_symbol: 'orbit', avatar_color: 'violet', instagram: 'ana_gr' },
+  bruno: { id: 'p-bruno', username: 'bruno', display_name: 'Bruno', avatar_symbol: 'peak', avatar_color: 'lime', instagram: null },
 };
 
 export const ME = PEOPLE.lucia;
