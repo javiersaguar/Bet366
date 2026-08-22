@@ -1,21 +1,12 @@
-import Link from 'next/link';
-import { CaretRight, Plus, SignOut } from '@phosphor-icons/react/dist/ssr';
+import { Plus, SignIn, SignOut } from '@phosphor-icons/react/dist/ssr';
 import { NavRow } from '@/components/nav-row';
 import { points } from '@/lib/format';
 import { Avatar } from '@/components/avatar';
 import { Wordmark } from '@/components/logo';
 import type { Profile } from '@/lib/types';
-import { JoinGroupForm } from '@/app/grupos/join-form';
+import { GroupsList, type GroupEntry, type ResultadoUnirse } from '@/components/groups-list';
 
-export type GroupEntry = {
-  id: string;
-  name: string;
-  inviteCode: string;
-  role: string;
-  balance: number;
-  /** Puntos con los que arranca la semana: sirve para saber si vas ganando. */
-  startingPoints: number;
-};
+export type { GroupEntry } from '@/components/groups-list';
 
 /** Verde si vas por encima de lo que te dieron el lunes, rojo si por debajo. */
 function tono(balance: number, start: number): string {
@@ -25,28 +16,42 @@ function tono(balance: number, start: number): string {
 }
 
 /**
- * Tus grupos.
+ * Tus grupos. Es lo primero que se ve al abrir la app.
  *
- * Es un índice, no un escaparate: lo que importa es el nombre del grupo y
- * cuántos puntos llevas en cada uno. Filas separadas por una línea, saldos en
- * columna con cifras monoespaciadas para poder compararlos de un vistazo, y
- * las dos acciones (entrar con código, crear grupo) abajo del todo.
+ * No es un escaparate, es un índice: quién se ha movido y cuántos puntos
+ * llevas en cada sitio. Las filas van ordenadas por lo último que pasó dentro,
+ * así que abrir la app y mirar arriba del todo basta para saber dónde ha
+ * habido algo.
+ *
+ * El buscador de arriba hace de las dos cosas que se hacen aquí: filtrar los
+ * tuyos y entrar en uno nuevo con su código.
  */
 export function GroupsScreen({
   profile,
   groups,
+  join,
+  onSelect,
+  currentId,
   onSignOut,
   codigoInvitacion = '',
+  demo = false,
 }: {
   profile: Profile | null;
   groups: GroupEntry[];
-  /** Acción de servidor. En la vista de ejemplo no se pasa y el botón no sale. */
+  /** Acción de servidor para entrar con un código. */
+  join: (prev: ResultadoUnirse, formData: FormData) => Promise<ResultadoUnirse>;
+  /** Solo en la demostración: cambiar de grupo guarda, no navega. */
+  onSelect?: (formData: FormData) => void;
+  currentId?: string;
+  /** Acción de servidor. En la demostración no se pasa y el botón no sale. */
   onSignOut?: () => void;
   /** Viene de un enlace de invitación: deja el campo listo para pulsar. */
   codigoInvitacion?: string;
+  demo?: boolean;
 }) {
   const total = groups.reduce((a, g) => a + g.balance, 0);
   const partida = groups.reduce((a, g) => a + g.startingPoints, 0);
+  const pendientes = groups.filter((g) => g.activity?.pendiente).length;
 
   return (
     <main className="mx-auto w-full max-w-2xl px-5 py-7 pb-20 pt-[max(1.75rem,env(safe-area-inset-top))]">
@@ -74,83 +79,70 @@ export function GroupsScreen({
         </div>
 
         {groups.length > 0 && (
-          <dl className="mt-5 grid grid-cols-2 divide-x divide-line border-y border-line">
+          <dl className="mt-5 grid grid-cols-3 divide-x divide-line border-y border-line">
             <Figure label="Grupos" value={String(groups.length)} />
-            <Figure label="Puntos en total" value={points(total)} tone={tono(total, partida)} />
+            <Figure label="En total" value={points(total)} tone={tono(total, partida)} />
+            {/* No es «te toca a ti»: es que en ese grupo hay algo parado, lo
+                haya lanzado quien lo haya lanzado. */}
+            <Figure
+              label="Pendientes"
+              value={String(pendientes)}
+              tone={pendientes > 0 ? 'text-gold' : 'text-white'}
+            />
           </dl>
         )}
       </header>
 
-      {groups.length > 0 ? (
-        <section className="animate-rise mt-8" style={{ animationDelay: '120ms' }}>
-          <ul className="stagger -mx-5 divide-y divide-line border-y border-line">
-            {groups.map((g, i) => (
-              <li key={g.id} style={{ '--i': i } as React.CSSProperties}>
-                <Link
-                  href={`/grupos/${g.id}`}
-                  className="group flex items-center gap-4 px-5 py-4
-                             transition-colors duration-press ease-out active:bg-surface-raised/60"
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-title font-semibold text-white">{g.name}</p>
-                    <p className="mt-0.5 text-caption text-content-faint">
-                      {g.role === 'owner' ? 'Lo creaste tú' : 'Miembro'} · código{' '}
-                      <span className="tnum text-content-muted">{g.inviteCode}</span>
-                    </p>
-                  </div>
-                  <div className="shrink-0 text-right">
-                    <p className={`tnum text-figure font-semibold ${tono(g.balance, g.startingPoints)}`}>
-                      {points(g.balance)}
-                    </p>
-                    <p className="field-label mt-0.5">puntos</p>
-                  </div>
-                  <CaretRight
-                    size={16}
-                    weight="bold"
-                    className="shrink-0 text-content-faint transition-transform duration-pop ease-out
-                               motion-safe:group-hover:translate-x-0.5"
-                  />
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : (
-        <p
-          className="animate-rise mt-8 max-w-[42ch] text-body-lg leading-relaxed text-content-muted"
-          style={{ animationDelay: '120ms' }}
-        >
-          Todavía no estás en ningún grupo. Crea uno para tu pandilla, o entra con el código de
-          seis caracteres que te hayan pasado.
-        </p>
-      )}
+      <section className="animate-rise mt-8" style={{ animationDelay: '120ms' }}>
+        {groups.length === 0 && (
+          <p className="mb-6 max-w-[42ch] text-body-lg leading-relaxed text-content-muted">
+            Todavía no estás en ningún grupo. Crea uno para tu pandilla, o entra con el código de
+            seis caracteres que te hayan pasado.
+          </p>
+        )}
+        <GroupsList
+          groups={groups}
+          join={join}
+          onSelect={onSelect}
+          currentId={currentId}
+          codigoInicial={codigoInvitacion}
+        />
+      </section>
 
       <section className="animate-rise mt-10" style={{ animationDelay: '180ms' }}>
-        <h2 className="text-title-lg font-semibold">Entrar en un grupo</h2>
-        <p className="mt-1 text-body text-content-muted">
-          {codigoInvitacion
-            ? 'Te han invitado. El código ya está puesto.'
-            : 'Pide el código a quien lo creó. Son seis caracteres.'}
-        </p>
-        <div className="mt-4">
-          <JoinGroupForm inicial={codigoInvitacion} />
-        </div>
-
-        <div className="-mx-5 mt-6 border-y border-line">
-          <NavRow
-            href="/grupos/nuevo"
-            icon={Plus}
-            tone="brand"
-            title="Crear un grupo"
-            hint="Eliges los puntos de partida y repartes el código"
-          />
+        <div className="-mx-5 border-y border-line">
+          {demo ? (
+            <NavRow
+              href="/login"
+              icon={SignIn}
+              tone="brand"
+              title="Entrar en la app de verdad"
+              hint="Con tu cuenta y tus grupos, no con estos de mentira"
+            />
+          ) : (
+            <NavRow
+              href="/grupos/nuevo"
+              icon={Plus}
+              tone="brand"
+              title="Crear un grupo"
+              hint="Eliges los puntos de partida y repartes el código"
+            />
+          )}
         </div>
       </section>
     </main>
   );
 }
 
-function Figure({ label, value, tone = 'text-white' }: { label: string; value: string; tone?: string }) {
+function Figure({
+  label,
+  value,
+  tone = 'text-white',
+}: {
+  label: string;
+  value: string;
+  tone?: string;
+}) {
   return (
     <div className="px-3 py-3 first:pl-0">
       <dt className="field-label">{label}</dt>

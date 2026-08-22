@@ -7,6 +7,7 @@ import { InviteCode } from '@/components/invite-code';
 import { Countdown } from '@/components/countdown';
 import { BackLink, NavRow } from '@/components/nav-row';
 import { InstagramLink } from '@/components/instagram-link';
+import { listaDeGrupos } from '@/lib/rutas';
 
 /**
  * La ficha del grupo.
@@ -227,7 +228,7 @@ export function GroupSummaryScreen({
             hint="Cómo va la clasificación ahora mismo"
           />
           <NavRow
-            href="/grupos"
+            href={listaDeGrupos(basePath)}
             icon={ArrowsLeftRight}
             title="Cambiar de grupo"
             hint="Tus grupos y el código para entrar en otro"

@@ -3,6 +3,7 @@ import type { Group, Profile, Season } from '@/lib/types';
 import { points } from '@/lib/format';
 import { SectionTitle } from '@/components/ui';
 import { NavRow } from '@/components/nav-row';
+import { listaDeGrupos } from '@/lib/rutas';
 import { signOutAction } from '@/lib/actions';
 import { ProfileEditor } from '@/app/grupos/[groupId]/perfil/editor';
 
@@ -58,7 +59,7 @@ export function ProfileScreen({
             hint="La gente, el palmarés y las reglas de la casa"
           />
           <NavRow
-            href="/grupos"
+            href={listaDeGrupos(basePath)}
             icon={ArrowsLeftRight}
             title="Cambiar de grupo"
             hint="Tus grupos y el código para entrar en otro"

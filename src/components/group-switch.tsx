@@ -8,10 +8,10 @@ import { ArrowsLeftRight } from '@phosphor-icons/react/dist/ssr';
  * navegación de primer nivel: quien está en dos porras a la vez lo hace
  * varias veces al día y no debería tener que retroceder a ciegas.
  */
-export function GroupSwitch() {
+export function GroupSwitch({ href = '/grupos' }: { href?: string }) {
   return (
     <Link
-      href="/grupos"
+      href={href}
       aria-label="Cambiar de grupo"
       title="Cambiar de grupo"
       className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-line

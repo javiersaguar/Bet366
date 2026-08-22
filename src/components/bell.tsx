@@ -2,8 +2,17 @@ import Link from 'next/link';
 import { Bell as BellIcon } from '@phosphor-icons/react/dist/ssr';
 
 /** Campana con contador de avisos sin leer. */
-export function Bell({ groupId, unread }: { groupId: string; unread: number }) {
-  const href = groupId === 'demo' ? '/demo/avisos' : `/grupos/${groupId}/avisos`;
+export function Bell({
+  groupId,
+  unread,
+  demo = false,
+}: {
+  groupId: string;
+  unread: number;
+  /* La demostración tiene varios grupos, pero todos viven bajo `/demo`. */
+  demo?: boolean;
+}) {
+  const href = demo ? '/demo/avisos' : `/grupos/${groupId}/avisos`;
 
   return (
     <Link
