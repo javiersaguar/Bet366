@@ -177,6 +177,7 @@ supabase/migrations/0001_schema.sql
 supabase/migrations/0002_functions.sql
 supabase/migrations/0003_resolution.sql
 supabase/migrations/0004_policies.sql
+supabase/migrations/0005_instagram.sql
 ```
 
 Si algo falla, para ahí y no sigas con el siguiente: cada uno depende del
@@ -199,6 +200,14 @@ Rellena con los datos de **Project Settings → API**:
 NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOi...
 ```
+
+Supabase renombró la *anon key* a *publishable key*. Vale cualquiera de las
+dos: si tu panel enseña la nueva, la variable se llama
+`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` y empieza por `sb_publishable_`.
+
+La que **no** se pone nunca aquí es la `service_role` / `secret`: se salta
+todos los permisos de fila y estas variables acaban dentro del JavaScript que
+descarga el navegador.
 
 ### 3. Arrancar
 
@@ -224,9 +233,34 @@ Y ojo con encadenar comandos: PowerShell 5 no admite `&&`, usa `;` o dos líneas
 
 ### 4. Publicar
 
-Importa el repositorio en [Vercel](https://vercel.com), añade esas dos
-variables de entorno y listo. Es una PWA: desde el móvil se puede añadir a la
-pantalla de inicio y se comporta como una app.
+Importa el repositorio en [Vercel](https://vercel.com) y añade esas dos
+variables. Es una PWA: desde el móvil se puede añadir a la pantalla de inicio y
+se comporta como una app.
+
+Tres trampas que cuestan una tarde cada una, por orden de lo bien que se
+esconden:
+
+**No las marques como «Sensitive».** Vercel deja hacerlo y no avisa. Pero
+`NEXT_PUBLIC_` significa «esto tiene que llegar al navegador» y *Sensitive*
+significa lo contrario: que no sale de los servidores de Vercel. El build pasa
+en verde y la app arranca sin base de datos. Si ya lo están, no se pueden
+arreglar editándolas: hay que borrarlas y crearlas de nuevo.
+
+**Añadirlas no basta: hay que volver a desplegar.** Next las incrusta al
+construir, no las lee al arrancar, así que un despliegue anterior no se entera.
+Vale con el *Redeploy* de Vercel o con cualquier push.
+
+**Márcalas para todos los entornos.** Si solo están en Production, los
+despliegues de vista previa arrancan sin base de datos.
+
+Cuando algo de esto falla, la app no revienta: manda a `/configurar`, que
+enseña cuál de las dos variables no está llegando y por qué.
+
+Si la integración oficial de Supabase te conecta el proyecto, pone unas
+cuantas variables más (`SUPABASE_URL`, `POSTGRES_*`, la clave de servicio).
+Todas esas se quedan en el servidor a propósito y la app no las usa: sin el
+prefijo `NEXT_PUBLIC_` no llegan al navegador, que es donde hace falta la
+sesión.
 
 ---
 
