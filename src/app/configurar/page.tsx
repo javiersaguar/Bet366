@@ -50,8 +50,8 @@ export default function SetupPage() {
       <section className="animate-rise mt-7" style={{ animationDelay: '90ms' }}>
         <h2 className="field-label">Lo que ve esta página</h2>
         <dl className="-mx-4 mt-2 divide-y divide-line border-y border-line sm:-mx-5">
-          <Visto nombre="NEXT_PUBLIC_SUPABASE_URL" v={visto.url} />
-          <Visto nombre="NEXT_PUBLIC_SUPABASE_ANON_KEY" v={visto.clave} />
+          <Visto v={visto.url} />
+          <Visto v={visto.clave} />
         </dl>
         <p className="mt-2 text-caption leading-relaxed text-content-faint">
           {ningunaPuesta
@@ -73,11 +73,17 @@ export default function SetupPage() {
             <Vars />
           </Paso>
           <Paso n={2}>
+            <b>Ninguna de las dos puede estar marcada como «Sensitive».</b> Una variable{' '}
+            <Code>NEXT_PUBLIC_</Code> tiene que llegar al navegador, y «Sensitive» significa justo
+            lo contrario: que no sale de los servidores de Vercel. El build va bien y la app se
+            queda sin ellas. Si lo están, bórralas y vuélvelas a crear sin marcar esa casilla.
+          </Paso>
+          <Paso n={3}>
             Comprueba que están marcadas para <b>todos</b> los entornos: Production, Preview y
             Development. Si solo están en Production, cualquier despliegue de vista previa cae
             aquí.
           </Paso>
-          <Paso n={3}>
+          <Paso n={4}>
             <b>Vuelve a desplegar.</b> Es el paso que se salta todo el mundo: estas variables se
             incrustan al construir, así que un despliegue anterior no se entera de que las has
             añadido. En <b>Deployments</b>, el menú del último → <b>Redeploy</b>.
@@ -127,8 +133,12 @@ export default function SetupPage() {
   );
 }
 
-function Visto({ nombre, v }: { nombre: string; v: EstadoVariable }) {
+function Visto({ v }: { v: EstadoVariable }) {
   const bien = v.estado === 'bien';
+  /* Si hay varios nombres válidos se enseña el que se ha usado; si no llega
+     ninguno, todos, que es la única forma de saber cuál poner. */
+  const nombres = v.usado ? [v.usado] : v.nombres;
+
   return (
     <div className="flex items-start gap-3 px-4 py-3 sm:px-5">
       <span
@@ -139,11 +149,14 @@ function Visto({ nombre, v }: { nombre: string; v: EstadoVariable }) {
         {bien ? <Check size={11} weight="bold" /> : <X size={11} weight="bold" />}
       </span>
       <div className="min-w-0 flex-1">
-        <p className="tnum break-all text-micro text-content">{nombre}</p>
-        <p
-          className={`mt-0.5 break-all text-caption ${bien ? 'text-content-muted' : 'text-lose'}`}
-        >
-          {v.estado === 'falta' ? 'no llega a la app' : v.detalle}
+        {nombres.map((n, i) => (
+          <p key={n} className="tnum break-all text-micro text-content">
+            {i > 0 && <span className="text-content-faint">o </span>}
+            {n}
+          </p>
+        ))}
+        <p className={`mt-0.5 break-all text-caption ${bien ? 'text-content-muted' : 'text-lose'}`}>
+          {v.detalle}
         </p>
       </div>
     </div>
