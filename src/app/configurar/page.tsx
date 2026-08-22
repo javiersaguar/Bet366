@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { ArrowUpRight, Warning } from '@phosphor-icons/react/dist/ssr';
-import { isSupabaseConfigured } from '@/lib/supabase/config';
+import { ArrowUpRight, Check, Warning, X } from '@phosphor-icons/react/dist/ssr';
+import { estadoDelEntorno, isSupabaseConfigured, type EstadoVariable } from '@/lib/supabase/config';
 import { Logo } from '@/components/logo';
 
 export const dynamic = 'force-dynamic';
@@ -23,6 +23,9 @@ export const dynamic = 'force-dynamic';
 export default function SetupPage() {
   if (isSupabaseConfigured()) redirect('/grupos');
 
+  const visto = estadoDelEntorno();
+  const ningunaPuesta = visto.url.estado === 'falta' && visto.clave.estado === 'falta';
+
   return (
     <main className="mx-auto w-full max-w-xl px-5 py-12 pb-20 pt-[max(3rem,env(safe-area-inset-top))]">
       <div className="animate-rise">
@@ -36,10 +39,26 @@ export default function SetupPage() {
       >
         <Warning size={18} weight="fill" className="mt-0.5 shrink-0 text-gold" />
         <span>
-          Faltan las dos variables de entorno de Supabase. Sin ellas no hay grupos, ni apuestas, ni
-          cuentas.
+          {ningunaPuesta
+            ? 'La app no ve ninguna de las dos variables de Supabase. Sin ellas no hay grupos, ni apuestas, ni cuentas.'
+            : 'Una de las dos variables de Supabase no llega bien. Sin las dos no hay grupos, ni apuestas, ni cuentas.'}
         </span>
       </p>
+
+      {/* Lo que la app ve de verdad. Es lo que no se puede saber mirando el
+          panel de Vercel: si la variable no está o si está mal escrita. */}
+      <section className="animate-rise mt-7" style={{ animationDelay: '90ms' }}>
+        <h2 className="field-label">Lo que ve esta página</h2>
+        <dl className="-mx-4 mt-2 divide-y divide-line border-y border-line sm:-mx-5">
+          <Visto nombre="NEXT_PUBLIC_SUPABASE_URL" v={visto.url} />
+          <Visto nombre="NEXT_PUBLIC_SUPABASE_ANON_KEY" v={visto.clave} />
+        </dl>
+        <p className="mt-2 text-caption leading-relaxed text-content-faint">
+          {ningunaPuesta
+            ? 'Las dos vacías suele ser que no se ha vuelto a desplegar después de añadirlas, o que están puestas solo para otro entorno.'
+            : 'Si una está y la otra no, casi siempre es una errata en el nombre.'}
+        </p>
+      </section>
 
       <section className="animate-rise mt-9" style={{ animationDelay: '120ms' }}>
         <h2 className="text-title-lg font-semibold">Si la app está en Vercel</h2>
@@ -105,6 +124,29 @@ export default function SetupPage() {
         </Link>
       </div>
     </main>
+  );
+}
+
+function Visto({ nombre, v }: { nombre: string; v: EstadoVariable }) {
+  const bien = v.estado === 'bien';
+  return (
+    <div className="flex items-start gap-3 px-4 py-3 sm:px-5">
+      <span
+        className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full border ${
+          bien ? 'border-brand/40 bg-brand/[.10] text-brand' : 'border-lose/40 bg-lose/[.10] text-lose'
+        }`}
+      >
+        {bien ? <Check size={11} weight="bold" /> : <X size={11} weight="bold" />}
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="tnum break-all text-micro text-content">{nombre}</p>
+        <p
+          className={`mt-0.5 break-all text-caption ${bien ? 'text-content-muted' : 'text-lose'}`}
+        >
+          {v.estado === 'falta' ? 'no llega a la app' : v.detalle}
+        </p>
+      </div>
+    </div>
   );
 }
 
