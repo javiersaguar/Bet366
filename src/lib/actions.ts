@@ -7,6 +7,13 @@ import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { AVATAR_COLORS, AVATAR_SYMBOLS } from '@/lib/avatars';
 import { limpiarInstagram } from '@/lib/instagram';
 import { mensajeDeError } from '@/lib/errores';
+import {
+  CUBO,
+  MAX_BYTES_SALIDA,
+  esRutaDeAvatarDe,
+  olfatear,
+  rutaDeAvatar,
+} from '@/lib/avatar-foto';
 
 export type ActionResult = { error?: string; ok?: true };
 
@@ -278,4 +285,130 @@ export async function markNotificationsReadAction(groupId: string): Promise<Acti
   const result = await rpc('mark_notifications_read', { p_group: groupId });
   if (result.ok) revalidatePath(`/grupos/${groupId}`, 'layout');
   return result;
+}
+
+// -------------------------------------------------------------- foto de perfil
+
+/**
+ * Qué decir cuando la base todavía no tiene la columna de la foto.
+ *
+ * PostgREST contesta PGRST204 «Could not find the 'avatar_path' column». Es
+ * el mismo caso que el de Instagram: mejor decir qué falta que soltar el
+ * error de la base tal cual.
+ */
+function faltaLaColumnaDeFoto(error: { code?: string; message: string }): boolean {
+  return error.code === 'PGRST204' || /avatar_path/i.test(error.message);
+}
+
+const SIN_MIGRACION_FOTO =
+  'Falta pasar la migración 0007 en el SQL Editor de Supabase para poder guardar fotos.';
+
+/**
+ * Guardar la foto de perfil.
+ *
+ * Lo que llega ya viene recortado y reencodado por el navegador, pero eso no
+ * se puede dar por bueno: una acción de servidor es una dirección más y
+ * cualquiera puede escribirle. Así que aquí se vuelve a comprobar todo lo que
+ * importa, y sin fiarse del `content-type`, que es texto que manda el cliente:
+ *
+ *   - que haya sesión, y la carpeta se arma con ese id y no con nada del
+ *     formulario;
+ *   - que pese lo que puede pesar un avatar y no esté vacío;
+ *   - y que los primeros bytes sean de verdad los de un JPEG o un WebP.
+ *
+ * Con eso, lo único que puede llegar al almacén es una imagen, en la carpeta
+ * de quien la sube. Las políticas del cubo lo vuelven a exigir por su cuenta.
+ */
+export async function setProfilePhotoAction(
+  _prev: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: 'No has iniciado sesión.' };
+
+  const subido = formData.get('foto');
+  if (!(subido instanceof File) || subido.size === 0) {
+    return { error: 'No ha llegado ninguna foto.' };
+  }
+  if (subido.size > MAX_BYTES_SALIDA) {
+    return { error: 'Esa foto pesa demasiado. Vuelve a elegirla y se encoge sola.' };
+  }
+
+  const bytes = new Uint8Array(await subido.arrayBuffer());
+  const tipo = olfatear(bytes);
+  if (!tipo) return { error: 'Ese fichero no es una imagen.' };
+
+  const ruta = rutaDeAvatar(user.id, tipo);
+
+  const { error: subida } = await supabase.storage.from(CUBO).upload(ruta, bytes, {
+    contentType: tipo,
+    cacheControl: '31536000',
+    upsert: false,
+  });
+  if (subida) {
+    if (/bucket/i.test(subida.message) && /not found/i.test(subida.message)) {
+      return { error: SIN_MIGRACION_FOTO };
+    }
+    return { error: mensajeDeError(subida) };
+  }
+
+  const { data: antes } = await supabase
+    .from('profiles')
+    .select('avatar_path')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({ avatar_path: ruta })
+    .eq('id', user.id);
+
+  if (error) {
+    /* Si no se puede apuntar, se deshace la subida: mejor no dejar bytes
+       sueltos en el almacén que nadie va a mirar nunca. */
+    await supabase.storage.from(CUBO).remove([ruta]);
+    return { error: faltaLaColumnaDeFoto(error) ? SIN_MIGRACION_FOTO : mensajeDeError(error) };
+  }
+
+  const vieja = antes?.avatar_path as string | null | undefined;
+  if (vieja && vieja !== ruta && esRutaDeAvatarDe(vieja, user.id)) {
+    await supabase.storage.from(CUBO).remove([vieja]);
+  }
+
+  revalidatePath('/', 'layout');
+  return { ok: true };
+}
+
+/** Quitar la foto y volver al emblema. También borra el fichero. */
+export async function removeProfilePhotoAction(): Promise<ActionResult> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: 'No has iniciado sesión.' };
+
+  const { data: antes } = await supabase
+    .from('profiles')
+    .select('avatar_path')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({ avatar_path: null })
+    .eq('id', user.id);
+  if (error) {
+    return { error: faltaLaColumnaDeFoto(error) ? SIN_MIGRACION_FOTO : mensajeDeError(error) };
+  }
+
+  const vieja = antes?.avatar_path as string | null | undefined;
+  if (esRutaDeAvatarDe(vieja, user.id)) {
+    await supabase.storage.from(CUBO).remove([vieja as string]);
+  }
+
+  revalidatePath('/', 'layout');
+  return { ok: true };
 }

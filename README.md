@@ -97,6 +97,44 @@ Los símbolos viven en [`src/components/avatar-symbol.tsx`](src/components/avata
 y la paleta en [`src/lib/avatars.ts`](src/lib/avatars.ts); en la base de datos
 son dos enums, así que no cabe un valor inventado.
 
+### Fotos de perfil
+
+Quien quiera puede poner una foto suya de la galería. El emblema no
+desaparece: sigue siendo lo que se ve mientras la foto carga, lo que queda si
+la quitas y lo que tiene todo el mundo desde el primer día.
+
+Del fichero que eliges **no se guarda ni un byte**. Se dibuja en un lienzo, se
+recorta al cuadrado que has encuadrado y se codifica de cero a 512×512 en
+WebP, así que lo que sube son píxeles y nada más: cualquier cosa escondida
+dentro del original desaparece al reencodar, y con ella los metadatos EXIF,
+que en una foto de móvil llevan las coordenadas de dónde se hizo.
+
+Las cuatro barreras, de fuera hacia dentro:
+
+| Dónde | Qué impide |
+| --- | --- |
+| Navegador | Tope de 12 MB y de 80 megapíxeles antes de tocar nada, y el reencodado a 512×512 |
+| Acción de servidor | Vuelve a medir el peso y **olfatea los primeros bytes**: si no es un JPEG o un WebP de verdad, no sube. El `content-type` lo manda el cliente, así que no cuenta |
+| Políticas del cubo | Solo `image/webp` y `image/jpeg`, 256 KB, y cada uno únicamente en la carpeta con su id de usuario |
+| Restricción de `profiles` | La columna guarda una **ruta**, nunca una dirección, y tiene que empezar por el id de la propia fila |
+
+Esa última es la que más importa: si ahí cupiera una URL, cualquiera podría
+apuntar su foto de perfil al servidor que quisiera y todo el grupo se la
+pediría al abrir la app. La dirección pública se arma en
+[`src/lib/avatar-foto.ts`](src/lib/avatar-foto.ts), que además vuelve a
+comprobar la ruta **al leer**: una fila manipulada acaba enseñando el emblema
+de siempre en vez de convertirse en una etiqueta `img` hacia cualquier sitio.
+
+Un cuadrado de 512×512 pesa unas decenas de kilobytes, así que cien personas
+ocupan menos que una sola foto sin tocar.
+
+### Instagram
+
+Es opcional y de lo que se guarda solo sale el nombre de usuario, nunca un
+enlace: la dirección la arma la app. Vale pegar la URL entera, pero si no es
+de `instagram.com` no se acepta. Una vez puesto, el campo se convierte en el
+enlace de verdad, y al tocarlo se abre tu perfil en la app de Instagram.
+
 ### Apostantes públicos o a ciegas
 
 Al lanzar una apuesta se elige si los apostantes y sus cantidades son visibles.
@@ -179,6 +217,7 @@ supabase/migrations/0003_resolution.sql
 supabase/migrations/0004_policies.sql
 supabase/migrations/0005_instagram.sql
 supabase/migrations/0006_codigo_invitacion.sql
+supabase/migrations/0007_foto_perfil.sql
 ```
 
 Si algo falla, para ahí y no sigas con el siguiente: cada uno depende del
@@ -299,10 +338,10 @@ El segundo levanta un Postgres, aplica las migraciones sobre un stub mínimo de
 lo que aporta Supabase (`auth.users`, `auth.uid()`, y pgcrypto en el esquema
 `extensions`, donde lo pone Supabase de verdad) y comprueba el ciclo entero:
 apuestas, rechazo de arbitraje, anulación por fraude, publicación de resultado,
-impugnación con votación, pago, reinicio semanal, códigos de invitación y
-políticas de acceso.
+impugnación con votación, pago, reinicio semanal, códigos de invitación, fotos
+de perfil y políticas de acceso.
 
-Entre los dos hay 116 comprobaciones. Las que más importan:
+Entre los dos hay 150 comprobaciones. Las que más importan:
 
 - ninguna secuencia de apuestas aceptada produce beneficio garantizado
   (comprobado además con 300 secuencias aleatorias);

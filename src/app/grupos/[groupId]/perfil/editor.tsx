@@ -1,15 +1,18 @@
 'use client';
 
+import Link from 'next/link';
 import { useActionState, useEffect, useState } from 'react';
-import { InstagramLogo } from '@phosphor-icons/react/dist/csr/InstagramLogo';
 import type { Profile } from '@/lib/types';
 import { updateProfileAction } from '@/lib/actions';
 import { Alert, SubmitButton } from '@/components/ui';
 import { AvatarPicker } from '@/components/avatar-picker';
 import { resolveAvatar } from '@/components/avatar';
+import { ConectarInstagram } from '@/components/conectar-instagram';
+import { FotoDePerfil } from '@/components/foto-perfil';
 import { useToast } from '@/components/toast';
 
-export function ProfileEditor({ me }: { me: Profile }) {
+export function ProfileEditor({ me, demo = false }: { me: Profile; demo?: boolean }) {
+  const tieneFoto = Boolean(me.avatar_path);
   const initial = resolveAvatar(me);
   const [state, action] = useActionState(updateProfileAction, {});
   const [name, setName] = useState(me.display_name);
@@ -31,63 +34,54 @@ export function ProfileEditor({ me }: { me: Profile }) {
     ig.trim() !== (me.instagram ?? '');
 
   return (
-    <form action={action} className="card space-y-6 p-5">
+    <div className="card space-y-6 p-5">
+      {/* La foto se guarda sola, en cuanto la encuadras: no tiene sentido
+          hacerla esperar al botón de abajo, que es de otras cosas. Por eso va
+          fuera del formulario, y no dentro: un formulario no puede llevar
+          otro dentro. */}
       <AvatarPicker
         userId={me.id}
         displayName={name}
         symbol={avatar.symbol}
         color={avatar.color}
+        fotoPath={me.avatar_path ?? null}
         onChange={setAvatar}
+        foto={<FotoDePerfil tieneFoto={tieneFoto} demo={demo} />}
       />
 
-      <div>
-        <label className="label" htmlFor="display_name">
-          Cómo te ven los demás
-        </label>
-        <input
-          id="display_name"
-          name="display_name"
-          required
-          minLength={2}
-          maxLength={40}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-      </div>
-
-      <div>
-        <label className="label" htmlFor="instagram">
-          Tu Instagram
-          <span className="ml-1.5 font-normal text-content-faint">opcional</span>
-        </label>
-        <div className="relative">
-          <span className="pointer-events-none absolute inset-y-0 left-3.5 grid place-items-center text-content-faint">
-            <InstagramLogo size={17} />
-          </span>
+      <form action={demo ? undefined : action} className="space-y-6 border-t border-line pt-6">
+        <div>
+          <label className="label" htmlFor="display_name">
+            Cómo te ven los demás
+          </label>
           <input
-            id="instagram"
-            name="instagram"
-            value={ig}
-            onChange={(e) => setIg(e.target.value)}
-            placeholder="tu_usuario"
-            autoCapitalize="none"
-            autoComplete="off"
-            spellCheck={false}
-            maxLength={80}
-            className="!pl-10"
+            id="display_name"
+            name="display_name"
+            required
+            minLength={2}
+            maxLength={40}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
           />
         </div>
-        <p className="mt-1.5 text-micro leading-relaxed text-content-faint">
-          Sale junto a tu nombre en la ficha del grupo, y quien lo toque va directo a tu perfil.
-          Vale pegar la dirección entera.
-        </p>
-      </div>
 
-      {state.error && <Alert kind="error">{state.error}</Alert>}
+        <input type="hidden" name="avatar_symbol" value={avatar.symbol} />
+        <input type="hidden" name="avatar_color" value={avatar.color} />
 
-      <SubmitButton className="btn-primary w-full" pending="Guardando…" disabled={!dirty}>
-        {dirty ? 'Guardar cambios' : 'Todo guardado'}
-      </SubmitButton>
-    </form>
+        <ConectarInstagram guardado={me.instagram ?? ''} valor={ig} onChange={setIg} />
+
+        {state.error && <Alert kind="error">{state.error}</Alert>}
+
+        {demo ? (
+          <Link href="/login" className="btn-primary w-full">
+            Entrar para guardar tu perfil
+          </Link>
+        ) : (
+          <SubmitButton className="btn-primary w-full" pending="Guardando…" disabled={!dirty}>
+            {dirty ? 'Guardar cambios' : 'Todo guardado'}
+          </SubmitButton>
+        )}
+      </form>
+    </div>
   );
 }

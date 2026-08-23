@@ -6,6 +6,7 @@ export default async function DemoProfile() {
 
   return (
     <ProfileScreen
+      demo
       basePath="/demo"
       me={me}
       group={group}

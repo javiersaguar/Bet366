@@ -20,3 +20,30 @@ create table if not exists auth.users (
 create or replace function auth.uid() returns uuid language sql stable as $$
   select nullif(current_setting('test.uid', true), '')::uuid;
 $$;
+
+-- Lo justo del almacen para que la migracion de la foto de perfil se aplique
+-- aqui. Las politicas de `storage.objects` se prueban en Supabase de verdad;
+-- lo que si se comprueba en local es la restriccion de `profiles`, que es la
+-- que impide guardar la ruta de otra persona.
+create schema if not exists storage;
+
+create table if not exists storage.buckets (
+  id text primary key,
+  name text not null,
+  public boolean default false,
+  file_size_limit bigint,
+  allowed_mime_types text[]
+);
+
+create table if not exists storage.objects (
+  id uuid primary key default gen_random_uuid(),
+  bucket_id text references storage.buckets(id),
+  name text,
+  owner uuid
+);
+alter table storage.objects enable row level security;
+
+create or replace function storage.foldername(name text) returns text[]
+language sql immutable as $$
+  select string_to_array(name, '/');
+$$;

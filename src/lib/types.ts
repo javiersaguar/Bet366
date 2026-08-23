@@ -20,6 +20,12 @@ export type Profile = {
    * en una base que todavía no la tenga.
    */
   instagram?: string | null;
+  /**
+   * Ruta de la foto de perfil dentro del almacén, nunca una dirección. La
+   * columna llega con la migración 0007; sin ella se sigue viendo el
+   * emblema, que es el respaldo de siempre.
+   */
+  avatar_path?: string | null;
 };
 
 export type Group = {

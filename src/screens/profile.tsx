@@ -16,6 +16,7 @@ export function ProfileScreen({
   group,
   balance,
   stats,
+  demo = false,
 }: {
   basePath: string;
   me: Profile;
@@ -23,13 +24,15 @@ export function ProfileScreen({
   season?: Season;
   balance: number;
   stats: ProfileStats;
+  /** En la vista de ejemplo no hay nada que guardar. */
+  demo?: boolean;
 }) {
   const hitRate = stats.settled > 0 ? Math.round((stats.won / stats.settled) * 100) : null;
 
   return (
 
     <div className="space-y-8">
-      <ProfileEditor me={me} />
+      <ProfileEditor me={me} demo={demo} />
 
       <section>
         <SectionTitle>Tu semana</SectionTitle>
@@ -67,9 +70,11 @@ export function ProfileScreen({
         </nav>
       </section>
 
-      <form action={signOutAction}>
-        <button className="btn-ghost w-full !text-lose">Cerrar sesión</button>
-      </form>
+      {!demo && (
+        <form action={signOutAction}>
+          <button className="btn-ghost w-full !text-lose">Cerrar sesión</button>
+        </form>
+      )}
     </div>
   );
 }

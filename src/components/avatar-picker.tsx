@@ -1,49 +1,88 @@
 'use client';
 
 import { useState } from 'react';
+import { CaretDown } from '@phosphor-icons/react/dist/csr/CaretDown';
 import { AVATAR_COLORS, AVATAR_SYMBOLS, SYMBOL_LABELS, paletteOf } from '@/lib/avatars';
 import { SymbolGlyph } from '@/components/avatar-symbol';
 import { Avatar } from '@/components/avatar';
 
 /**
- * Selector de emblema: una vista previa grande arriba y, debajo, la rejilla
- * de símbolos y la fila de colores. Los símbolos se pintan ya con el color
- * elegido para que la decisión se vea al momento.
+ * Cómo te ven: la foto si la has puesto y, debajo, el emblema.
+ *
+ * El emblema no desaparece al poner una foto. Es lo que se ve mientras la
+ * foto carga, lo que queda si la quitas y lo que tiene todo el mundo desde el
+ * primer día sin tocar nada, así que sigue mereciendo su sitio; eso sí, si ya
+ * hay foto se recoge detrás de un desplegable para no dar la turra.
  */
 export function AvatarPicker({
   userId,
   displayName,
   symbol,
   color,
+  fotoPath = null,
+  foto,
   onChange,
 }: {
   userId: string;
   displayName: string;
   symbol: string;
   color: string;
+  /** Ruta de la foto guardada, para pintar la vista previa de verdad. */
+  fotoPath?: string | null;
+  /** Los botones de poner y quitar la foto. Llegan de fuera porque llevan
+      sus propias acciones de servidor. */
+  foto?: React.ReactNode;
   onChange: (next: { symbol: string; color: string }) => void;
 }) {
   const palette = paletteOf(color);
+  const conFoto = Boolean(fotoPath);
+  const [verEmblema, setVerEmblema] = useState(!conFoto);
 
   return (
     <div className="space-y-5">
-      <input type="hidden" name="avatar_symbol" value={symbol} />
-      <input type="hidden" name="avatar_color" value={color} />
-
       <div className="flex items-center gap-4">
         <Avatar
-          profile={{ id: userId, avatar_symbol: symbol, avatar_color: color }}
+          profile={{
+            id: userId,
+            avatar_symbol: symbol,
+            avatar_color: color,
+            avatar_path: fotoPath,
+          }}
           size="xl"
           className="transition-transform duration-300 ease-out"
         />
         <div className="min-w-0">
           <p className="truncate text-lg font-bold text-white">{displayName || 'Sin nombre'}</p>
           <p className="text-sm text-content-muted">
-            {SYMBOL_LABELS[symbol as keyof typeof SYMBOL_LABELS] ?? 'Emblema'}
+            {conFoto
+              ? 'Tu foto'
+              : (SYMBOL_LABELS[symbol as keyof typeof SYMBOL_LABELS] ?? 'Emblema')}
           </p>
         </div>
       </div>
 
+      {foto}
+
+      {conFoto && (
+        <button
+          type="button"
+          onClick={() => setVerEmblema((v) => !v)}
+          aria-expanded={verEmblema}
+          className="flex items-center gap-1.5 text-caption font-semibold text-content-muted
+                     transition-colors duration-press ease-out hover:text-content"
+        >
+          Tu emblema
+          <span className="font-normal text-content-faint">se ve si quitas la foto</span>
+          <CaretDown
+            size={13}
+            weight="bold"
+            className="transition-transform duration-pop ease-out"
+            style={{ transform: verEmblema ? 'rotate(180deg)' : 'none' }}
+          />
+        </button>
+      )}
+
+      <div hidden={!verEmblema} className="space-y-5">
       <div>
         <p className="label">Color</p>
         <div className="flex flex-wrap gap-2">
@@ -105,6 +144,7 @@ export function AvatarPicker({
             );
           })}
         </div>
+      </div>
       </div>
     </div>
   );
