@@ -4,7 +4,9 @@
 --  stake x cuota bloqueada.
 -- =====================================================================
 
-create extension if not exists "pgcrypto";
+-- `gen_random_uuid()` es de serie desde PostgreSQL 13, asi que aqui no
+-- hace falta ninguna extension. Antes se pedia pgcrypto por el codigo de
+-- invitacion, que ya no la usa: ver 0006_codigo_invitacion.sql.
 
 -- ---------------------------------------------------------------- perfiles
 -- Avatares: un simbolo vectorial sobre un color, en vez de emojis (que

@@ -139,14 +139,23 @@ create or replace function public.create_group(
   p_dispute_hours int default 24
 ) returns uuid language plpgsql security definer set search_path = public as $$
 declare
+  -- Sin O/0 ni I/1: estos codigos se dictan en voz alta. Y sin pgcrypto:
+  -- en Supabase esa extension vive en el esquema `extensions` y esta
+  -- funcion solo mira en `public`, asi que gen_random_bytes no existia
+  -- aqui dentro. Ver 0006_codigo_invitacion.sql.
+  v_alfabeto constant text := 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   v_uid   uuid := auth.uid();
   v_group uuid;
   v_code  text;
+  v_i     int;
 begin
   if v_uid is null then raise exception 'No autenticado'; end if;
 
   loop
-    v_code := upper(substr(replace(encode(gen_random_bytes(6), 'base64'), '/', ''), 1, 6));
+    v_code := '';
+    for v_i in 1..6 loop
+      v_code := v_code || substr(v_alfabeto, 1 + floor(random() * length(v_alfabeto))::int, 1);
+    end loop;
     exit when not exists (select 1 from public.groups where invite_code = v_code);
   end loop;
 

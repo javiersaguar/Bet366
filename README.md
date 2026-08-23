@@ -178,6 +178,7 @@ supabase/migrations/0002_functions.sql
 supabase/migrations/0003_resolution.sql
 supabase/migrations/0004_policies.sql
 supabase/migrations/0005_instagram.sql
+supabase/migrations/0006_codigo_invitacion.sql
 ```
 
 Si algo falla, para ahí y no sigas con el siguiente: cada uno depende del
@@ -295,11 +296,13 @@ viven en `src/screens/` y reciben los datos por props, así que las páginas de
 que verás con datos reales.
 
 El segundo levanta un Postgres, aplica las migraciones sobre un stub mínimo de
-lo que aporta Supabase (`auth.users`, `auth.uid()`) y comprueba el ciclo entero:
+lo que aporta Supabase (`auth.users`, `auth.uid()`, y pgcrypto en el esquema
+`extensions`, donde lo pone Supabase de verdad) y comprueba el ciclo entero:
 apuestas, rechazo de arbitraje, anulación por fraude, publicación de resultado,
-impugnación con votación, pago, reinicio semanal y políticas de acceso.
+impugnación con votación, pago, reinicio semanal, códigos de invitación y
+políticas de acceso.
 
-Entre los dos hay 81 comprobaciones. Las que más importan:
+Entre los dos hay 116 comprobaciones. Las que más importan:
 
 - ninguna secuencia de apuestas aceptada produce beneficio garantizado
   (comprobado además con 300 secuencias aleatorias);

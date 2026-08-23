@@ -50,13 +50,18 @@ export function NewGroupForm() {
           <label className="label" htmlFor="starting_points">
             Puntos con los que empieza cada uno
           </label>
+          {/* Vale cualquier número entero del rango. Con un `step` de 100 el
+              navegador solo daba por bueno un múltiplo exacto, y quien
+              escribía 1250 se topaba con un «introduce un valor válido» que
+              no explicaba nada. Los topes de verdad los pone la base. */}
           <input
             id="starting_points"
             name="starting_points"
             type="number"
+            inputMode="numeric"
             min={100}
             max={100000}
-            step={100}
+            step={1}
             value={starting}
             onChange={(e) => setStarting(Number(e.target.value))}
             className="tnum text-body-lg"
@@ -137,9 +142,10 @@ export function NewGroupForm() {
                 id="liquidity"
                 name="liquidity"
                 type="number"
+                inputMode="numeric"
                 min={1}
                 max={100000}
-                step={50}
+                step={1}
                 defaultValue={300}
                 className="tnum"
               />
@@ -156,6 +162,7 @@ export function NewGroupForm() {
                 id="dispute_hours"
                 name="dispute_hours"
                 type="number"
+                inputMode="numeric"
                 min={1}
                 max={168}
                 defaultValue={24}

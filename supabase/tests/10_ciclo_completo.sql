@@ -40,6 +40,14 @@ select test.check('todos arrancan con los mismos puntos',
 select test.check('el codigo de invitacion no repetido es rechazado',
   (select count(*) from public.group_members where group_id = :'gid') = 4);
 
+-- La semana que abre `create_group` acaba el lunes que viene, asi que en
+-- domingo dura horas. Las apuestas de mas abajo cierran a dias vista y
+-- chocaban con eso: la suite fallaba entera un dia de cada siete. Aqui se
+-- estira la semana para que estas pruebas no dependan de que dia se corran;
+-- el reinicio semanal tiene su propia prueba en 20_, que la acorta a mano.
+update public.seasons set ends_at = now() + interval '30 days'
+where group_id = :'gid' and closed_at is null;
+
 -- ======================================================= crear apuesta
 set test.uid = '11111111-1111-1111-1111-111111111111';
 select public.create_market(:'gid', 'Fulanito se lia con Menganito', 'Antes de que acabe la fiesta',

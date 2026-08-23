@@ -6,27 +6,18 @@ import { createClient } from '@/lib/supabase/server';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { AVATAR_COLORS, AVATAR_SYMBOLS } from '@/lib/avatars';
 import { limpiarInstagram } from '@/lib/instagram';
+import { mensajeDeError } from '@/lib/errores';
 
 export type ActionResult = { error?: string; ok?: true };
 
 /** Mejor un mensaje que una excepcion cuando faltan las variables de entorno. */
 const SIN_PROYECTO = 'La app no tiene base de datos configurada todavía.';
 
-/** Los mensajes de las funciones SQL ya vienen en castellano y son de cara al usuario. */
-function toMessage(error: { message: string; code?: string } | null): string {
-  if (!error) return 'Algo ha fallado, prueba otra vez.';
-  const raw = error.message ?? '';
-  const clean = raw.replace(/^.*?(?:ERROR|error):\s*/i, '').trim();
-  if (/duplicate key|unique constraint/i.test(clean)) return 'Eso ya existe.';
-  if (/violates check constraint/i.test(clean)) return 'Hay algún dato fuera de rango.';
-  return clean || 'Algo ha fallado, prueba otra vez.';
-}
-
 async function rpc(fn: string, args: Record<string, unknown>): Promise<ActionResult> {
   if (!isSupabaseConfigured()) return { error: SIN_PROYECTO };
   const supabase = await createClient();
   const { error } = await supabase.rpc(fn, args);
-  return error ? { error: toMessage(error) } : { ok: true };
+  return error ? { error: mensajeDeError(error) } : { ok: true };
 }
 
 // ------------------------------------------------------------------ grupos
@@ -42,7 +33,7 @@ export async function createGroupAction(
     p_liquidity: Number(formData.get('liquidity') ?? 300),
     p_dispute_hours: Number(formData.get('dispute_hours') ?? 24),
   });
-  if (error) return { error: toMessage(error) };
+  if (error) return { error: mensajeDeError(error) };
   redirect(`/grupos/${data}`);
 }
 
@@ -54,7 +45,7 @@ export async function joinGroupAction(
   const { data, error } = await supabase.rpc('join_group', {
     p_code: String(formData.get('code') ?? '').trim(),
   });
-  if (error) return { error: toMessage(error) };
+  if (error) return { error: mensajeDeError(error) };
   redirect(`/grupos/${data}`);
 }
 
@@ -85,7 +76,7 @@ export async function createMarketAction(
     p_stakes_public: formData.get('stakes_public') === 'on',
     p_options: options,
   });
-  if (error) return { error: toMessage(error) };
+  if (error) return { error: mensajeDeError(error) };
   redirect(`/grupos/${groupId}/apuesta/${data}`);
 }
 
@@ -215,7 +206,7 @@ export async function updateProfileAction(
      responde PGRST204 "Could not find the 'instagram' column". */
   if (error && (error.code === 'PGRST204' || /instagram/i.test(error.message))) {
     const reintento = await supabase.from('profiles').update(base).eq('id', user.id);
-    if (reintento.error) return { error: toMessage(reintento.error) };
+    if (reintento.error) return { error: mensajeDeError(reintento.error) };
     revalidatePath('/', 'layout');
     return {
       error:
@@ -223,7 +214,7 @@ export async function updateProfileAction(
     };
   }
 
-  if (error) return { error: toMessage(error) };
+  if (error) return { error: mensajeDeError(error) };
   revalidatePath('/', 'layout');
   return { ok: true };
 }
@@ -272,7 +263,7 @@ export async function leaveGroupAction(
     .eq('group_id', groupId)
     .eq('user_id', user.id);
 
-  if (error) return { error: toMessage(error) };
+  if (error) return { error: mensajeDeError(error) };
   revalidatePath('/grupos', 'layout');
   redirect('/grupos');
 }
