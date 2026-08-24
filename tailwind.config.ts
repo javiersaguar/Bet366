@@ -99,6 +99,14 @@ export default {
       },
 
       keyframes: {
+        /* Para lo que cambia sin moverse de su hueco: un campo que sustituye
+           a una tarjeta, una sección que se despliega. Diez píxeles de
+           recorrido ahí sobran; cuatro bastan para que se lea como un cambio
+           y no como un parpadeo. */
+        swap: {
+          from: { opacity: '0', transform: 'translateY(4px)' },
+          to: { opacity: '1', transform: 'none' },
+        },
         rise: {
           from: { opacity: '0', transform: 'translateY(10px)' },
           to: { opacity: '1', transform: 'none' },
@@ -143,6 +151,7 @@ export default {
 
       animation: {
         rise: 'rise .34s cubic-bezier(.22,.68,.28,1) both',
+        swap: 'swap .18s cubic-bezier(.23,1,.32,1) both',
         'pop-in': 'popIn .28s cubic-bezier(.2,.9,.3,1.08) both',
         'slide-up': 'slideUp .32s cubic-bezier(.22,.68,.28,1) both',
         shimmer: 'shimmer 1.6s infinite',

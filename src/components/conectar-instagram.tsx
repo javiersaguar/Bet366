@@ -92,7 +92,7 @@ export function ConectarInstagram({
           </button>
         </div>
       ) : abierto || valor ? (
-        <div className="space-y-2">
+        <div className={`space-y-2 ${abierto ? 'animate-swap' : ''}`}>
           <div className="relative">
             <span className="pointer-events-none absolute inset-y-0 left-3.5 grid place-items-center text-content-faint">
               <InstagramLogo size={17} />

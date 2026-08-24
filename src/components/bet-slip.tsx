@@ -111,7 +111,7 @@ export function BetSlip({
       </div>
 
       {!option ? (
-        <p className="py-2 text-center text-sm text-content-faint">
+        <p className="py-2 text-center text-body text-content-faint">
           Toca una opción para apostar.
         </p>
       ) : (
@@ -129,7 +129,7 @@ export function BetSlip({
               <p className="field-label">Tu boleto</p>
               <p className="truncate font-semibold text-white">{option.label}</p>
             </div>
-            <span className="odds shrink-0 rounded-lg border border-brand/40 bg-brand/10 px-3 py-1.5 text-lg text-brand">
+            <span className="odds shrink-0 rounded-lg border border-brand/40 bg-brand/10 px-3 py-1.5 text-odds text-brand">
               {fmtOdds(option.current_odds)}
             </span>
           </header>
@@ -176,13 +176,13 @@ export function BetSlip({
               <CountUp
                 value={profit}
                 prefix={profit > 0 ? '+' : ''}
-                className="text-lg font-bold text-content"
+                className="tnum text-odds font-semibold text-content"
                 duration={350}
               />
             </div>
             <div className="px-4 py-3">
               <p className="field-label !mb-1">Cobras</p>
-              <CountUp value={payout} className="text-lg font-bold text-brand" duration={350} />
+              <CountUp value={payout} className="tnum text-odds font-semibold text-brand" duration={350} />
             </div>
           </div>
 

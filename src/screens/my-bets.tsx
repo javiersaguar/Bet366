@@ -1,5 +1,11 @@
 import Link from 'next/link';
-import { CaretRight, Plus } from '@phosphor-icons/react/dist/ssr';
+import {
+  CaretRight,
+  ClockCounterClockwise,
+  Megaphone,
+  Plus,
+  Receipt,
+} from '@phosphor-icons/react/dist/ssr';
 import type { MarketWithOptions, Profile, Wager } from '@/lib/types';
 import { countdown, dateTime, odds as fmtOdds, points } from '@/lib/format';
 import { Empty, MarketBadge } from '@/components/ui';
@@ -115,6 +121,7 @@ function EnJuego({
   if (wagers.length === 0) {
     return (
       <Empty
+        icon={Receipt}
         title="No tienes nada en juego"
         hint="Date una vuelta por el tablón y busca algo que te suene."
       />
@@ -201,6 +208,7 @@ function Historial({
   if (wagers.length === 0) {
     return (
       <Empty
+        icon={ClockCounterClockwise}
         title="Todavía no se ha resuelto ninguna"
         hint="Cuando alguien publique un resultado, tus apuestas de esa semana aparecerán aquí."
       />
@@ -287,6 +295,7 @@ function Lanzadas({ basePath, markets }: { basePath: string; markets: MarketWith
   if (markets.length === 0) {
     return (
       <Empty
+        icon={Megaphone}
         title="No has lanzado ninguna"
         hint="Se te tiene que ocurrir algo bueno."
         action={

@@ -169,7 +169,7 @@ export function NewMarketForm({
           <button
             type="button"
             onClick={() => setOptions((prev) => [...prev, { label: '', odds: '3.00' }])}
-            className="text-sm font-semibold text-content-muted transition hover:text-brand"
+            className="text-body font-semibold text-content-muted transition hover:text-brand"
           >
             + Añadir opción
           </button>

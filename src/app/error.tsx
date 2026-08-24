@@ -21,8 +21,8 @@ export default function GlobalError({
           <Warning size={28} />
         </span>
         <div className="space-y-1.5">
-          <h1 className="text-2xl font-bold">Se ha roto algo</h1>
-          <p className="text-sm text-content-muted">
+          <h1 className="text-display font-semibold">Se ha roto algo</h1>
+          <p className="text-body text-content-muted">
             No es culpa tuya. Prueba otra vez y, si sigue igual, avisa.
           </p>
         </div>

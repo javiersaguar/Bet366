@@ -52,8 +52,8 @@ export function AvatarPicker({
           className="transition-transform duration-300 ease-out"
         />
         <div className="min-w-0">
-          <p className="truncate text-lg font-bold text-white">{displayName || 'Sin nombre'}</p>
-          <p className="text-sm text-content-muted">
+          <p className="truncate text-title-lg font-semibold text-white">{displayName || 'Sin nombre'}</p>
+          <p className="text-body text-content-muted">
             {conFoto
               ? 'Tu foto'
               : (SYMBOL_LABELS[symbol as keyof typeof SYMBOL_LABELS] ?? 'Emblema')}
@@ -82,7 +82,10 @@ export function AvatarPicker({
         </button>
       )}
 
-      <div hidden={!verEmblema} className="space-y-5">
+      <div
+        hidden={!verEmblema}
+        className={`space-y-5 ${verEmblema && conFoto ? 'animate-swap' : ''}`}
+      >
       <div>
         <p className="label">Color</p>
         <div className="flex flex-wrap gap-2">

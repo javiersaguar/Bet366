@@ -7,8 +7,8 @@ export default function NotFound() {
       <div className="animate-rise space-y-5">
         <Mark className="mx-auto h-16 w-16 opacity-60" />
         <div className="space-y-1.5">
-          <h1 className="text-2xl font-bold">Por aquí no hay nada</h1>
-          <p className="text-sm text-content-muted">
+          <h1 className="text-display font-semibold">Por aquí no hay nada</h1>
+          <p className="text-body text-content-muted">
             O el enlace está mal, o esa apuesta ya no existe.
           </p>
         </div>

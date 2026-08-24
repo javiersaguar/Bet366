@@ -1,3 +1,4 @@
+import { BellSlash } from '@phosphor-icons/react/dist/ssr';
 import type { Notification } from '@/lib/types';
 import { NotificationRow } from '@/components/notification-row';
 import { Empty, SectionTitle } from '@/components/ui';
@@ -42,8 +43,8 @@ export function NotificationsScreen({
       <header className="flex items-end justify-between gap-3">
         <div>
           <BackLink href={basePath}>El tablón</BackLink>
-          <h1 className="mt-3 text-xl font-bold">Avisos</h1>
-          <p className="mt-0.5 text-sm text-content-muted">
+          <h1 className="mt-3 text-display font-semibold">Avisos</h1>
+          <p className="mt-1 text-body text-content-muted">
             {unread > 0 ? `${unread} sin leer` : 'Todo al día'}
           </p>
         </div>
@@ -52,6 +53,7 @@ export function NotificationsScreen({
 
       {items.length === 0 ? (
         <Empty
+          icon={BellSlash}
           title="Aquí no ha pasado nada todavía"
           hint="Cuando alguien lance una apuesta, publique un resultado o te toque resolver, aparecerá aquí."
         />

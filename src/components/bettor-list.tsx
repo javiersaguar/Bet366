@@ -30,7 +30,7 @@ export function BettorList({
     return (
       <section>
         <SectionTitle>Apostantes</SectionTitle>
-        <p className="card px-5 py-8 text-center text-sm text-content-faint">
+        <p className="px-5 py-8 text-center text-body text-content-faint">
           Todavía no ha entrado nadie.
         </p>
       </section>
@@ -60,7 +60,7 @@ export function BettorList({
               <div className="flex items-center gap-3">
                 {who && <Avatar profile={who} size="sm" />}
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold text-content">
+                  <p className="truncate text-body font-semibold text-content">
                     {w.user_id === meId ? 'Tú' : (who?.display_name ?? 'Alguien')}
                     <span className="font-normal text-content-muted"> · {labelOf(w.option_id)}</span>
                   </p>

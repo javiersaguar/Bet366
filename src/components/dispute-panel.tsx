@@ -48,7 +48,7 @@ export function DisputePanel({
         <h2 className="field-label !text-info">
           Plazo para impugnar
         </h2>
-        <p className="mt-1 text-sm leading-relaxed text-content-muted">
+        <p className="mt-1 text-body leading-relaxed text-content-muted">
           El creador dice que ganó <strong className="text-white">{declared?.label}</strong>. Si nadie
           lo discute, los puntos se reparten{' '}
           {market.dispute_until ? relative(market.dispute_until) : 'en breve'}.
@@ -83,7 +83,7 @@ export function DisputePanel({
         Lo decide el grupo
       </h2>
       {dispute && (
-        <p className="mt-1 text-sm leading-relaxed text-content-muted">
+        <p className="mt-1 text-body leading-relaxed text-content-muted">
           <strong className="text-white">
             {profilesById[dispute.opened_by]?.display_name ?? 'Alguien'}
           </strong>{' '}
@@ -128,7 +128,7 @@ function DisputeForm({ groupId, marketId }: { groupId: string; marketId: string 
         minLength={3}
         maxLength={300}
         placeholder="¿Qué pasó de verdad?"
-        className="w-full text-sm"
+        className="w-full text-body"
       />
       {state.error && <Alert kind="error">{state.error}</Alert>}
       <div className="flex gap-2">
@@ -192,7 +192,7 @@ function VoteForm({
                 style={{ width: `${pct}%` }}
               />
               <span className="relative flex items-center justify-between gap-3">
-                <span className={`text-sm font-semibold ${mine ? 'text-vote' : 'text-content'}`}>
+                <span className={`text-body font-semibold ${mine ? 'text-vote' : 'text-content'}`}>
                   {mine && '✓ '}
                   {c.label}
                 </span>

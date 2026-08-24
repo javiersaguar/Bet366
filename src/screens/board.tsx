@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Plus } from '@phosphor-icons/react/dist/ssr';
+import { Plus, SquaresFour } from '@phosphor-icons/react/dist/ssr';
 import type { Group, MarketWithOptions, Profile, Season, Wager } from '@/lib/types';
 import { MarketRow } from '@/components/market-row';
 import { Empty } from '@/components/ui';
@@ -78,6 +78,7 @@ export function BoardScreen({
 
       {markets.length === 0 ? (
         <Empty
+          icon={SquaresFour}
           title="Aún no hay ninguna apuesta"
           hint="Lanza la primera: «¿a que fulanito se lía con menganito?»"
           action={

@@ -22,7 +22,7 @@ export function CreatorPanel({
       <h2 className="field-label !mb-1.5 !text-brand">
         Tú lanzaste esta apuesta
       </h2>
-      <p className="mb-4 text-sm leading-relaxed text-content-muted">
+      <p className="mb-4 text-body leading-relaxed text-content-muted">
         {market.status === 'open'
           ? 'Puedes cerrarla antes de tiempo, poner el resultado cuando cierre o anular apuestas que veas raras.'
           : market.status === 'closed'
@@ -69,7 +69,7 @@ function ResultForm({ groupId, market }: { groupId: string; market: MarketWithOp
         {market.market_options.map((o) => (
           <label
             key={o.id}
-            className={`cursor-pointer rounded-xl border px-4 py-3 text-sm font-semibold transition ${
+            className={`cursor-pointer rounded-xl border px-4 py-3 text-body font-semibold transition ${
               choice === o.id
                 ? 'border-brand bg-brand/[.08] text-brand'
                 : 'border-line text-content-muted hover:border-line-strong'
@@ -88,7 +88,7 @@ function ResultForm({ groupId, market }: { groupId: string; market: MarketWithOp
         ))}
       </div>
 
-      <input name="note" maxLength={300} placeholder="Comentario (opcional)" className="w-full text-sm" />
+      <input name="note" maxLength={300} placeholder="Comentario (opcional)" className="w-full text-body" />
 
       {state.error && <Alert kind="error">{state.error}</Alert>}
 
@@ -129,12 +129,12 @@ function CancelForm({
     <form action={action} className="animate-rise space-y-2 rounded-xl border border-lose/25 p-4">
       <input type="hidden" name="market_id" value={marketId} />
       <input type="hidden" name="group_id" value={groupId} />
-      <p className="text-sm text-content-muted">
+      <p className="text-body text-content-muted">
         {hasBets
           ? 'Se devuelven todos los puntos a quien haya apostado. No se puede deshacer.'
           : 'Nadie ha apostado todavía.'}
       </p>
-      <input name="reason" required maxLength={200} placeholder="Motivo" className="w-full text-sm" />
+      <input name="reason" required maxLength={200} placeholder="Motivo" className="w-full text-body" />
       {state.error && <Alert kind="error">{state.error}</Alert>}
       <div className="flex gap-2">
         <SubmitButton className="btn-danger" pending="Anulando…">

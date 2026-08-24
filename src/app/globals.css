@@ -133,15 +133,36 @@
     scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
   }
 
-  /* Se respeta a quien tenga el sistema en "reducir movimiento". */
+  /* Se respeta a quien tenga el sistema en "reducir movimiento".
+  
+     Lo que se pide ahí es menos DESPLAZAMIENTO, no una interfaz a saltos.
+     Antes esto apagaba absolutamente todo, fundidos incluidos, y el
+     resultado era peor de lo que parece: un botón que cambia de color de
+     golpe o un panel que aparece de cuajo se leen como un fallo, no como
+     una atención. Un fundido no marea a nadie; lo que marea es que las
+     cosas se muevan por la pantalla. */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
     *::after {
+      /* Las entradas escalonadas, el confeti y las transiciones de página
+         llegan directamente a su sitio, sin recorrido. */
       animation-duration: 0.01ms !important;
+      animation-delay: 0ms !important;
       animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
+      /* Y lo que quede se acorta, pero no se apaga. */
+      transition-duration: 120ms !important;
+    }
+
+    /* Excepto lo que mueve algo de sitio o lo cambia de tamaño: eso sí se
+       resuelve al instante, que es justo lo que se ha pedido evitar. */
+    [class*='translate'],
+    [class*='scale'],
+    [class*='rotate'],
+    [class*='transition-transform'],
+    [class*='transition-['] {
+      transition-duration: 0.01ms !important;
     }
   }
 }

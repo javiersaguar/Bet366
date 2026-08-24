@@ -32,11 +32,19 @@ export function ProfileScreen({
   return (
 
     <div className="space-y-8">
+      {/* La pantalla se titula con tu nombre, que ya se ve grande dentro del
+          editor. Aquí va solo para el lector de pantalla y para que el
+          documento tenga un encabezado, como todas las demás. */}
+      <h1 className="sr-only">Tu perfil, {me.display_name}</h1>
+
       <ProfileEditor me={me} demo={demo} />
 
       <section>
         <SectionTitle>Tu semana</SectionTitle>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {/* Las mismas cuatro cifras que el tablón, el ranking y la lista de
+            grupos: filetes y columnas, no tarjetas. Una cifra es un dato, no
+            un objeto que se pueda tocar. */}
+        <dl className="grid grid-cols-4 divide-x divide-line border-y border-line">
           <Stat label="Puntos" value={points(balance)} tone="brand" />
           <Stat
             label="Acierto"
@@ -44,12 +52,8 @@ export function ProfileScreen({
             tone={hitRate !== null && hitRate >= 50 ? 'brand' : 'plain'}
           />
           <Stat label="Apuestas" value={String(stats.total)} tone="plain" />
-          <Stat
-            label="En juego"
-            value={points(stats.inPlay)}
-            tone="info"
-          />
-        </div>
+          <Stat label="En juego" value={points(stats.inPlay)} tone="info" />
+        </dl>
       </section>
 
       <section>
@@ -90,9 +94,9 @@ function Stat({
 }) {
   const color = { brand: 'text-brand', info: 'text-info', plain: 'text-white' }[tone];
   return (
-    <div className="card px-4 py-3.5">
-      <p className="field-label !mb-1 ">{label}</p>
-      <p className={`num text-xl font-bold ${color}`}>{value}</p>
+    <div className="px-3 py-3 first:pl-0">
+      <dt className="field-label">{label}</dt>
+      <dd className={`tnum mt-1 text-figure font-semibold ${color}`}>{value}</dd>
     </div>
   );
 }

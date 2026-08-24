@@ -80,7 +80,7 @@ export function OddsFace({
           <p
             className={`truncate font-semibold leading-tight ${
               state === 'muted' ? 'text-content-muted' : 'text-content'
-            } ${compact ? 'text-sm' : ''}`}
+            } ${compact ? 'text-body' : 'text-title'}`}
           >
             {state === 'winner' && <span className="text-brand">✓ </span>}
             {option.label}
@@ -107,7 +107,7 @@ export function OddsFace({
 
         <span
           className={`odds shrink-0 rounded-lg border px-3 py-1.5 transition-[transform,border-color,color,background-color] duration-pop ease-out
-            group-hover/odds:scale-[1.04] ${pill} ${compact ? 'text-base' : 'text-lg'}`}
+            group-hover/odds:scale-[1.04] ${pill} ${compact ? 'text-odds' : 'text-odds-lg'}`}
         >
           {fmtOdds(current)}
         </span>

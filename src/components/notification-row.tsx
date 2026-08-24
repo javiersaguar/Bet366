@@ -53,7 +53,7 @@ export function NotificationRow({
 
       <span className="min-w-0 flex-1">
         {/* El título puede ocupar dos líneas: cortarlo deja frases sin sentido. */}
-        <span className="line-clamp-2 text-sm font-semibold leading-snug text-white">
+        <span className="line-clamp-2 text-body font-semibold text-white">
           {notification.title}
         </span>
         {notification.body && (
@@ -75,11 +75,19 @@ export function NotificationRow({
         </span>
       </span>
 
-      {unread && <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-brand" />}
+      {/* Siempre está, y lo que cambia es su opacidad. Así al pulsar «marcar
+          todo leído» los puntos se apagan a la vez en lugar de esfumarse de
+          golpe, que se lee como que la página ha cambiado y no como que se
+          han marcado. De paso la fila no se reajusta al perderlo. */}
+      <span
+        aria-hidden
+        className={`mt-1.5 h-2 w-2 shrink-0 rounded-full bg-brand transition-opacity
+                    duration-panel ease-out ${unread ? 'opacity-100' : 'opacity-0'}`}
+      />
     </>
   );
 
-  const className = `flex gap-3 px-4 py-3.5 transition-colors ${
+  const className = `flex gap-3 px-4 py-3.5 transition-colors duration-panel ease-out ${
     unread ? 'bg-brand/[.035]' : ''
   } ${notification.market_id ? 'hover:bg-surface-raised' : ''}`;
 

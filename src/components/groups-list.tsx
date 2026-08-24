@@ -196,47 +196,47 @@ function Fila({
   const contenido = (
     <>
       <div className="min-w-0 flex-1">
-        <div className="flex items-baseline gap-2">
+        <div className="flex items-center gap-2">
           <p className="truncate text-title font-semibold text-white">{grupo.name}</p>
           {actual && <span className="field-label shrink-0 text-brand">aquí</span>}
 
-          <span className="ml-auto flex shrink-0 items-baseline gap-1.5">
-            {/* Algo del grupo está parado esperando un resultado. Es una marca
-                aparte y no un color sobre la frase, porque la frase cuenta lo
-                último que pasó y eso casi nunca es lo que está atascado. */}
+          {/* Todo lo que resume el estado del grupo va en esta esquina, en un
+              solo eje: la marca de que hay algo parado, los avisos sin leer y
+              cuánto hace. Antes la chapa colgaba a media altura entre la
+              frase y los puntos, sin alinearse con nada, y de paso le comía
+              el ancho a la frase, que es lo que hay que poder leer. */}
+          <span className="ml-auto flex shrink-0 items-center gap-1.5">
             {grupo.activity?.pendiente && (
               <span
                 title="Hay algo esperando resultado"
-                className="h-1.5 w-1.5 self-center rounded-full bg-gold
-                           shadow-[0_0_8px_rgba(245,194,75,.8)]"
+                className="h-1.5 w-1.5 rounded-full bg-gold shadow-[0_0_8px_rgba(245,194,75,.8)]"
               >
                 <span className="sr-only">Hay algo esperando resultado</span>
               </span>
             )}
+
+            {grupo.unread > 0 && (
+              <span
+                className="grid h-[18px] min-w-[18px] place-items-center rounded-full bg-brand px-1"
+                aria-label={`${grupo.unread} avisos sin leer`}
+              >
+                <span className="num text-[0.5625rem] font-semibold leading-none text-brand-ink">
+                  {grupo.unread > 9 ? '9+' : grupo.unread}
+                </span>
+              </span>
+            )}
+
             {grupo.activity && (
               <span className="num text-micro text-content-faint">{sello(grupo.activity.at)}</span>
             )}
           </span>
         </div>
 
-        <div className="mt-1 flex items-center gap-2">
-          <p className="min-w-0 flex-1 truncate text-caption text-content-muted">
-            {grupo.activity
-              ? grupo.activity.texto
-              : `${grupo.members} ${grupo.members === 1 ? 'persona' : 'personas'} · todavía sin apuestas`}
-          </p>
-
-          {grupo.unread > 0 && (
-            <span
-              className="grid h-[18px] min-w-[18px] shrink-0 place-items-center rounded-full bg-brand px-1"
-              aria-label={`${grupo.unread} avisos sin leer`}
-            >
-              <span className="num text-[0.5625rem] font-semibold leading-none text-brand-ink">
-                {grupo.unread > 9 ? '9+' : grupo.unread}
-              </span>
-            </span>
-          )}
-        </div>
+        <p className="mt-1 truncate text-caption text-content-muted">
+          {grupo.activity
+            ? grupo.activity.texto
+            : `${grupo.members} ${grupo.members === 1 ? 'persona' : 'personas'} · todavía sin apuestas`}
+        </p>
       </div>
 
       <div className="shrink-0 text-right">

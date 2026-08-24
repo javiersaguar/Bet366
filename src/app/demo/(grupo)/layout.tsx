@@ -56,7 +56,7 @@ export default async function DemoGroupLayout({ children }: { children: React.Re
                   <CountUp
                     key={group.id}
                     value={balance}
-                    className="block text-sm font-bold text-brand"
+                    className="num block text-body font-bold text-brand"
                   />
                   <span className="field-label hidden sm:block">puntos</span>
                 </span>

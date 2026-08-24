@@ -59,7 +59,7 @@ export function MarketScreen({
       <Celebrate fire={iWon} />
       <Link
         href={basePath}
-        className="group inline-flex items-center gap-1.5 text-sm text-content-muted transition-colors hover:text-content"
+        className="group inline-flex items-center gap-1.5 text-body text-content-muted transition-colors hover:text-content"
       >
         <span className="transition-transform duration-200 group-hover:-translate-x-0.5">←</span>
         El tablón
@@ -67,11 +67,11 @@ export function MarketScreen({
 
       <header className="space-y-3">
         <div className="flex items-start justify-between gap-3">
-          <h1 className="text-[1.6rem] font-bold leading-[1.15] text-white">{market.title}</h1>
+          <h1 className="text-title-lg font-semibold text-white">{market.title}</h1>
           <MarketBadge status={market.status} />
         </div>
         {market.description && (
-          <p className="rounded-xl border border-line bg-surface-sunken px-4 py-3 text-sm leading-relaxed text-content-muted">
+          <p className="rounded-xl border border-line bg-surface-sunken px-4 py-3 text-body leading-relaxed text-content-muted">
             {market.description}
           </p>
         )}
@@ -115,15 +115,15 @@ export function MarketScreen({
       {winner && market.status === 'resolved' && (
         <div className="card border-brand/40 bg-brand/[.08] px-5 py-4">
           <p className="field-label !text-brand/70">Resultado</p>
-          <p className="text-lg font-bold text-brand">{winner.label}</p>
-          {market.result_note && <p className="mt-1 text-sm text-brand/80">{market.result_note}</p>}
+          <p className="text-title font-semibold text-brand">{winner.label}</p>
+          {market.result_note && <p className="mt-1 text-body text-brand/80">{market.result_note}</p>}
         </div>
       )}
 
       {market.status === 'cancelled' && (
         <div className="card px-5 py-4">
           <p className="field-label">Anulada</p>
-          <p className="text-sm text-content-muted">
+          <p className="text-body text-content-muted">
             {market.cancel_reason ?? 'Se anuló y cada uno recuperó sus puntos.'}
           </p>
         </div>

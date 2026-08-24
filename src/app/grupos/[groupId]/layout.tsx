@@ -47,7 +47,7 @@ export default async function GroupLayout({
               <div className="flex items-center gap-2 rounded-xl border border-line bg-surface px-2.5 py-1.5 sm:px-3">
                 <span className="h-1.5 w-1.5 rounded-full bg-brand shadow-[0_0_8px_rgba(43,224,140,.9)]" />
                 <span className="text-right leading-tight">
-                  <CountUp value={balance} className="block text-sm font-bold text-brand" />
+                  <CountUp value={balance} className="num block text-body font-bold text-brand" />
                   <span className="field-label hidden sm:block">puntos</span>
                 </span>
               </div>

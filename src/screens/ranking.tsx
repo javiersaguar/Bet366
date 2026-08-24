@@ -37,8 +37,8 @@ export function RankingScreen({
     <div className="space-y-8">
       <section>
         <div className="mb-4">
-          <h1 className="text-xl font-bold">Ranking de la semana {season.number}</h1>
-          <p className="mt-0.5 text-sm text-content-muted">
+          <h1 className="text-display font-semibold">Ranking de la semana {season.number}</h1>
+          <p className="mt-1 text-body text-content-muted">
             Se cierra en <Countdown to={season.ends_at} className="text-content" urgentUnder={7200_000} />{' '}
             y todos vuelven a {points(start)} pts
           </p>
@@ -129,12 +129,12 @@ export function RankingScreen({
                   key={h.season_number}
                   className="flex items-center justify-between gap-3 px-4 py-3"
                 >
-                  <span className="flex items-center gap-2.5 text-sm text-content-muted">
+                  <span className="flex items-center gap-2.5 text-body text-content-muted">
                     <Trophy size={16} weight="fill" className="text-gold" />
                     Semana {h.season_number} ·{' '}
                     <strong className="text-white">{who?.display_name ?? 'Alguien'}</strong>
                   </span>
-                  <span className="num text-sm text-content-faint">{points(h.points)} pts</span>
+                  <span className="num text-body text-content-faint">{points(h.points)} pts</span>
                 </li>
               );
             })}

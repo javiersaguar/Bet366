@@ -2,6 +2,7 @@
 
 import { useFormStatus } from 'react-dom';
 import { Receipt } from '@phosphor-icons/react/dist/ssr';
+import type { Icon } from '@phosphor-icons/react';
 import type { MarketStatus, WagerStatus } from '@/lib/types';
 
 export function SubmitButton({
@@ -39,7 +40,7 @@ export function Alert({
     info: 'border-info/25 bg-info/[.07] text-info',
   }[kind];
   return (
-    <p className={`animate-rise rounded-xl border px-3.5 py-2.5 text-sm leading-relaxed ${styles}`}>
+    <p className={`animate-rise rounded-xl border px-3.5 py-2.5 text-body leading-relaxed ${styles}`}>
       {children}
     </p>
   );
@@ -72,21 +73,38 @@ export function WagerBadge({ status }: { status: WagerStatus }) {
   return <span className={`chip ${s.className}`}>{s.text}</span>;
 }
 
+/**
+ * Cuando no hay nada que enseñar.
+ *
+ * Sin tarjeta: un hueco vacío no es un objeto con el que se interactúe, así
+ * que no lleva marco. Y el emblema lo pone quien lo usa, porque «no tienes
+ * nada en juego» y «aquí no ha pasado nada» no son lo mismo y con el mismo
+ * icono para todo la app parecía rota en cinco sitios distintos.
+ */
 export function Empty({
   title,
   hint,
   action,
+  icon: Glyph = Receipt,
 }: {
   title: string;
   hint?: string;
   action?: React.ReactNode;
+  icon?: Icon;
 }) {
   return (
-    <div className="card grid place-items-center gap-3 px-6 py-16 text-center">
-      <Receipt size={44} className="text-content-faint/45" />
-      <div className="space-y-1">
-        <p className="font-semibold text-white">{title}</p>
-        {hint && <p className="mx-auto max-w-[28ch] text-sm leading-relaxed text-content-muted">{hint}</p>}
+    <div className="grid place-items-center gap-4 px-6 py-14 text-center">
+      <span
+        className="grid h-14 w-14 place-items-center rounded-2xl border border-line
+                   bg-surface-sunken text-content-faint"
+      >
+        <Glyph size={24} />
+      </span>
+      <div className="space-y-1.5">
+        <p className="text-title font-semibold text-white">{title}</p>
+        {hint && (
+          <p className="mx-auto max-w-[30ch] text-body leading-relaxed text-content-muted">{hint}</p>
+        )}
       </div>
       {action}
     </div>
