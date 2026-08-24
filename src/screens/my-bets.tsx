@@ -8,7 +8,8 @@ import {
 } from '@phosphor-icons/react/dist/ssr';
 import type { MarketWithOptions, Profile, Wager } from '@/lib/types';
 import { countdown, dateTime, odds as fmtOdds, points } from '@/lib/format';
-import { Empty, MarketBadge } from '@/components/ui';
+import { MarketBadge } from '@/components/ui';
+import { Empty } from '@/components/empty';
 import { BetTabs } from '@/components/bet-tabs';
 import { TodoCallout } from '@/components/todo-callout';
 

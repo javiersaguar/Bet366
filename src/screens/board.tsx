@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Plus, SquaresFour } from '@phosphor-icons/react/dist/ssr';
 import type { Group, MarketWithOptions, Profile, Season, Wager } from '@/lib/types';
 import { MarketRow } from '@/components/market-row';
-import { Empty } from '@/components/ui';
+import { Empty } from '@/components/empty';
 import { InviteCode } from '@/components/invite-code';
 import { points } from '@/lib/format';
 import { Countdown } from '@/components/countdown';

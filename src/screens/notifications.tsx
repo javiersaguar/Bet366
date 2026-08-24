@@ -1,7 +1,8 @@
 import { BellSlash } from '@phosphor-icons/react/dist/ssr';
 import type { Notification } from '@/lib/types';
 import { NotificationRow } from '@/components/notification-row';
-import { Empty, SectionTitle } from '@/components/ui';
+import { SectionTitle } from '@/components/ui';
+import { Empty } from '@/components/empty';
 import { BackLink } from '@/components/nav-row';
 import { MarkAllRead } from '@/app/grupos/[groupId]/avisos/mark-read';
 

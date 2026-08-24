@@ -29,6 +29,18 @@ export default function GlobalError({
         <button onClick={reset} className="btn-primary">
           Reintentar
         </button>
+
+        {/* El código del fallo. En producción Next no manda el mensaje al
+            navegador (con razón: puede llevar dentro nombres de tablas o
+            trozos de consulta), pero sí este identificador, que es el mismo
+            que sale en el registro del servidor. Sin él, «se ha roto algo»
+            es lo único que hay para buscar, y con dos pantallas rotas a la
+            vez no se sabe cuál es cuál. */}
+        {error.digest && (
+          <p className="tnum text-micro text-content-faint">
+            Si lo cuentas, di este código: {error.digest}
+          </p>
+        )}
       </div>
     </main>
   );

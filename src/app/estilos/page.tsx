@@ -28,7 +28,8 @@ import { Logo, Mark, Wordmark } from '@/components/logo';
 import { ToastProvider } from '@/components/toast';
 import { SkeletonMarketCard, SkeletonRows } from '@/components/skeleton';
 import { Countdown, DeadlineRing } from '@/components/countdown';
-import { Alert, Empty, MarketBadge, SectionTitle, WagerBadge } from '@/components/ui';
+import { Alert, MarketBadge, SectionTitle, WagerBadge } from '@/components/ui';
+import { Empty } from '@/components/empty';
 import type { MarketStatus, WagerStatus } from '@/lib/types';
 
 /**
